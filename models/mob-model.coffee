@@ -9,11 +9,14 @@ ObjectId = Schema.ObjectId
 
 MobSchema = new Schema {
   name: { type: String, required: true },
-  id: { type: Sting, required: true, unique: true },
+  id: { type: String, required: true, unique: true },
   class: { type: String, default: 'Warrior' },
   active: { type: Number, default: 1 },
+  speed: { type: Number, default: 1 },
   maxHP: { type: Number },
-  currentHP: { type: Number },
+  curHP: { type: Number },
+  X: { type: Number },
+  Y: { type: Number }
 }
 
 mongoose.model 'Mobs', MobSchema

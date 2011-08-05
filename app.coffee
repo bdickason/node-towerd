@@ -26,6 +26,7 @@ mongoose.connection.on 'open', ->
 app.dynamicHelpers { session: (req, res) -> req.session }
 
 ### Initialize controllers ###
+Game = (require './controllers/game.js').Game
 Users = (require './controllers/user.js').Users
 # Mobs = (require './controllers/mobs.js').Mobs
 
@@ -35,7 +36,9 @@ Users = (require './controllers/user.js').Users
 app.get '/', (req, res) ->  
   if req.session.auth == 1
     # User is authenticated
-    console.log 'do something'
+    console.log 'Spawning New Game'
+    newgame = new Game
+    
     res.send 'done'
   else
     res.send "You are not logged in. <A HREF='/login'>Click here</A> to login"

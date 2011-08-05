@@ -11,7 +11,7 @@
       required: true
     },
     id: {
-      type: Sting,
+      type: String,
       required: true,
       unique: true
     },
@@ -23,10 +23,20 @@
       type: Number,
       "default": 1
     },
+    speed: {
+      type: Number,
+      "default": 1
+    },
     maxHP: {
       type: Number
     },
-    currentHP: {
+    curHP: {
+      type: Number
+    },
+    X: {
+      type: Number
+    },
+    Y: {
       type: Number
     }
   });

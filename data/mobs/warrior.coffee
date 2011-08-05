@@ -6,6 +6,7 @@ exports.mob = {
   id: 'warrior',
   class: 'Warrior',
   active: 1,
+  speed: 1,
   maxHP: 50,
-  currentHP: 50
+  curHP: 50
 }

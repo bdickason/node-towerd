@@ -1,5 +1,5 @@
 (function() {
-  var RedisStore, Users, app, cfg, express, gzippo, http, mongoose, sys;
+  var Game, RedisStore, Users, app, cfg, express, gzippo, http, mongoose, sys;
   http = require('http');
   express = require('express');
   RedisStore = (require('connect-redis'))(express);
@@ -31,11 +31,14 @@
     }
   });
   /* Initialize controllers */
+  Game = (require('./controllers/game.js')).Game;
   Users = (require('./controllers/user.js')).Users;
   /* Start Route Handling */
   app.get('/', function(req, res) {
+    var newgame;
     if (req.session.auth === 1) {
-      console.log('do something');
+      console.log('Spawning New Game');
+      newgame = new Game;
       return res.send('done');
     } else {
       return res.send("You are not logged in. <A HREF='/login'>Click here</A> to login");
