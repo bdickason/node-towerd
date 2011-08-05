@@ -1,0 +1,14 @@
+{
+	"name": "game",
+	"version": "0.0.1",
+	"dependencies": {
+		"express": ">=2.3.10",
+		"coffee-script": ">=1.1.1",
+		"jade": ">=0.13.0",
+		"connect-redis": ">=1.0.6",
+		"redis": ">=0.6.4",
+		"hiredis": ">=0.1.12",
+		"jasmine-node": ">=1.0.6",
+		"gzippo": ">=0.0.4"
+	}
+}
