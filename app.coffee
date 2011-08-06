@@ -31,17 +31,33 @@ Users = (require './controllers/user.js').Users
 # Mobs = (require './controllers/mobs.js').Mobs
 
 ### Start Route Handling ###
- 
+
 # Home Page
-app.get '/', (req, res) ->  
+app.get '/', (req, res) ->
+  if !@game
+    console.log 'Game has not started yet.'
+    res.redirect '/start'
+  else
+    @game.toString (json) ->
+      res.send json
+
+  ### Handle logins
   if req.session.auth == 1
     # User is authenticated
-    console.log 'Spawning New Game'
-    newgame = new Game
-    
     res.send 'done'
   else
     res.send "You are not logged in. <A HREF='/login'>Click here</A> to login"
+  ###
+
+# Start a new game!
+app.get '/start', (req, res) ->
+  console.log 'Spawning New Game'
+  @game = new Game
+  res.redirect '/'
+    
+  
+app.get '/end', (req, res) ->
+  @game.destroy()
 
 app.get '/register/:id/:name', (req, res) ->
   # Allow a user to register

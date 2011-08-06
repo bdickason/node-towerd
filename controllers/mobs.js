@@ -1,11 +1,12 @@
 (function() {
-  var Mob, Mobs, cfg, redis;
+  var Mob, cfg, mobModel, redis;
   cfg = require('../config/config.js');
   redis = require('redis');
-  Mob = require('../models/mob-model.js');
-  exports.Mobs = Mobs = (function() {
-    function Mobs(name) {
+  mobModel = require('../models/mob-model.js');
+  exports.Mob = Mob = (function() {
+    function Mob(name) {
       var toLoad;
+      name = name.toLowerCase();
       console.log('Loading mob: ' + name);
       toLoad = (require('../data/mobs/' + name + '.js')).mob;
       console.log(toLoad);
@@ -15,18 +16,28 @@
       this["class"] = toLoad["class"];
       this.speed = toLoad.speed;
       this.maxHP = toLoad.maxHP;
+      this.loc = {
+        X: null,
+        Y: null
+      };
+      this.curHP = null;
     }
-    Mobs.prototype.spawn = function(X, Y, callback) {
-      console.log('Spawning mob [' + this.id + '] at (' + X + ',' + Y + ') with UID: ' + this.uid);
-      this.X = X;
-      this.Y = Y;
-      return this.curHP = this.maxHP;
+    Mob.prototype.spawn = function(X, Y, callback) {
+      this.loc.X = X;
+      this.loc.Y = Y;
+      this.curHP = this.maxHP;
+      return console.log('Spawning mob [' + this.id + '] at (' + X + ',' + Y + ') with UID: ' + this.uid);
     };
-    Mobs.prototype.move = function(X, Y, callback) {
-      this.X = this.X + X;
-      this.Y = this.Y + Y;
-      return console.log('mob [' + this.id + '] moved to (' + X + ',' + Y + ')');
+    Mob.prototype.move = function(X, Y, callback) {
+      this.loc.X = this.loc.X + X;
+      this.loc.Y = this.loc.Y + Y;
+      return console.log('MOB ' + this.uid + ' [' + this.id + '] moved to (' + this.loc.X + ',' + this.loc.Y + ')');
     };
-    return Mobs;
+    Mob.prototype.toString = function(callback) {
+      var output;
+      output = 'MOB ' + this.uid + ' [' + this.id + ']  loc: (' + this.loc.X + ', ' + this.loc.Y + ')  HP: ' + this.curHP + '/' + this.maxHP;
+      return callback(output);
+    };
+    return Mob;
   })();
 }).call(this);

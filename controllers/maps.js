@@ -1,11 +1,12 @@
 (function() {
-  var Map, Maps, cfg, redis;
+  var Map, cfg, mapModel, redis;
   cfg = require('../config/config.js');
   redis = require('redis');
-  Map = require('../models/map-model.js');
-  exports.Maps = Maps = (function() {
-    function Maps(name) {
+  mapModel = require('../models/map-model.js');
+  exports.Map = Map = (function() {
+    function Map(name) {
       var toLoad;
+      name = name.toLowerCase();
       console.log('Loading map: ' + name);
       toLoad = (require('../data/maps/' + name + '.js')).map;
       console.log(toLoad);
@@ -16,6 +17,11 @@
       this.mobs = toLoad.mobs;
       this.size = toLoad.size;
     }
-    return Maps;
+    Map.prototype.toString = function(callback) {
+      var output;
+      output = 'MAP ' + this.uid + ' [' + this.name + ']  Size: ' + this.size;
+      return callback(output);
+    };
+    return Map;
   })();
 }).call(this);

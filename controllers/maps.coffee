@@ -2,10 +2,11 @@ cfg = require '../config/config.js'    # contains API keys, etc.
 redis = require 'redis'
 
 # Models
-Map = require '../models/map-model.js'
+mapModel = require '../models/map-model.js'
 
-exports.Maps = class Maps
+exports.Map = class Map
   constructor: (name) ->
+    name = name.toLowerCase() # In case someone throws in some weird name
     console.log 'Loading map: ' + name
     toLoad = (require '../data/maps/' + name + '.js').map
     console.log toLoad
@@ -18,3 +19,6 @@ exports.Maps = class Maps
     @size = toLoad.size
   
   
+  toString: (callback) ->
+    output = 'MAP ' + @uid + ' [' + @name + ']  Size: ' + @size
+    callback output

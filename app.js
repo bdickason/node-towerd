@@ -35,14 +35,29 @@
   Users = (require('./controllers/user.js')).Users;
   /* Start Route Handling */
   app.get('/', function(req, res) {
-    var newgame;
-    if (req.session.auth === 1) {
-      console.log('Spawning New Game');
-      newgame = new Game;
-      return res.send('done');
+    if (!this.game) {
+      console.log('Game has not started yet.');
+      return res.redirect('/start');
     } else {
-      return res.send("You are not logged in. <A HREF='/login'>Click here</A> to login");
+      return this.game.toString(function(json) {
+        return res.send(json);
+      });
     }
+    /* Handle logins
+    if req.session.auth == 1
+      # User is authenticated
+      res.send 'done'
+    else
+      res.send "You are not logged in. <A HREF='/login'>Click here</A> to login"
+    */
+  });
+  app.get('/start', function(req, res) {
+    console.log('Spawning New Game');
+    this.game = new Game;
+    return res.redirect('/');
+  });
+  app.get('/end', function(req, res) {
+    return this.game.destroy();
   });
   app.get('/register/:id/:name', function(req, res) {
     var user;

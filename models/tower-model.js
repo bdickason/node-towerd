@@ -28,7 +28,20 @@
     },
     range: {
       type: Number
+    },
+    loc: {
+      X: {
+        type: Number,
+        "default": null
+      },
+      Y: {
+        type: Number,
+        "default": null
+      }
     }
+  });
+  TowerSchema.index({
+    location: '2d'
   });
   mongoose.model('Towers', TowerSchema);
   module.exports = db.model('Towers');

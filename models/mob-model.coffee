@@ -15,9 +15,14 @@ MobSchema = new Schema {
   speed: { type: Number, default: 1 },
   maxHP: { type: Number },
   curHP: { type: Number },
-  X: { type: Number },
-  Y: { type: Number }
+  loc: { 
+    X: { type: Number, default: null },
+    Y: { type: Number, default: null }
+  }
 }
+
+# Enable geospatial indexing
+MobSchema.index { location: '2d' }
 
 mongoose.model 'Mobs', MobSchema
 module.exports = db.model 'Mobs'

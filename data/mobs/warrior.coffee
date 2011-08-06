@@ -1,7 +1,7 @@
 # Mob Definition File
 # Mob: Warrior
 
-exports.mob = {
+exports.mob =
   name: 'Warrior',
   id: 'warrior',
   class: 'Warrior',
@@ -9,4 +9,3 @@ exports.mob = {
   speed: 1,
   maxHP: 50,
   curHP: 50
-}

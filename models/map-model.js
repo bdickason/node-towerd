@@ -27,7 +27,17 @@
       {
         type: Number
       }
-    ]
+    ],
+    loc: {
+      X: {
+        type: Number,
+        "default": null
+      },
+      Y: {
+        type: Number,
+        "default": null
+      }
+    }
   });
   mongoose.model('Maps', MapSchema);
   module.exports = db.model('Maps');
