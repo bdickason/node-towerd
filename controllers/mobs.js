@@ -9,33 +9,47 @@
       name = name.toLowerCase();
       console.log('Loading mob: ' + name);
       toLoad = (require('../data/mobs/' + name + '.js')).mob;
-      console.log(toLoad);
       this.uid = Math.floor(Math.random() * 10000000);
       this.id = toLoad.id;
       this.name = toLoad.name;
       this["class"] = toLoad["class"];
       this.speed = toLoad.speed;
       this.maxHP = toLoad.maxHP;
-      this.loc = {
-        X: null,
-        Y: null
-      };
+      this.loc = [null, null];
       this.curHP = null;
     }
     Mob.prototype.spawn = function(X, Y, callback) {
-      this.loc.X = X;
-      this.loc.Y = Y;
+      this.loc = [X, Y];
       this.curHP = this.maxHP;
       return console.log('Spawning mob [' + this.id + '] at (' + X + ',' + Y + ') with UID: ' + this.uid);
     };
     Mob.prototype.move = function(X, Y, callback) {
-      this.loc.X = this.loc.X + X;
-      this.loc.Y = this.loc.Y + Y;
-      return console.log('MOB ' + this.uid + ' [' + this.id + '] moved to (' + this.loc.X + ',' + this.loc.Y + ')');
+      this.loc = [this.loc[0] + X, this.loc[1] + Y];
+      return console.log('MOB ' + this.uid + ' [' + this.id + '] moved to (' + this.loc[0] + ',' + this.loc[1] + ')');
+    };
+    Mob.prototype.save = function(callback) {
+      var newmob;
+      newmob = new mobModel({
+        uid: this.uid,
+        id: this.id,
+        name: this.name,
+        "class": this["class"],
+        speed: this.speed,
+        maxHP: this.maxHP,
+        curHP: this.curHP,
+        loc: this.loc
+      });
+      return newmob.save(function(err, saved) {
+        if (err) {
+          return console.log('Error saving: ' + err);
+        } else {
+          return console.log('Saved Mob: ' + newmob.uid);
+        }
+      });
     };
     Mob.prototype.toString = function(callback) {
       var output;
-      output = 'MOB ' + this.uid + ' [' + this.id + ']  loc: (' + this.loc.X + ', ' + this.loc.Y + ')  HP: ' + this.curHP + '/' + this.maxHP;
+      output = 'MOB ' + this.uid + ' [' + this.id + ']  loc: (' + this.loc[0] + ', ' + this.loc[1] + ')  HP: ' + this.curHP + '/' + this.maxHP;
       return callback(output);
     };
     return Mob;

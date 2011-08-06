@@ -14,13 +14,11 @@ TowerSchema = new Schema
   active: { type: Number, default: 1 },
   damage: { type: Number },
   range: { type: Number },
-  loc: { 
-    X: { type: Number, default: null },
-    Y: { type: Number, default: null }
+  loc: [ Number ]
   }
 
 # Enable geospatial indexing
-TowerSchema.index { location: '2d' }
+TowerSchema.index { loc: '2d' }
   
 mongoose.model 'Towers', TowerSchema
 module.exports = db.model 'Towers'

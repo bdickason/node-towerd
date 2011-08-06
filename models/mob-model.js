@@ -6,14 +6,16 @@
   Schema = mongoose.Schema;
   ObjectId = Schema.ObjectId;
   MobSchema = new Schema({
+    uid: {
+      type: Number,
+      unique: true
+    },
     name: {
       type: String,
       required: true
     },
     id: {
-      type: String,
-      required: true,
-      unique: true
+      type: String
     },
     "class": {
       type: String,
@@ -33,19 +35,10 @@
     curHP: {
       type: Number
     },
-    loc: {
-      X: {
-        type: Number,
-        "default": null
-      },
-      Y: {
-        type: Number,
-        "default": null
-      }
-    }
+    loc: [Number]
   });
   MobSchema.index({
-    location: '2d'
+    loc: '2d'
   });
   mongoose.model('Mobs', MobSchema);
   module.exports = db.model('Mobs');

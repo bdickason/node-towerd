@@ -12,16 +12,16 @@ exports.Game = class Game
     # First level: Hidden Valley
     @maps = []
     @maps.push new map 'hiddenvalley'
-  
-    console.log @maps
+    
+    @maps[0].save ->
   
     ### Load the mobs ###
     # First map has one mob: Warrior
     @mobs = []
   
     # Let's create two of them  
-    @mobs.push new mob 'warrior'
-    @mobs.push new mob 'warrior'
+    @mobs.push new mob @maps[0].mobs[0]
+    @mobs.push new mob @maps[0].mobs[0]
 
     # They exist in memory but need to be spawned
     @mobs[0].spawn 0, 0, (json) ->
@@ -38,6 +38,9 @@ exports.Game = class Game
       console.log json
     @mobs[1].toString (json) ->
       console.log json
+    
+    @mobs[0].save ->
+    @mobs[1].save ->
   
     ### Load the towers ###
     # First map has one tower: Cannon
@@ -47,12 +50,17 @@ exports.Game = class Game
     @towers.push new tower 'cannon'
   
     # Spawn it
-    @towers[0].spawn 5, 5, (json) ->
-      console.log 'Tower: ' + tower
+    @towers[0].spawn 4, 4, (json) ->
+      console.log 'Tower: ' + json
   
     # Print basic info about the tower
     @towers[0].toString (json) ->
       console.log json
+    
+    @towers[0].save ->
+    
+    @towers[0].checkTargets ->
+    
   
   destroy: ->
     console.log 'DESTROYING the game ;('

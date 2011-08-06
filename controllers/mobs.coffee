@@ -9,7 +9,6 @@ exports.Mob = class Mob
     name = name.toLowerCase()   # In case someone throws in some weird name
     console.log 'Loading mob: ' + name
     toLoad = (require '../data/mobs/' + name + '.js').mob
-    console.log toLoad
     
     @uid = Math.floor Math.random()*10000000  # Generate a unique ID for each instance of this mob
     @id = toLoad.id
@@ -17,23 +16,28 @@ exports.Mob = class Mob
     @class = toLoad.class
     @speed = toLoad.speed
     @maxHP = toLoad.maxHP
-    @loc =
-      X: null # Hasn't been spawned yet, so position is null
-      Y: null
+    @loc = [null, null]  # Hasn't been spawned yet, so position is null
     @curHP = null # Hasn't spawned so has no HP.
 
   spawn: (X, Y, callback) ->
-    @loc.X = X
-    @loc.Y = Y
+    @loc = [X, Y]
     @curHP = @maxHP # Always spawn with full life (for now!)
     console.log 'Spawning mob [' + @id + '] at (' + X + ',' + Y + ') with UID: ' + @uid
   
   move: (X, Y, callback) ->
-    @loc.X = @loc.X + X
-    @loc.Y = @loc.Y + Y
+    @loc = [@loc[0] + X, @loc[1] + Y]
     
-    console.log 'MOB ' + @uid + ' [' + @id + '] moved to (' + @loc.X + ',' + @loc.Y + ')'
+    console.log 'MOB ' + @uid + ' [' + @id + '] moved to (' + @loc[0] + ',' + @loc[1] + ')'
+
+  save: (callback) ->
+    # Save to DB
+    newmob = new mobModel ( { uid: @uid, id: @id, name: @name, class: @class, speed: @speed, maxHP: @maxHP, curHP: @curHP, loc: @loc } )
+    newmob.save (err, saved) ->
+      if err
+        console.log 'Error saving: ' + err
+      else
+        console.log 'Saved Mob: ' + newmob.uid
     
   toString: (callback) ->
-    output = 'MOB ' + @uid + ' [' + @id + ']  loc: (' + @loc.X + ', ' + @loc.Y + ')  HP: ' + @curHP + '/' + @maxHP
+    output = 'MOB ' + @uid + ' [' + @id + ']  loc: (' + @loc[0] + ', ' + @loc[1] + ')  HP: ' + @curHP + '/' + @maxHP
     callback output

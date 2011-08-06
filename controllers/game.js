@@ -7,11 +7,11 @@
     function Game() {
       /* Load the map */      this.maps = [];
       this.maps.push(new map('hiddenvalley'));
-      console.log(this.maps);
+      this.maps[0].save(function() {});
       /* Load the mobs */
       this.mobs = [];
-      this.mobs.push(new mob('warrior'));
-      this.mobs.push(new mob('warrior'));
+      this.mobs.push(new mob(this.maps[0].mobs[0]));
+      this.mobs.push(new mob(this.maps[0].mobs[0]));
       this.mobs[0].spawn(0, 0, function(json) {
         return console.log('Mob: ' + mob);
       });
@@ -26,15 +26,19 @@
       this.mobs[1].toString(function(json) {
         return console.log(json);
       });
+      this.mobs[0].save(function() {});
+      this.mobs[1].save(function() {});
       /* Load the towers */
       this.towers = [];
       this.towers.push(new tower('cannon'));
-      this.towers[0].spawn(5, 5, function(json) {
-        return console.log('Tower: ' + tower);
+      this.towers[0].spawn(4, 4, function(json) {
+        return console.log('Tower: ' + json);
       });
       this.towers[0].toString(function(json) {
         return console.log(json);
       });
+      this.towers[0].save(function() {});
+      this.towers[0].checkTargets(function() {});
     }
     Game.prototype.destroy = function() {
       var maps, mobs, towers;

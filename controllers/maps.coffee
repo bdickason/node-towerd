@@ -9,7 +9,6 @@ exports.Map = class Map
     name = name.toLowerCase() # In case someone throws in some weird name
     console.log 'Loading map: ' + name
     toLoad = (require '../data/maps/' + name + '.js').map
-    console.log toLoad
     
     @uid = Math.floor Math.random()*10000000  # Generate a unique ID for each instance of this map
     @id = toLoad.id
@@ -17,8 +16,17 @@ exports.Map = class Map
     @theme = toLoad.theme
     @mobs = toLoad.mobs
     @size = toLoad.size
-  
-  
+      
+  save: (callback) ->
+    # Save to DB
+    newmap = new mapModel ( { uid: @uid, id: @id, name: @name, theme: @theme, mobs: @mobs, size: @size } )
+    newmap.save (err, saved) ->
+      if err
+        console.log 'Error saving: ' + err
+      else
+        console.log 'Saved Map: ' + newmap.uid
+    
   toString: (callback) ->
     output = 'MAP ' + @uid + ' [' + @name + ']  Size: ' + @size
     callback output
+    

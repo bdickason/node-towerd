@@ -41,7 +41,7 @@
     }
   });
   TowerSchema.index({
-    location: '2d'
+    loc: '2d'
   });
   mongoose.model('Towers', TowerSchema);
   module.exports = db.model('Towers');

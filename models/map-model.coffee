@@ -12,11 +12,7 @@ MapSchema = new Schema {
   id: { type: String, required: true, unique: true },
   active: { type: Number, default: 1 },
   theme: { type: String, default: 'Water' },
-  mobs: [ { type: Number } ],  # A map can have many mobs
-  loc: { 
-    X: { type: Number, default: null },
-    Y: { type: Number, default: null }
-  }
+  mobs: [ String ],  # A map can have many mobs
 }
 
 mongoose.model 'Maps', MapSchema
