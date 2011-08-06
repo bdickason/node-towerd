@@ -1,10 +1,11 @@
 cfg = require '../config/config.js'    # contains API keys, etc.
 redis = require 'redis'
+EventEmitter = (require 'events').EventEmitter
 
 # Models
 mobModel = require '../models/mob-model.js'
 
-exports.Mob = class Mob
+exports.Mob = class Mob extends EventEmitter
   constructor: (name) ->
     name = name.toLowerCase()   # In case someone throws in some weird name
     console.log 'Loading mob: ' + name
@@ -18,11 +19,20 @@ exports.Mob = class Mob
     @maxHP = toLoad.maxHP
     @loc = [null, null]  # Hasn't been spawned yet, so position is null
     @curHP = null # Hasn't spawned so has no HP.
-
+    
   spawn: (X, Y, callback) ->
     @loc = [X, Y]
     @curHP = @maxHP # Always spawn with full life (for now!)
+    @emit 'spawn'
     console.log 'Spawning mob [' + @id + '] at (' + X + ',' + Y + ') with UID: ' + @uid
+  
+  hit: (damage) ->
+    @curHP = @curHP - damage
+    if @curHP > 0
+      @emit 'hit'
+    else
+      # mob is dead!
+      @emit 'die'
   
   move: (X, Y, callback) ->
     @loc = [@loc[0] + X, @loc[1] + Y]
@@ -35,6 +45,8 @@ exports.Mob = class Mob
         mob[0].save (err) ->
           if (err)
             console.log 'Error saving mob: {@uid} ' + err
+          else
+            @emit 'move'
     console.log 'MOB ' + @uid + ' [' + @id + '] moved to (' + @loc[0] + ',' + @loc[1] + ')'
 
   save: (callback) ->

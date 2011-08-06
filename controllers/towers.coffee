@@ -1,11 +1,12 @@
 cfg = require '../config/config.js'    # contains API keys, etc.
 redis = require 'redis'
+EventEmitter = (require 'events').EventEmitter
 
 # Models
 towerModel = require '../models/tower-model.js'
 mobModel = require '../models/mob-model.js'
 
-exports.Tower = class Tower
+exports.Tower = class Tower extends EventEmitter
   constructor: (name) ->
     name = name.toLowerCase() # In case someone throws in some weird name
     console.log 'Loading tower: ' + name
@@ -23,6 +24,7 @@ exports.Tower = class Tower
   # Activate the tower and place it on the map
   spawn: (X, Y, callback) ->
     @loc = [X, Y]
+    @emit 'spawn'
     console.log 'Spawning tower [' + @name + '] at (' + X + ',' + Y + ') with UID: ' + @uid
   
   # Check for anything within range
@@ -31,6 +33,7 @@ exports.Tower = class Tower
       if err
         console.log 'Error: ' + err
       else
+        @emit 'shot'
         callback hits
   
   save: (callback) ->

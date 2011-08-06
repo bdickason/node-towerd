@@ -1,9 +1,19 @@
 (function() {
-  var Mob, cfg, mobModel, redis;
+  var EventEmitter, Mob, cfg, mobModel, redis;
+  var __hasProp = Object.prototype.hasOwnProperty, __extends = function(child, parent) {
+    for (var key in parent) { if (__hasProp.call(parent, key)) child[key] = parent[key]; }
+    function ctor() { this.constructor = child; }
+    ctor.prototype = parent.prototype;
+    child.prototype = new ctor;
+    child.__super__ = parent.prototype;
+    return child;
+  };
   cfg = require('../config/config.js');
   redis = require('redis');
+  EventEmitter = (require('events')).EventEmitter;
   mobModel = require('../models/mob-model.js');
   exports.Mob = Mob = (function() {
+    __extends(Mob, EventEmitter);
     function Mob(name) {
       var toLoad;
       name = name.toLowerCase();
@@ -21,7 +31,16 @@
     Mob.prototype.spawn = function(X, Y, callback) {
       this.loc = [X, Y];
       this.curHP = this.maxHP;
+      this.emit('spawn');
       return console.log('Spawning mob [' + this.id + '] at (' + X + ',' + Y + ') with UID: ' + this.uid);
+    };
+    Mob.prototype.hit = function(damage) {
+      this.curHP = this.curHP - damage;
+      if (this.curHP > 0) {
+        return this.emit('hit');
+      } else {
+        return this.emit('die');
+      }
     };
     Mob.prototype.move = function(X, Y, callback) {
       var newloc;
@@ -37,6 +56,8 @@
           return mob[0].save(function(err) {
             if (err) {
               return console.log('Error saving mob: {@uid} ' + err);
+            } else {
+              return this.emit('move');
             }
           });
         }

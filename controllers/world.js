@@ -1,9 +1,19 @@
 (function() {
-  var World, map, mob, tower;
+  var EventEmitter, World, map, mob, tower;
+  var __hasProp = Object.prototype.hasOwnProperty, __extends = function(child, parent) {
+    for (var key in parent) { if (__hasProp.call(parent, key)) child[key] = parent[key]; }
+    function ctor() { this.constructor = child; }
+    ctor.prototype = parent.prototype;
+    child.prototype = new ctor;
+    child.__super__ = parent.prototype;
+    return child;
+  };
   map = (require('./maps')).Map;
   mob = (require('./mobs')).Mob;
   tower = (require('./towers')).Tower;
+  EventEmitter = (require('events')).EventEmitter;
   exports.World = World = (function() {
+    __extends(World, EventEmitter);
     function World() {
       /* Initial config */      this.gameTime = 3000;
       /* Start the game!! */
@@ -48,6 +58,7 @@
     }
     World.prototype.gameLoop = function() {
       var mob, tower, _i, _j, _len, _len2, _ref, _ref2, _results;
+      this.emit('gameLoop');
       _ref = this.mobs;
       for (_i = 0, _len = _ref.length; _i < _len; _i++) {
         mob = _ref[_i];

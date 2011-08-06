@@ -1,11 +1,12 @@
 map = (require './maps').Map  # Map functions like render, etc.
 mob = (require './mobs').Mob  # Mob functions like move, etc.
 tower = (require './towers').Tower  # Tower functions like attack, etc. 
+EventEmitter = (require 'events').EventEmitter
 
 # Initialize a new game
 # Called when the player first starts or elects to restart
 
-exports.World = class World
+exports.World = class World extends EventEmitter
 
   constructor: ->
     ### Initial config ###
@@ -72,6 +73,7 @@ exports.World = class World
   gameLoop: ->
     # One iteration of a game loop
     # Runs every '@gameTime' seconds
+    @emit 'gameLoop'
     for mob in @mobs
       mob.move 1, 1, (json) ->
       

@@ -5,6 +5,6 @@
     type: 'Cannon',
     active: 1,
     damage: 5,
-    range: 5
+    range: 2
   };
 }).call(this);
