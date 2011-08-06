@@ -31,7 +31,7 @@ exports.Tower = class Tower
       if err
         console.log 'Error: ' + err
       else
-        console.log hits
+        callback hits
   
   save: (callback) ->
     # Save to DB

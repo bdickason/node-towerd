@@ -26,7 +26,15 @@ exports.Mob = class Mob
   
   move: (X, Y, callback) ->
     @loc = [@loc[0] + X, @loc[1] + Y]
-    
+    newloc = @loc
+    mobModel.find { uid: @uid }, (err, mob) ->
+      if(err)
+        console.log 'Error finding mob: {@uid} ' + err
+      else
+        mob[0].loc = newloc
+        mob[0].save (err) ->
+          if (err)
+            console.log 'Error saving mob: {@uid} ' + err
     console.log 'MOB ' + @uid + ' [' + @id + '] moved to (' + @loc[0] + ',' + @loc[1] + ')'
 
   save: (callback) ->

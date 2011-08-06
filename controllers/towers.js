@@ -33,7 +33,7 @@
         if (err) {
           return console.log('Error: ' + err);
         } else {
-          return console.log(hits);
+          return callback(hits);
         }
       });
     };

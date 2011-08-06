@@ -1,11 +1,17 @@
 (function() {
-  var Game, map, mob, tower;
+  var World, map, mob, tower;
   map = (require('./maps')).Map;
   mob = (require('./mobs')).Mob;
   tower = (require('./towers')).Tower;
-  exports.Game = Game = (function() {
-    function Game() {
-      /* Load the map */      this.maps = [];
+  exports.World = World = (function() {
+    function World() {
+      /* Initial config */      this.gameTime = 3000;
+      /* Start the game!! */
+      this.game = setInterval(function() {
+        return world.gameLoop();
+      }, this.gameTime);
+      /* Load the map */
+      this.maps = [];
       this.maps.push(new map('hiddenvalley'));
       this.maps[0].save(function() {});
       /* Load the mobs */
@@ -38,16 +44,34 @@
         return console.log(json);
       });
       this.towers[0].save(function() {});
-      this.towers[0].checkTargets(function() {});
+      this.towers[0].checkTargets(function(json) {});
     }
-    Game.prototype.destroy = function() {
+    World.prototype.gameLoop = function() {
+      var mob, tower, _i, _j, _len, _len2, _ref, _ref2, _results;
+      _ref = this.mobs;
+      for (_i = 0, _len = _ref.length; _i < _len; _i++) {
+        mob = _ref[_i];
+        mob.move(1, 1, function(json) {});
+      }
+      _ref2 = this.towers;
+      _results = [];
+      for (_j = 0, _len2 = _ref2.length; _j < _len2; _j++) {
+        tower = _ref2[_j];
+        _results.push(tower.checkTargets(function(json) {
+          return console.log(json);
+        }));
+      }
+      return _results;
+    };
+    World.prototype.destroy = function() {
       var maps, mobs, towers;
       console.log('DESTROYING the game ;(');
+      clearInterval(this.game);
       maps = [];
       mobs = [];
       return towers = [];
     };
-    Game.prototype.toString = function(json) {
+    World.prototype.toString = function(json) {
       var map, mob, tower, _fn, _fn2, _i, _j, _k, _len, _len2, _len3, _ref, _ref2, _ref3, _results;
       _ref = this.maps;
       _fn = function(map) {
@@ -81,6 +105,6 @@
       }
       return _results;
     };
-    return Game;
+    return World;
   })();
 }).call(this);

@@ -24,7 +24,23 @@
       return console.log('Spawning mob [' + this.id + '] at (' + X + ',' + Y + ') with UID: ' + this.uid);
     };
     Mob.prototype.move = function(X, Y, callback) {
+      var newloc;
       this.loc = [this.loc[0] + X, this.loc[1] + Y];
+      newloc = this.loc;
+      mobModel.find({
+        uid: this.uid
+      }, function(err, mob) {
+        if (err) {
+          return console.log('Error finding mob: {@uid} ' + err);
+        } else {
+          mob[0].loc = newloc;
+          return mob[0].save(function(err) {
+            if (err) {
+              return console.log('Error saving mob: {@uid} ' + err);
+            }
+          });
+        }
+      });
       return console.log('MOB ' + this.uid + ' [' + this.id + '] moved to (' + this.loc[0] + ',' + this.loc[1] + ')');
     };
     Mob.prototype.save = function(callback) {

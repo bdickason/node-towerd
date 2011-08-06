@@ -5,9 +5,17 @@ tower = (require './towers').Tower  # Tower functions like attack, etc.
 # Initialize a new game
 # Called when the player first starts or elects to restart
 
-exports.Game = class Game
+exports.World = class World
 
   constructor: ->
+    ### Initial config ###
+    @gameTime = 3000  # every 3000ms, the game progresses
+
+    ### Start the game!! ###
+    @game = setInterval ->
+      world.gameLoop()
+    , @gameTime
+    
     ### Load the map ###
     # First level: Hidden Valley
     @maps = []
@@ -59,11 +67,21 @@ exports.Game = class Game
     
     @towers[0].save ->
     
-    @towers[0].checkTargets ->
-    
+    @towers[0].checkTargets (json) ->
   
+  gameLoop: ->
+    # One iteration of a game loop
+    # Runs every '@gameTime' seconds
+    for mob in @mobs
+      mob.move 1, 1, (json) ->
+      
+    for tower in @towers
+      tower.checkTargets (json) ->
+        console.log json          
+    
   destroy: ->
     console.log 'DESTROYING the game ;('
+    clearInterval @game # stop game clock
     maps = []
     mobs = []
     towers = []

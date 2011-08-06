@@ -26,7 +26,7 @@ mongoose.connection.on 'open', ->
 app.dynamicHelpers { session: (req, res) -> req.session }
 
 ### Initialize controllers ###
-Game = (require './controllers/game.js').Game
+World = (require './controllers/world.js').World
 Users = (require './controllers/user.js').Users
 # Mobs = (require './controllers/mobs.js').Mobs
 
@@ -34,11 +34,11 @@ Users = (require './controllers/user.js').Users
 
 # Home Page
 app.get '/', (req, res) ->
-  if !@game
+  if typeof world == 'undefined'
     console.log 'Game has not started yet.'
     res.redirect '/start'
   else
-    @game.toString (json) ->
+    world.toString (json) ->
       res.send json
 
   ### Handle logins
@@ -52,12 +52,15 @@ app.get '/', (req, res) ->
 # Start a new game!
 app.get '/start', (req, res) ->
   console.log 'Spawning New Game'
-  @game = new Game
+
+  world = new World
+  global.world = world  # world needs to be called from anywhere/everywhere
+  
   res.redirect '/'
     
   
 app.get '/end', (req, res) ->
-  @game.destroy()
+  world.destroy()
 
 app.get '/register/:id/:name', (req, res) ->
   # Allow a user to register
@@ -100,5 +103,7 @@ app.get '/logout', (req, res) ->
   console.log '--- LOGOUT ---'
   req.session.destroy()
   res.redirect '/'
+  
+
 
 app.listen process.env.PORT or 3000 

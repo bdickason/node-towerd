@@ -1,5 +1,5 @@
 (function() {
-  var Game, RedisStore, Users, app, cfg, express, gzippo, http, mongoose, sys;
+  var RedisStore, Users, World, app, cfg, express, gzippo, http, mongoose, sys;
   http = require('http');
   express = require('express');
   RedisStore = (require('connect-redis'))(express);
@@ -31,15 +31,15 @@
     }
   });
   /* Initialize controllers */
-  Game = (require('./controllers/game.js')).Game;
+  World = (require('./controllers/world.js')).World;
   Users = (require('./controllers/user.js')).Users;
   /* Start Route Handling */
   app.get('/', function(req, res) {
-    if (!this.game) {
+    if (typeof world === 'undefined') {
       console.log('Game has not started yet.');
       return res.redirect('/start');
     } else {
-      return this.game.toString(function(json) {
+      return world.toString(function(json) {
         return res.send(json);
       });
     }
@@ -52,12 +52,14 @@
     */
   });
   app.get('/start', function(req, res) {
+    var world;
     console.log('Spawning New Game');
-    this.game = new Game;
+    world = new World;
+    global.world = world;
     return res.redirect('/');
   });
   app.get('/end', function(req, res) {
-    return this.game.destroy();
+    return world.destroy();
   });
   app.get('/register/:id/:name', function(req, res) {
     var user;
