@@ -8,6 +8,7 @@ cfg = require './config/config.js'    # contains API keys, etc.
 
 
 app = express.createServer()
+io = (require 'socket.io').listen app
 
 app.configure ->
   app.set 'views', __dirname + '/views'
@@ -25,8 +26,13 @@ mongoose.connection.on 'open', ->
   
 app.dynamicHelpers { session: (req, res) -> req.session }
 
+### Spawn the world!! ###
+console.log 'Spawning New Game'  
+World = (require './world.js').World
+world = new World
+global.world = world  # world needs to be called from anywhere/everywhere
+
 ### Initialize controllers ###
-World = (require './controllers/world.js').World
 Users = (require './controllers/user.js').Users
 
 ### Start Route Handling ###
@@ -35,10 +41,10 @@ Users = (require './controllers/user.js').Users
 app.get '/', (req, res) ->
   if typeof world == 'undefined'
     console.log 'Game has not started yet.'
-    res.redirect '/start'
+    res.redirect '/'
   else
     world.toString (json) ->
-      res.send json
+      res.render 'game', { json: json } 
 
   ### Handle logins
   if req.session.auth == 1
@@ -50,10 +56,6 @@ app.get '/', (req, res) ->
 
 # Start a new game!
 app.get '/start', (req, res) ->
-  console.log 'Spawning New Game'
-
-  world = new World
-  global.world = world  # world needs to be called from anywhere/everywhere
   
   res.redirect '/'
     
@@ -103,6 +105,9 @@ app.get '/logout', (req, res) ->
   req.session.destroy()
   res.redirect '/'
   
-
-
 app.listen process.env.PORT or 3000 
+
+io.sockets.on 'connection', (socket) ->
+  socket.emit 'test', hello: 'world'
+  socket.on 'test event', (data) ->
+    console.log data
