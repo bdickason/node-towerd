@@ -1,15 +1,25 @@
-### Utilities Tests ###
-basedir = '../../'  # 
-Grid = (require basedir + 'controllers/utils/grid.js').Grid
+### Maps Tests ###
+basedir = '../../'
+Map = (require basedir + 'controllers/maps.js').Map
+Obj = (require basedir + 'controllers/utils/object.js').Obj
+
 
 # Unit Tests
-describe '2d Grid utils/grid.js', ->
+describe 'Map map.js', ->
   beforeEach ->
     # Stub data
-    @size = 10
-    @grid = new Grid (@size)
+    global.world = new Obj # Required because maps relies on 'world' for some events
+    @mapName = 'hiddenvalley'
+    @map = new Map @mapName
+    @id = 'hiddenvalley'
+    
 
-  it 'Creates a 10x10 grid', ->
+  it 'Loads a new map called hiddenvalley', ->
+    expect(@map.id).toEqual(@id)
+    
+    
+
+###
     expect(@grid).toBeDefined()
     expect(@grid.h).toEqual(@size)
     expect(@grid.w).toEqual(@size)
@@ -33,3 +43,7 @@ describe '2d Grid utils/grid.js', ->
     @grid.set [1,1], 'm', ->
     @grid.get [1, 1], (res) ->
       expect(res).toEqual('m')
+
+###      
+# Integration Tests
+

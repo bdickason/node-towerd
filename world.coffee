@@ -1,4 +1,5 @@
 EventEmitter = (require 'events').EventEmitter
+# TODO - rename 'map' to 'Map' etc.
 map = (require './controllers/maps').Map  # Map functions like render, etc.
 mob = (require './controllers/mobs').Mob  # Mob functions like move, etc.
 tower = (require './controllers/towers').Tower  # Tower functions like attack, etc.
