@@ -37,7 +37,6 @@
   world = new World;
   global.world = world;
   world.emit('load');
-  console.log(world);
   /* Initialize controllers */
   Users = (require('./controllers/user.js')).Users;
   /* Start Route Handling */

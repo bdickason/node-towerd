@@ -45,12 +45,10 @@ exports.World = class World extends EventEmitter
     # Each map can have many mobs
     @mobs = []
     for _map in @maps
-      console.log _map
       for mobId in _map.mobs
         _mob = new mob mobId
         @mobs.push _mob
         @emit 'load', 'mob', _mob
-        console.log 'Spawning: ' + _mob.uid
 
     # They exist in memory but need to be spawned
     @mobs[0].emit 'spawn', [0, 0]

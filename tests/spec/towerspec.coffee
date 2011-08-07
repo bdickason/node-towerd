@@ -59,7 +59,7 @@ describe 'Towers towers.js', ->
     @tower.checkTargets (res) ->
       expect(res).toEqual []
   ###
-        
+
   it 'Finds targets when one is in range', ->
     # Spawn the tower    
     @tower.spawn [5, 4], (callback) ->      

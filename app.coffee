@@ -33,8 +33,6 @@ world = new World
 global.world = world  # world needs to be called from anywhere/everywhere
 world.emit 'load'
 
-console.log world
-
 ### Initialize controllers ###
 Users = (require './controllers/user.js').Users
 

@@ -48,14 +48,12 @@
       _ref3 = this.maps;
       for (_k = 0, _len3 = _ref3.length; _k < _len3; _k++) {
         _map = _ref3[_k];
-        console.log(_map);
         _ref4 = _map.mobs;
         for (_l = 0, _len4 = _ref4.length; _l < _len4; _l++) {
           mobId = _ref4[_l];
           _mob = new mob(mobId);
           this.mobs.push(_mob);
           this.emit('load', 'mob', _mob);
-          console.log('Spawning: ' + _mob.uid);
         }
       }
       this.mobs[0].emit('spawn', [0, 0]);
