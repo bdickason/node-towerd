@@ -5,8 +5,8 @@ Users = (require basedir + 'controllers/user.js').Users
 # Unit Tests
 
 # Integration Tests
-describe 'List all users: /users', -> 
-  it 'Returns at least one valid user', ->
+describe 'Users -  ', -> 
+  it 'Returns at least one valid user - /users', ->
     user = new Users
     user.get null, (json) ->
       expect(json).toBeDefined()

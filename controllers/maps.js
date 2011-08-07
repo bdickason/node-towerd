@@ -16,6 +16,7 @@
       this.theme = toLoad.theme;
       this.mobs = toLoad.mobs;
       this.size = toLoad.size;
+      this.active = toLoad.active;
       this.grid = new Grid(this.size);
       this.save(function() {});
       self = this;
@@ -23,7 +24,6 @@
       world.on('load', function(type, obj) {
         if (type !== 'map') {
           return obj.on('spawn', function(loc) {
-            console.log(obj.symbol);
             return self.grid.set(loc, obj.symbol, function(callback) {});
           });
         }

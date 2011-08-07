@@ -17,6 +17,7 @@ exports.Map = class Map
     @theme = toLoad.theme
     @mobs = toLoad.mobs
     @size = toLoad.size
+    @active = toLoad.active
     @grid = new Grid @size
     
     @save ->
@@ -26,7 +27,6 @@ exports.Map = class Map
     world.on 'load', (type, obj) ->
       if type != 'map'
         obj.on 'spawn', (loc) ->
-          console.log obj.symbol
           self.grid.set loc, obj.symbol, (callback) ->
             
       

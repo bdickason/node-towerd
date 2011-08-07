@@ -3,8 +3,8 @@
   basedir = '../../';
   cfg = require(basedir + 'config/config.js');
   Users = (require(basedir + 'controllers/user.js')).Users;
-  describe('List all users: /users', function() {
-    return it('Returns at least one valid user', function() {
+  describe('Users -  ', function() {
+    return it('Returns at least one valid user - /users', function() {
       var user;
       user = new Users;
       user.get(null, function(json) {
