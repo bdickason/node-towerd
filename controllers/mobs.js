@@ -31,7 +31,7 @@
     Mob.prototype.spawn = function(X, Y, callback) {
       this.loc = [X, Y];
       this.curHP = this.maxHP;
-      this.emit('spawn');
+      this.emit('spawn', 'mob', this.loc);
       return console.log('Spawning mob [' + this.id + '] at (' + X + ',' + Y + ') with UID: ' + this.uid);
     };
     Mob.prototype.hit = function(damage) {
@@ -59,7 +59,7 @@
             if (err) {
               return console.log('Error saving mob: {@uid} ' + err);
             } else {
-              return self.emit('move', oldloc, newloc);
+              return self.emit('move', 'mob', oldloc, newloc);
             }
           });
         }

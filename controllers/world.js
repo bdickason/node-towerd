@@ -24,49 +24,52 @@
       /* Load the map */
       this.maps = [];
       this.maps.push(new map('hiddenvalley'));
-      this.maps[0].save(function() {});
       /* Load the mobs */
       this.mobs = [];
       this.mobs.push(new mob(this.maps[0].mobs[0]));
       this.mobs.push(new mob(this.maps[0].mobs[0]));
+      /* Load the towers */
+      this.towers = [];
+      this.towers.push(new tower('cannon'));
+      self = this;
+      this.towers[0].on('spawn', function(type, loc, json) {
+        return self.handleSpawn(type, loc, function(json) {
+          return console.log('finished spawn');
+        });
+      });
+      this.mobs[0].on('spawn', function(type, loc, json) {
+        return self.handleSpawn(type, loc, function(json) {
+          return console.log('finished spawn');
+        });
+      });
+      this.mobs[1].on('spawn', function(type, loc, json) {
+        return self.handleSpawn(type, loc, function(json) {
+          return console.log('finished spawn');
+        });
+      });
+      this.mobs[0].on('move', function(type, oldLoc, newLoc, json) {
+        return self.handleMove(type, oldLoc, newLoc, function(json) {
+          return console.log('finished move');
+        });
+      });
+      this.mobs[1].on('move', function(type, oldLoc, newLoc, json) {
+        return self.handleMove(type, oldLoc, newLoc, function(json) {
+          return console.log('finished move');
+        });
+      });
       this.mobs[0].spawn(0, 0, function(json) {
         return console.log('Mob: ' + mob);
       });
       this.mobs[1].spawn(1, 0, function(json) {
         return console.log('Mob: ' + mob);
       });
-      this.mobs[0].move(1, 0, function(json) {});
-      this.mobs[1].move(0, 1, function(json) {});
-      this.mobs[0].toString(function(json) {
-        return console.log(json);
-      });
-      this.mobs[1].toString(function(json) {
-        return console.log(json);
-      });
-      this.mobs[0].save(function() {});
-      this.mobs[1].save(function() {});
-      /* Load the towers */
-      this.towers = [];
-      this.towers.push(new tower('cannon'));
       this.towers[0].spawn(4, 4, function(json) {
         return console.log('Tower: ' + json);
       });
-      this.towers[0].toString(function(json) {
-        return console.log(json);
-      });
+      this.maps[0].save(function() {});
       this.towers[0].save(function() {});
-      this.towers[0].checkTargets(function(json) {});
-      self = this;
-      this.mobs[0].on('move', function(oldLoc, newLoc, json) {
-        return self.handleMove(oldLoc, newLoc, function(json) {
-          return console.log('finished move');
-        });
-      });
-      this.mobs[1].on('move', function(oldLoc, newLoc, json) {
-        return self.handleMove(oldLoc, newLoc, function(json) {
-          return console.log('finished move');
-        });
-      });
+      this.mobs[0].save(function() {});
+      this.mobs[1].save(function() {});
     }
     World.prototype.gameLoop = function() {
       var mob, _i, _len, _ref;
@@ -92,23 +95,46 @@
       return callback(this.maps[0].grid.grid);
     };
     /* Handle Event Emitters/Listeners */
-    World.prototype.handleMove = function(oldLoc, newLoc, json) {
+    World.prototype.handleSpawn = function(type, loc, json) {
+      var symbol, _i, _len, _map, _ref, _results;
+      symbol = 0;
+      switch (type) {
+        case 'mob':
+          symbol = 'm';
+          break;
+        case 'tower':
+          symbol = 'T';
+      }
+      if (this.maps.length) {
+        _ref = this.maps;
+        _results = [];
+        for (_i = 0, _len = _ref.length; _i < _len; _i++) {
+          _map = _ref[_i];
+          console.log(loc);
+          _results.push(_map.grid.set(loc, symbol));
+        }
+        return _results;
+      }
+    };
+    World.prototype.handleMove = function(type, oldLoc, newLoc, json) {
       var tower, _i, _j, _len, _len2, _map, _ref, _ref2, _results;
-      _ref = this.maps;
-      for (_i = 0, _len = _ref.length; _i < _len; _i++) {
-        _map = _ref[_i];
-        console.log(oldLoc);
-        console.log(newLoc);
-        _map.grid.set(oldLoc, 0);
-        _map.grid.set(newLoc, 'm');
+      if (this.maps.length) {
+        _ref = this.maps;
+        for (_i = 0, _len = _ref.length; _i < _len; _i++) {
+          _map = _ref[_i];
+          _map.grid.set(oldLoc, 0);
+          _map.grid.set(newLoc, 'm');
+        }
       }
-      _ref2 = this.towers;
-      _results = [];
-      for (_j = 0, _len2 = _ref2.length; _j < _len2; _j++) {
-        tower = _ref2[_j];
-        _results.push(tower.checkTargets(function(json) {}));
+      if (this.towers.length) {
+        _ref2 = this.towers;
+        _results = [];
+        for (_j = 0, _len2 = _ref2.length; _j < _len2; _j++) {
+          tower = _ref2[_j];
+          _results.push(tower.checkTargets(function(json) {}));
+        }
+        return _results;
       }
-      return _results;
     };
     return World;
   })();

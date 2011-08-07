@@ -23,7 +23,7 @@ exports.Mob = class Mob extends EventEmitter
   spawn: (X, Y, callback) ->
     @loc = [X, Y]
     @curHP = @maxHP # Always spawn with full life (for now!)
-    @emit 'spawn'
+    @emit 'spawn', 'mob', @loc
     console.log 'Spawning mob [' + @id + '] at (' + X + ',' + Y + ') with UID: ' + @uid
   
   hit: (damage) ->
@@ -48,7 +48,7 @@ exports.Mob = class Mob extends EventEmitter
           if (err)
             console.log 'Error saving mob: {@uid} ' + err
           else
-            self.emit 'move', oldloc, newloc
+            self.emit 'move', 'mob', oldloc, newloc
     console.log 'MOB ' + @uid + ' [' + @id + '] moved to (' + @loc[0] + ',' + @loc[1] + ')'
 
   save: (callback) ->

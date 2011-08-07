@@ -24,7 +24,7 @@ exports.Tower = class Tower extends EventEmitter
   # Activate the tower and place it on the map
   spawn: (X, Y, callback) ->
     @loc = [X, Y]
-    @emit 'spawn'
+    @emit 'spawn', 'tower', @loc
     console.log 'Spawning tower [' + @name + '] at (' + X + ',' + Y + ') with UID: ' + @uid
   
   # Check for anything within range
