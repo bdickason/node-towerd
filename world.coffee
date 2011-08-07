@@ -1,3 +1,5 @@
+### World - Runs the game world like a pro! ###
+
 EventEmitter = (require 'events').EventEmitter
 # TODO - rename 'map' to 'Map' etc.
 map = (require './controllers/maps').Map  # Map functions like render, etc.
@@ -18,19 +20,19 @@ exports.World = class World extends EventEmitter
       world.gameLoop()
     , @gameTime
     
-    # For some reason we have to wait to load everything    
+    # For some reason we have to wait to load everything or else 'world' doesn't get defined as a global var
     self = @
     @load = setTimeout ->
-      self.loadEntities()
+      self.loadEntities( { map: 'hiddenvalley' } )
     , 1000
     
       
-  loadEntities: (callback) ->
+  loadEntities: (json, callback) ->
     
     ### Load the map ###
     # First level: Hidden Valley
     @maps = []
-    @maps.push new map 'hiddenvalley'
+    @maps.push new map json.map
     @emit 'load', 'map', _map for _map in @maps
 
     ### Load and spawn the towers ###
@@ -47,44 +49,23 @@ exports.World = class World extends EventEmitter
     for _map in @maps
       for mobId in _map.mobs
         _mob = new mob mobId
-        @mobs.push _mob
         @emit 'load', 'mob', _mob
+        @mobs.push _mob
+
 
     # They exist in memory but need to be spawned
-    @mobs[0].emit 'spawn', [0, 0]
-    @mobs[1].emit 'spawm', [1, 0] # Why is this guy not getting called?
-    @towers[0].emit 'spawn', [4, 4]
+    @mobs[0].spawn [0, 0]
+    @mobs[1].spawn [1, 0] # Why is this guy not getting called?
+    @towers[0].spawn [4, 4]
 
-
-    ### Save everything to mongo
-    @maps[0].save ->    
-
-    console.log 'TOWERS!'
-    console.log @towers
-    @towers[0].save ->
-    
-    console.log 'MOBS!'
-    console.log @mobs
-    
-    @mobs[0].save ->
-    
-    console.log 'MOBS!'
-    console.log @mobs
-    @mobs[1].save -> ###
-    
-    # callback 'success!'
          
   gameLoop: ->
     # One iteration of a game loop
     # Runs every '@gameTime' seconds
-    @emit 'gameLoop'
-    
-    # Temporary disabled while working on events
-    ###for mob in @mobs
-      mob.move 1, 1, (json) -> ###
-    
-    ###@toString (json) ->
-      console.log json ###
+    @emit 'gameLoop'  # A bunch of stuff listens to this to know when a 'turn' has finished    
+
+    @toString (json) ->
+      console.log json
     
   destroy: ->
     console.log 'DESTROYING the game ;('
@@ -98,28 +79,3 @@ exports.World = class World extends EventEmitter
   toString: (callback) ->
     callback @maps[0].grid
     
-  
-  ### Handle Event Emitters/Listeners ###
-  handleSpawn: (type, loc, json) ->
-    symbol = 0
-    
-    switch type
-      when 'mob'
-        symbol = 'm'
-      when 'tower'
-        symbol = 'T'
-
-    if @maps.length      
-      for _map in @maps
-        console.log loc
-        _map.grid.set loc, symbol
-    
-  handleMove: (type, oldLoc, newLoc, json) ->
-    if @maps.length
-      for _map in @maps
-        _map.grid.set oldLoc, 0
-        _map.grid.set newLoc, 'm'
-    if @towers.length      
-      for tower in @towers
-        tower.checkTargets (json) ->
-          # Add hitcode here    
