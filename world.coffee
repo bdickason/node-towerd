@@ -49,11 +49,12 @@ exports.World = class World extends EventEmitter
         _mob = new mob mobId
         @mobs.push _mob
         @emit 'load', 'mob', _mob
+        console.log 'Spawning: ' + _mob.uid
 
     # They exist in memory but need to be spawned
     @mobs[0].emit 'spawn', [0, 0]
-    @mobs[1].emit 'spawm', 1, 0
-    @towers[0].emit 'spawn', 4, 4
+    @mobs[1].emit 'spawm', [1, 0] # Why is this guy not getting called?
+    @towers[0].emit 'spawn', [4, 4]
 
 
     ### Save everything to mongo

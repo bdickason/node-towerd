@@ -17,6 +17,7 @@ exports.Tower = class Tower extends EventEmitter
     @name = toLoad.name     # Human readable version
     @damage = toLoad.damage
     @range = toLoad.range
+    @symbol = toLoad.symbol
     @type = toLoad.type     # e.g. cannon, arrow, etc.
     @loc = [null, null]  # Hasn't been spawned yet, so position is null
     @model = null

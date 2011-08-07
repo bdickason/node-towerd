@@ -25,6 +25,7 @@
       this.name = toLoad.name;
       this.damage = toLoad.damage;
       this.range = toLoad.range;
+      this.symbol = toLoad.symbol;
       this.type = toLoad.type;
       this.loc = [null, null];
       this.model = null;

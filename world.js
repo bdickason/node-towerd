@@ -55,11 +55,12 @@
           _mob = new mob(mobId);
           this.mobs.push(_mob);
           this.emit('load', 'mob', _mob);
+          console.log('Spawning: ' + _mob.uid);
         }
       }
       this.mobs[0].emit('spawn', [0, 0]);
-      this.mobs[1].emit('spawm', 1, 0);
-      return this.towers[0].emit('spawn', 4, 4);
+      this.mobs[1].emit('spawm', [1, 0]);
+      return this.towers[0].emit('spawn', [4, 4]);
       /* Save everything to mongo
       @maps[0].save ->    
       

@@ -12,6 +12,7 @@ TowerSchema = new Schema
   id: { type: String, required: true, unique: true },
   type: { type: String, default: 'Cannon' },
   active: { type: Number, default: 1 },
+  symbol: { type: String, default: 'C' },
   damage: { type: Number },
   range: { type: Number },
   loc: [ Number ]
