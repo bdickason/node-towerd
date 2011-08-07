@@ -1,5 +1,8 @@
 (function() {
-  var Grid;
+  /* Utils.js - Quick utility classes for stuff like:
+        -Creating a game grid
+        -etc.
+  */  var Grid;
   exports.Grid = Grid = (function() {
     function Grid(size) {
       var row, x, y, _ref, _ref2;

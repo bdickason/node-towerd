@@ -1,3 +1,10 @@
+### Utils.js - Quick utility classes for stuff like:
+      -Creating a game grid
+      -etc.
+###
+      
+
+
 exports.Grid = class Grid
   constructor: (size) ->
     # Fills an empty array with 0's
@@ -22,3 +29,4 @@ exports.Grid = class Grid
   toString: (callback) ->
     console.log 'hit this'
     callback @grid.toString()  
+

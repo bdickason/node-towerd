@@ -1,6 +1,6 @@
 cfg = require '../config/config.js'    # contains API keys, etc.
 redis = require 'redis'
-Grid = (require './utils').Grid
+Grid = (require './utils/utils').Grid
 
 # Models
 mapModel = require '../models/map-model.js'
