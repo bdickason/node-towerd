@@ -23,6 +23,14 @@ exports.Tower = class Tower extends EventEmitter
     @loc = [null, null]  # Hasn't been spawned yet, so position is null
     @model = null
 
+    self = @
+    world.on 'load', (type, obj) ->
+      # Ignore all other towers and maps
+      if type == 'mob'
+        # Check targets each time a mob moves        
+        obj.on 'move', (loc) ->
+          self.checkTargets (res) ->
+      
   # Activate the tower and place it on the map
   spawn: (loc, callback) ->
     @loc = loc
@@ -38,7 +46,7 @@ exports.Tower = class Tower extends EventEmitter
       if err
         console.log 'Error: ' + err
       else
-        @emit 'shot'
+        # @emit 'shot'
         callback hits
   
   save: (callback) ->

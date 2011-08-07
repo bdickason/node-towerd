@@ -1,5 +1,5 @@
 (function() {
-  var EventEmitter, World, map, mob, tower;
+  /* World - Runs the game world like a pro! */  var EventEmitter, World, map, mob, tower;
   var __hasProp = Object.prototype.hasOwnProperty, __extends = function(child, parent) {
     for (var key in parent) { if (__hasProp.call(parent, key)) child[key] = parent[key]; }
     function ctor() { this.constructor = child; }
@@ -23,13 +23,15 @@
       }, this.gameTime);
       self = this;
       this.load = setTimeout(function() {
-        return self.loadEntities();
+        return self.loadEntities({
+          map: 'hiddenvalley'
+        });
       }, 1000);
     }
-    World.prototype.loadEntities = function(callback) {
+    World.prototype.loadEntities = function(json, callback) {
       /* Load the map */      var mobId, _i, _j, _k, _l, _len, _len2, _len3, _len4, _map, _mob, _ref, _ref2, _ref3, _ref4, _tower;
       this.maps = [];
-      this.maps.push(new map('hiddenvalley'));
+      this.maps.push(new map(json.map));
       _ref = this.maps;
       for (_i = 0, _len = _ref.length; _i < _len; _i++) {
         _map = _ref[_i];
@@ -52,35 +54,19 @@
         for (_l = 0, _len4 = _ref4.length; _l < _len4; _l++) {
           mobId = _ref4[_l];
           _mob = new mob(mobId);
-          this.mobs.push(_mob);
           this.emit('load', 'mob', _mob);
+          this.mobs.push(_mob);
         }
       }
-      this.mobs[0].emit('spawn', [0, 0]);
-      this.mobs[1].emit('spawm', [1, 0]);
-      return this.towers[0].emit('spawn', [4, 4]);
-      /* Save everything to mongo
-      @maps[0].save ->    
-      
-      console.log 'TOWERS!'
-      console.log @towers
-      @towers[0].save ->
-      
-      console.log 'MOBS!'
-      console.log @mobs
-      
-      @mobs[0].save ->
-      
-      console.log 'MOBS!'
-      console.log @mobs
-      @mobs[1].save -> */
+      this.mobs[0].spawn([0, 0]);
+      this.mobs[1].spawn([1, 0]);
+      return this.towers[0].spawn([4, 4]);
     };
     World.prototype.gameLoop = function() {
-      return this.emit('gameLoop');
-      /*for mob in @mobs
-        mob.move 1, 1, (json) -> */
-      /*@toString (json) ->
-        console.log json */
+      this.emit('gameLoop');
+      return this.toString(function(json) {
+        return console.log(json);
+      });
     };
     World.prototype.destroy = function() {
       var maps, mobs, towers;
@@ -92,48 +78,6 @@
     };
     World.prototype.toString = function(callback) {
       return callback(this.maps[0].grid);
-    };
-    /* Handle Event Emitters/Listeners */
-    World.prototype.handleSpawn = function(type, loc, json) {
-      var symbol, _i, _len, _map, _ref, _results;
-      symbol = 0;
-      switch (type) {
-        case 'mob':
-          symbol = 'm';
-          break;
-        case 'tower':
-          symbol = 'T';
-      }
-      if (this.maps.length) {
-        _ref = this.maps;
-        _results = [];
-        for (_i = 0, _len = _ref.length; _i < _len; _i++) {
-          _map = _ref[_i];
-          console.log(loc);
-          _results.push(_map.grid.set(loc, symbol));
-        }
-        return _results;
-      }
-    };
-    World.prototype.handleMove = function(type, oldLoc, newLoc, json) {
-      var tower, _i, _j, _len, _len2, _map, _ref, _ref2, _results;
-      if (this.maps.length) {
-        _ref = this.maps;
-        for (_i = 0, _len = _ref.length; _i < _len; _i++) {
-          _map = _ref[_i];
-          _map.grid.set(oldLoc, 0);
-          _map.grid.set(newLoc, 'm');
-        }
-      }
-      if (this.towers.length) {
-        _ref2 = this.towers;
-        _results = [];
-        for (_j = 0, _len2 = _ref2.length; _j < _len2; _j++) {
-          tower = _ref2[_j];
-          _results.push(tower.checkTargets(function(json) {}));
-        }
-        return _results;
-      }
     };
     return World;
   })();

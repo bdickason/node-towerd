@@ -15,7 +15,7 @@
   exports.Mob = Mob = (function() {
     __extends(Mob, EventEmitter);
     function Mob(name) {
-      var toLoad;
+      var self, toLoad;
       name = name.toLowerCase();
       console.log('Loading mob: ' + name);
       toLoad = (require('../data/mobs/' + name + '.js')).mob;
@@ -29,13 +29,18 @@
       this.symbol = toLoad.symbol;
       this.loc = [null, null];
       this.curHP = toLoad.curHP;
+      /* Event Emitters */
+      self = this;
+      world.on('gameLoop', function() {
+        return self.move(1, 1, function(json) {});
+      });
     }
     Mob.prototype.spawn = function(loc, callback) {
       this.curHP = this.maxHP;
-      console.log('Spawning mob [' + this.id + '] at (' + loc + ') with UID: ' + this.uid);
       this.loc = loc;
-      this.save(function() {});
-      return this.emit('spawn', 'mob', loc);
+      this.emit('spawn', 'mob', this.loc);
+      console.log('Spawning mob [' + this.id + '] at (' + this.loc + ') with UID: ' + this.uid);
+      return this.save(function() {});
     };
     Mob.prototype.hit = function(damage) {
       this.curHP = this.curHP - damage;

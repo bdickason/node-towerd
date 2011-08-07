@@ -23,12 +23,15 @@
       /* Event Emitters */
       world.on('load', function(type, obj) {
         if (type !== 'map') {
-          return obj.on('spawn', function(loc) {
-            return self.grid.set(loc, obj.symbol, function(callback) {});
+          obj.on('spawn', function() {
+            return self.grid.set(obj.loc, obj.symbol, function(callback) {});
+          });
+          return obj.on('move', function(type, oldloc, newloc) {
+            self.grid.set(oldloc, 0, function(callback) {});
+            return self.grid.set(newloc, obj.symbol, function(callback) {});
           });
         }
       });
-      world.on('move', function() {});
     }
     Map.prototype.save = function(callback) {
       var newmap;

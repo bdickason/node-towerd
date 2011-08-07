@@ -22,12 +22,18 @@ exports.Mob = class Mob extends EventEmitter
     @loc = [null, null]  # Hasn't been spawned yet, so position is null
     @curHP = toLoad.curHP
     
+    ### Event Emitters ###
+    self = @
+    world.on 'gameLoop', ->
+      self.move 1, 1, (json) ->
+    
   spawn: (loc, callback) ->
     @curHP = @maxHP # Always spawn with full life (for now!)
-    console.log 'Spawning mob [' + @id + '] at (' + loc + ') with UID: ' + @uid
     @loc = loc
+    @emit 'spawn', 'mob', @loc 
+    console.log 'Spawning mob [' + @id + '] at (' + @loc + ') with UID: ' + @uid
     @save ->
-    @emit 'spawn', 'mob', loc    
+   
     
   
   hit: (damage) ->

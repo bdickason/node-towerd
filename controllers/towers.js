@@ -16,7 +16,7 @@
   exports.Tower = Tower = (function() {
     __extends(Tower, EventEmitter);
     function Tower(name) {
-      var toLoad;
+      var self, toLoad;
       name = name.toLowerCase();
       console.log('Loading tower: ' + name);
       toLoad = (require('../data/towers/' + name + '.js')).tower;
@@ -30,6 +30,14 @@
       this.type = toLoad.type;
       this.loc = [null, null];
       this.model = null;
+      self = this;
+      world.on('load', function(type, obj) {
+        if (type === 'mob') {
+          return obj.on('move', function(loc) {
+            return self.checkTargets(function(res) {});
+          });
+        }
+      });
     }
     Tower.prototype.spawn = function(loc, callback) {
       this.loc = loc;
@@ -47,7 +55,6 @@
         if (err) {
           return console.log('Error: ' + err);
         } else {
-          this.emit('shot');
           return callback(hits);
         }
       });
