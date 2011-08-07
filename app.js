@@ -1,5 +1,5 @@
 (function() {
-  var RedisStore, Users, World, app, cfg, express, gzippo, http, mongoose, sys;
+  var RedisStore, Users, World, app, cfg, express, gzippo, http, io, mongoose, sys;
   http = require('http');
   express = require('express');
   RedisStore = (require('connect-redis'))(express);
@@ -8,6 +8,7 @@
   gzippo = require('gzippo');
   cfg = require('./config/config.js');
   app = express.createServer();
+  io = (require('socket.io')).listen(app);
   app.configure(function() {
     app.set('views', __dirname + '/views');
     app.set('view engine', 'jade');
@@ -40,7 +41,9 @@
       return res.redirect('/start');
     } else {
       return world.toString(function(json) {
-        return res.send(json);
+        return res.render('game', {
+          json: json
+        });
       });
     }
     /* Handle logins
@@ -105,4 +108,12 @@
     return res.redirect('/');
   });
   app.listen(process.env.PORT || 3000);
+  io.sockets.on('connection', function(socket) {
+    socket.emit('news', {
+      hello: 'world'
+    });
+    return socket.on('test event', function(data) {
+      return console.log(data);
+    });
+  });
 }).call(this);

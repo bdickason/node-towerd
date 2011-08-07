@@ -8,6 +8,7 @@ cfg = require './config/config.js'    # contains API keys, etc.
 
 
 app = express.createServer()
+io = (require 'socket.io').listen app
 
 app.configure ->
   app.set 'views', __dirname + '/views'
@@ -38,7 +39,7 @@ app.get '/', (req, res) ->
     res.redirect '/start'
   else
     world.toString (json) ->
-      res.send json
+      res.render 'game', { json: json } 
 
   ### Handle logins
   if req.session.auth == 1
@@ -103,6 +104,9 @@ app.get '/logout', (req, res) ->
   req.session.destroy()
   res.redirect '/'
   
-
-
 app.listen process.env.PORT or 3000 
+
+io.sockets.on 'connection', (socket) ->
+  socket.emit 'news', hello: 'world'
+  socket.on 'test event', (data) ->
+    console.log data
