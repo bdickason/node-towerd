@@ -1,5 +1,5 @@
 (function() {
-  var RedisStore, Users, World, app, cfg, express, gzippo, http, io, mongoose, sys;
+  var RedisStore, Users, World, app, cfg, express, gzippo, http, io, mongoose, sys, world;
   http = require('http');
   express = require('express');
   RedisStore = (require('connect-redis'))(express);
@@ -31,14 +31,18 @@
       return req.session;
     }
   });
+  /* Spawn the world!! */
+  console.log('Spawning New Game');
+  World = (require('./world.js')).World;
+  world = new World;
+  global.world = world;
   /* Initialize controllers */
-  World = (require('./controllers/world.js')).World;
   Users = (require('./controllers/user.js')).Users;
   /* Start Route Handling */
   app.get('/', function(req, res) {
     if (typeof world === 'undefined') {
       console.log('Game has not started yet.');
-      return res.redirect('/start');
+      return res.redirect('/');
     } else {
       return world.toString(function(json) {
         return res.render('game', {
@@ -55,10 +59,6 @@
     */
   });
   app.get('/start', function(req, res) {
-    var world;
-    console.log('Spawning New Game');
-    world = new World;
-    global.world = world;
     return res.redirect('/');
   });
   app.get('/end', function(req, res) {
@@ -109,7 +109,7 @@
   });
   app.listen(process.env.PORT || 3000);
   io.sockets.on('connection', function(socket) {
-    socket.emit('news', {
+    socket.emit('test', {
       hello: 'world'
     });
     return socket.on('test event', function(data) {

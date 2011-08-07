@@ -1,6 +1,6 @@
-map = (require './maps').Map  # Map functions like render, etc.
-mob = (require './mobs').Mob  # Mob functions like move, etc.
-tower = (require './towers').Tower  # Tower functions like attack, etc. 
+map = (require './controllers/maps').Map  # Map functions like render, etc.
+mob = (require './controllers/mobs').Mob  # Mob functions like move, etc.
+tower = (require './controllers/towers').Tower  # Tower functions like attack, etc. 
 EventEmitter = (require 'events').EventEmitter
 
 
@@ -97,7 +97,7 @@ exports.World = class World extends EventEmitter
   
   # Output current game status
   toString: (callback) ->
-    callback @maps[0].grid.grid
+    callback @maps[0].grid
     
   
   ### Handle Event Emitters/Listeners ###

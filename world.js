@@ -8,9 +8,9 @@
     child.__super__ = parent.prototype;
     return child;
   };
-  map = (require('./maps')).Map;
-  mob = (require('./mobs')).Mob;
-  tower = (require('./towers')).Tower;
+  map = (require('./controllers/maps')).Map;
+  mob = (require('./controllers/mobs')).Mob;
+  tower = (require('./controllers/towers')).Tower;
   EventEmitter = (require('events')).EventEmitter;
   exports.World = World = (function() {
     __extends(World, EventEmitter);
@@ -92,7 +92,7 @@
       return towers = [];
     };
     World.prototype.toString = function(callback) {
-      return callback(this.maps[0].grid.grid);
+      return callback(this.maps[0].grid);
     };
     /* Handle Event Emitters/Listeners */
     World.prototype.handleSpawn = function(type, loc, json) {
