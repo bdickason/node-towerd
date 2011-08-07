@@ -28,7 +28,6 @@ app.dynamicHelpers { session: (req, res) -> req.session }
 ### Initialize controllers ###
 World = (require './controllers/world.js').World
 Users = (require './controllers/user.js').Users
-# Mobs = (require './controllers/mobs.js').Mobs
 
 ### Start Route Handling ###
 

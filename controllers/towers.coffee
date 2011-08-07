@@ -26,6 +26,7 @@ exports.Tower = class Tower extends EventEmitter
     @loc = [X, Y]
     @emit 'spawn', 'tower', @loc
     console.log 'Spawning tower [' + @name + '] at (' + X + ',' + Y + ') with UID: ' + @uid
+
   
   # Check for anything within range
   checkTargets: (callback) ->
