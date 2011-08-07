@@ -2,11 +2,11 @@
   var Grid, Map, cfg, mapModel, redis;
   cfg = require('../config/config.js');
   redis = require('redis');
-  Grid = (require('./utils')).Grid;
+  Grid = (require('./utils/grid.js')).Grid;
   mapModel = require('../models/map-model.js');
   exports.Map = Map = (function() {
     function Map(name) {
-      var toLoad;
+      var self, toLoad;
       name = name.toLowerCase();
       console.log('Loading map: ' + name);
       toLoad = (require('../data/maps/' + name + '.js')).map;
@@ -16,7 +16,19 @@
       this.theme = toLoad.theme;
       this.mobs = toLoad.mobs;
       this.size = toLoad.size;
+      this.active = toLoad.active;
       this.grid = new Grid(this.size);
+      this.save(function() {});
+      self = this;
+      /* Event Emitters */
+      world.on('load', function(type, obj) {
+        if (type !== 'map') {
+          return obj.on('spawn', function(loc) {
+            return self.grid.set(loc, obj.symbol, function(callback) {});
+          });
+        }
+      });
+      world.on('move', function() {});
     }
     Map.prototype.save = function(callback) {
       var newmap;

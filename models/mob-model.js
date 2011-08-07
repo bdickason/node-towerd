@@ -25,6 +25,10 @@
       type: Number,
       "default": 1
     },
+    symbol: {
+      type: String,
+      "default": 'W'
+    },
     speed: {
       type: Number,
       "default": 1
@@ -42,4 +46,5 @@
   });
   mongoose.model('Mobs', MobSchema);
   module.exports = db.model('Mobs');
+  module.exports;
 }).call(this);

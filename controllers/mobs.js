@@ -23,23 +23,26 @@
       this.id = toLoad.id;
       this.name = toLoad.name;
       this["class"] = toLoad["class"];
+      this.active = toLoad.active;
       this.speed = toLoad.speed;
       this.maxHP = toLoad.maxHP;
+      this.symbol = toLoad.symbol;
       this.loc = [null, null];
-      this.curHP = null;
+      this.curHP = toLoad.curHP;
     }
-    Mob.prototype.spawn = function(X, Y, callback) {
-      this.loc = [X, Y];
+    Mob.prototype.spawn = function(loc, callback) {
       this.curHP = this.maxHP;
-      this.emit('spawn', 'mob', this.loc);
-      return console.log('Spawning mob [' + this.id + '] at (' + X + ',' + Y + ') with UID: ' + this.uid);
+      console.log('Spawning mob [' + this.id + '] at (' + loc + ') with UID: ' + this.uid);
+      this.loc = loc;
+      this.save(function() {});
+      return this.emit('spawn', 'mob', loc);
     };
     Mob.prototype.hit = function(damage) {
       this.curHP = this.curHP - damage;
       if (this.curHP > 0) {
-        return this.emit('hit');
+        return this.emit('hit', this.curHP);
       } else {
-        return this.emit('die');
+        return this.emit('die', this.curHP);
       }
     };
     Mob.prototype.move = function(X, Y, callback) {
@@ -82,7 +85,7 @@
         if (err) {
           return console.log('Error saving: ' + err);
         } else {
-          return console.log('Saved Mob: ' + newmob.uid);
+          return console.log('Saved mob: ' + newmob.uid);
         }
       });
     };
@@ -90,6 +93,9 @@
       var output;
       output = 'MOB ' + this.uid + ' [' + this.id + ']  loc: (' + this.loc[0] + ', ' + this.loc[1] + ')  HP: ' + this.curHP + '/' + this.maxHP;
       return callback(output);
+    };
+    Mob.prototype.defineEmitters = function(callback) {
+      return world.on('test', function() {});
     };
     return Mob;
   })();

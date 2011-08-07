@@ -1,9 +1,12 @@
-cfg = require '../config/config.js'  # contains API keys, etc'
-Users = (require '../controllers/user.js').Users
+basedir = '../../'  # 
+cfg = require basedir + 'config/config.js'  # contains API keys, etc'
+Users = (require basedir + 'controllers/user.js').Users
 
 # Unit Tests
-describe 'List all users: /users', -> 
-  it 'Returns at least one valid user', ->
+
+# Integration Tests
+describe 'Users - user.js', -> 
+  it 'Returns at least one valid user - /users', ->
     user = new Users
     user.get null, (json) ->
       expect(json).toBeDefined()

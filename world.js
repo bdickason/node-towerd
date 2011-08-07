@@ -8,10 +8,10 @@
     child.__super__ = parent.prototype;
     return child;
   };
+  EventEmitter = (require('events')).EventEmitter;
   map = (require('./controllers/maps')).Map;
   mob = (require('./controllers/mobs')).Mob;
   tower = (require('./controllers/towers')).Tower;
-  EventEmitter = (require('events')).EventEmitter;
   exports.World = World = (function() {
     __extends(World, EventEmitter);
     function World() {
@@ -21,67 +21,66 @@
       this.game = setInterval(function() {
         return world.gameLoop();
       }, this.gameTime);
-      /* Load the map */
+      self = this;
+      this.load = setTimeout(function() {
+        return self.loadEntities();
+      }, 1000);
+    }
+    World.prototype.loadEntities = function(callback) {
+      /* Load the map */      var mobId, _i, _j, _k, _l, _len, _len2, _len3, _len4, _map, _mob, _ref, _ref2, _ref3, _ref4, _tower;
       this.maps = [];
       this.maps.push(new map('hiddenvalley'));
-      /* Load the mobs */
-      this.mobs = [];
-      this.mobs.push(new mob(this.maps[0].mobs[0]));
-      this.mobs.push(new mob(this.maps[0].mobs[0]));
-      /* Load the towers */
+      _ref = this.maps;
+      for (_i = 0, _len = _ref.length; _i < _len; _i++) {
+        _map = _ref[_i];
+        this.emit('load', 'map', _map);
+      }
+      /* Load and spawn the towers */
       this.towers = [];
       this.towers.push(new tower('cannon'));
-      self = this;
-      this.towers[0].on('spawn', function(type, loc, json) {
-        return self.handleSpawn(type, loc, function(json) {
-          return console.log('finished spawn');
-        });
-      });
-      this.mobs[0].on('spawn', function(type, loc, json) {
-        return self.handleSpawn(type, loc, function(json) {
-          return console.log('finished spawn');
-        });
-      });
-      this.mobs[1].on('spawn', function(type, loc, json) {
-        return self.handleSpawn(type, loc, function(json) {
-          return console.log('finished spawn');
-        });
-      });
-      this.mobs[0].on('move', function(type, oldLoc, newLoc, json) {
-        return self.handleMove(type, oldLoc, newLoc, function(json) {
-          return console.log('finished move');
-        });
-      });
-      this.mobs[1].on('move', function(type, oldLoc, newLoc, json) {
-        return self.handleMove(type, oldLoc, newLoc, function(json) {
-          return console.log('finished move');
-        });
-      });
-      this.mobs[0].spawn(0, 0, function(json) {
-        return console.log('Mob: ' + mob);
-      });
-      this.mobs[1].spawn(1, 0, function(json) {
-        return console.log('Mob: ' + mob);
-      });
-      this.towers[0].spawn(4, 4, function(json) {
-        return console.log('Tower: ' + json);
-      });
-      this.maps[0].save(function() {});
-      this.towers[0].save(function() {});
-      this.mobs[0].save(function() {});
-      this.mobs[1].save(function() {});
-    }
-    World.prototype.gameLoop = function() {
-      var mob, _i, _len, _ref;
-      this.emit('gameLoop');
-      _ref = this.mobs;
-      for (_i = 0, _len = _ref.length; _i < _len; _i++) {
-        mob = _ref[_i];
-        mob.move(1, 1, function(json) {});
+      _ref2 = this.towers;
+      for (_j = 0, _len2 = _ref2.length; _j < _len2; _j++) {
+        _tower = _ref2[_j];
+        this.emit('load', 'tower', _tower);
       }
-      return this.toString(function(json) {
-        return console.log(json);
-      });
+      /* Load the mobs */
+      this.mobs = [];
+      _ref3 = this.maps;
+      for (_k = 0, _len3 = _ref3.length; _k < _len3; _k++) {
+        _map = _ref3[_k];
+        _ref4 = _map.mobs;
+        for (_l = 0, _len4 = _ref4.length; _l < _len4; _l++) {
+          mobId = _ref4[_l];
+          _mob = new mob(mobId);
+          this.mobs.push(_mob);
+          this.emit('load', 'mob', _mob);
+        }
+      }
+      this.mobs[0].emit('spawn', [0, 0]);
+      this.mobs[1].emit('spawm', [1, 0]);
+      return this.towers[0].emit('spawn', [4, 4]);
+      /* Save everything to mongo
+      @maps[0].save ->    
+      
+      console.log 'TOWERS!'
+      console.log @towers
+      @towers[0].save ->
+      
+      console.log 'MOBS!'
+      console.log @mobs
+      
+      @mobs[0].save ->
+      
+      console.log 'MOBS!'
+      console.log @mobs
+      @mobs[1].save -> */
+    };
+    World.prototype.gameLoop = function() {
+      return this.emit('gameLoop');
+      /*for mob in @mobs
+        mob.move 1, 1, (json) -> */
+      /*@toString (json) ->
+        console.log json */
     };
     World.prototype.destroy = function() {
       var maps, mobs, towers;

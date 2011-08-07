@@ -1,6 +1,6 @@
 cfg = require '../config/config.js'    # contains API keys, etc.
 redis = require 'redis'
-Grid = (require './utils').Grid
+Grid = (require './utils/grid.js').Grid
 
 # Models
 mapModel = require '../models/map-model.js'
@@ -17,8 +17,21 @@ exports.Map = class Map
     @theme = toLoad.theme
     @mobs = toLoad.mobs
     @size = toLoad.size
+    @active = toLoad.active
     @grid = new Grid @size
+    
+    @save ->
+    
+    self = @
+    ### Event Emitters ###
+    world.on 'load', (type, obj) ->
+      if type != 'map'
+        obj.on 'spawn', (loc) ->
+          self.grid.set loc, obj.symbol, (callback) ->
+            
       
+    world.on 'move', () ->
+        
   save: (callback) ->
     # Save to DB
     newmap = new mapModel ( { uid: @uid, id: @id, name: @name, theme: @theme, mobs: @mobs, size: @size } )
@@ -31,4 +44,3 @@ exports.Map = class Map
   toString: (callback) ->
     output = 'MAP ' + @uid + ' [' + @name + ']  Size: ' + @size
     callback output
-    

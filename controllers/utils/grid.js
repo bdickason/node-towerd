@@ -1,5 +1,5 @@
 (function() {
-  var Grid;
+  /* Grid.js - Create a 2d grid for the game board */  var Grid;
   exports.Grid = Grid = (function() {
     function Grid(size) {
       var row, x, y, _ref, _ref2;
@@ -21,8 +21,14 @@
       return callback(this.grid[loc[0]][loc[1]]);
     };
     Grid.prototype.toString = function(callback) {
-      console.log('hit this');
       return callback(this.grid.toString());
+    };
+    Grid.prototype.toJSON = function(callback) {
+      return callback({
+        grid: this.grid,
+        w: this.w,
+        h: this.h
+      });
     };
     return Grid;
   })();

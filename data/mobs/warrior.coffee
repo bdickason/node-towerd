@@ -4,8 +4,9 @@
 exports.mob =
   name: 'Warrior',
   id: 'warrior',
-  class: 'Warrior',
+  class: 'warrior',
   active: 1,
+  symbol: 'W'
   speed: 1,
   maxHP: 50,
   curHP: 50

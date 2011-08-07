@@ -13,6 +13,7 @@ MobSchema = new Schema {
   id: { type: String },
   class: { type: String, default: 'Warrior' },
   active: { type: Number, default: 1 },
+  symbol: { type: String, default: 'W' },
   speed: { type: Number, default: 1 },
   maxHP: { type: Number },
   curHP: { type: Number },
@@ -24,3 +25,5 @@ MobSchema.index { loc: '2d' }
 
 mongoose.model 'Mobs', MobSchema
 module.exports = db.model 'Mobs'
+
+module.exports
