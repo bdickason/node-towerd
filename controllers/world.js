@@ -57,22 +57,16 @@
       this.towers[0].checkTargets(function(json) {});
     }
     World.prototype.gameLoop = function() {
-      var mob, tower, _i, _j, _len, _len2, _ref, _ref2, _results;
+      var mob, _i, _len, _ref;
       this.emit('gameLoop');
       _ref = this.mobs;
       for (_i = 0, _len = _ref.length; _i < _len; _i++) {
         mob = _ref[_i];
         mob.move(1, 1, function(json) {});
       }
-      _ref2 = this.towers;
-      _results = [];
-      for (_j = 0, _len2 = _ref2.length; _j < _len2; _j++) {
-        tower = _ref2[_j];
-        _results.push(tower.checkTargets(function(json) {
-          return console.log(json);
-        }));
-      }
-      return _results;
+      return this.toString(function(json) {
+        return console.log(json);
+      });
     };
     World.prototype.destroy = function() {
       var maps, mobs, towers;
@@ -82,39 +76,8 @@
       mobs = [];
       return towers = [];
     };
-    World.prototype.toString = function(json) {
-      var map, mob, tower, _fn, _fn2, _i, _j, _k, _len, _len2, _len3, _ref, _ref2, _ref3, _results;
-      _ref = this.maps;
-      _fn = function(map) {
-        return map.toString(function(json) {
-          return console.log(json);
-        });
-      };
-      for (_i = 0, _len = _ref.length; _i < _len; _i++) {
-        map = _ref[_i];
-        _fn(map);
-      }
-      _ref2 = this.mobs;
-      _fn2 = function(mob) {
-        return mob.toString(function(json) {
-          return console.log(json);
-        });
-      };
-      for (_j = 0, _len2 = _ref2.length; _j < _len2; _j++) {
-        mob = _ref2[_j];
-        _fn2(mob);
-      }
-      _ref3 = this.towers;
-      _results = [];
-      for (_k = 0, _len3 = _ref3.length; _k < _len3; _k++) {
-        tower = _ref3[_k];
-        _results.push((function(tower) {
-          return tower.toString(function(json) {
-            return console.log(json);
-          });
-        })(tower));
-      }
-      return _results;
+    World.prototype.toString = function(callback) {
+      return callback(this.maps[0].grid);
     };
     return World;
   })();

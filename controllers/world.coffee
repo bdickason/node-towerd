@@ -3,6 +3,7 @@ mob = (require './mobs').Mob  # Mob functions like move, etc.
 tower = (require './towers').Tower  # Tower functions like attack, etc. 
 EventEmitter = (require 'events').EventEmitter
 
+
 # Initialize a new game
 # Called when the player first starts or elects to restart
 
@@ -21,7 +22,7 @@ exports.World = class World extends EventEmitter
     # First level: Hidden Valley
     @maps = []
     @maps.push new map 'hiddenvalley'
-    
+      
     @maps[0].save ->
   
     ### Load the mobs ###
@@ -31,7 +32,7 @@ exports.World = class World extends EventEmitter
     # Let's create two of them  
     @mobs.push new mob @maps[0].mobs[0]
     @mobs.push new mob @maps[0].mobs[0]
-
+    
     # They exist in memory but need to be spawned
     @mobs[0].spawn 0, 0, (json) ->
       console.log 'Mob: ' + mob
@@ -76,10 +77,9 @@ exports.World = class World extends EventEmitter
     @emit 'gameLoop'
     for mob in @mobs
       mob.move 1, 1, (json) ->
-      
-    for tower in @towers
-      tower.checkTargets (json) ->
-        console.log json          
+    
+    @toString (json) ->
+      console.log json
     
   destroy: ->
     console.log 'DESTROYING the game ;('
@@ -89,19 +89,5 @@ exports.World = class World extends EventEmitter
     towers = []
   
   # Output current game status
-  toString: (json) ->
-    
-    for map in @maps
-      do (map) ->
-        map.toString (json) ->
-          console.log json
-
-    for mob in @mobs
-      do (mob) ->
-        mob.toString (json) ->
-          console.log json
-    
-    for tower in @towers
-      do (tower) ->
-        tower.toString (json) ->
-          console.log json
+  toString: (callback) ->
+    callback @maps[0].grid

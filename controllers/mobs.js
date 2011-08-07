@@ -43,7 +43,8 @@
       }
     };
     Mob.prototype.move = function(X, Y, callback) {
-      var newloc;
+      var newloc, oldloc;
+      oldloc = this.loc;
       this.loc = [this.loc[0] + X, this.loc[1] + Y];
       newloc = this.loc;
       mobModel.find({

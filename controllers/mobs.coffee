@@ -35,6 +35,7 @@ exports.Mob = class Mob extends EventEmitter
       @emit 'die'
   
   move: (X, Y, callback) ->
+    oldloc = @loc
     @loc = [@loc[0] + X, @loc[1] + Y]
     newloc = @loc
     mobModel.find { uid: @uid }, (err, mob) ->

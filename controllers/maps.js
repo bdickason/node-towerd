@@ -1,7 +1,8 @@
 (function() {
-  var Map, cfg, mapModel, redis;
+  var Grid, Map, cfg, mapModel, redis;
   cfg = require('../config/config.js');
   redis = require('redis');
+  Grid = (require('./utils')).Grid;
   mapModel = require('../models/map-model.js');
   exports.Map = Map = (function() {
     function Map(name) {
@@ -15,6 +16,7 @@
       this.theme = toLoad.theme;
       this.mobs = toLoad.mobs;
       this.size = toLoad.size;
+      this.grid = new Grid(this.size);
     }
     Map.prototype.save = function(callback) {
       var newmap;
