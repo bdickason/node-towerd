@@ -42,35 +42,3 @@ describe 'Map map.js', ->
     self = @
     MapModel.find { id: @id }, (err, res) ->
       expect(res[0].name).toEqual self.name
-
-    
-    
-
-###
-    expect(@grid).toBeDefined()
-    expect(@grid.h).toEqual(@size)
-    expect(@grid.w).toEqual(@size)
-  it 'Populates with 0s', ->
-    @grid.get [1,1], (res) ->
-      expect(res).toEqual(0)
-  it 'Converts to JSON', ->
-    self = @  # Hack for js closures
-    @grid.toJSON (res) ->
-      expect(res.grid).toBeDefined()
-      expect(res.grid.length).toEqual(11)    # Check first dimension
-      expect(res.grid[0].length).toEqual(11) # Check second dimension
-      expect(res.h).toEqual(self.size)
-      expect(res.w).toEqual(self.size)  
-  it 'Converts to a String', ->
-    self = @
-    @grid.toString (res) ->
-      expect(res).toBeDefined()
-      expect(res).toEqual('0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0')
-  it 'Sets 1,1 to a monster', ->
-    @grid.set [1,1], 'm', ->
-    @grid.get [1, 1], (res) ->
-      expect(res).toEqual('m')
-
-###      
-# Integration Tests
-
