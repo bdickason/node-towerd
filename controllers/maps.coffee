@@ -1,5 +1,6 @@
 cfg = require '../config/config.js'    # contains API keys, etc.
 redis = require 'redis'
+Grid = (require './utils').Grid
 
 # Models
 mapModel = require '../models/map-model.js'
@@ -16,6 +17,7 @@ exports.Map = class Map
     @theme = toLoad.theme
     @mobs = toLoad.mobs
     @size = toLoad.size
+    @grid = new Grid @size
       
   save: (callback) ->
     # Save to DB

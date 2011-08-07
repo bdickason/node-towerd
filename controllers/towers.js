@@ -31,7 +31,7 @@
     }
     Tower.prototype.spawn = function(X, Y, callback) {
       this.loc = [X, Y];
-      this.emit('spawn');
+      this.emit('spawn', 'tower', this.loc);
       return console.log('Spawning tower [' + this.name + '] at (' + X + ',' + Y + ') with UID: ' + this.uid);
     };
     Tower.prototype.checkTargets = function(callback) {

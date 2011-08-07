@@ -3,6 +3,7 @@ mob = (require './mobs').Mob  # Mob functions like move, etc.
 tower = (require './towers').Tower  # Tower functions like attack, etc. 
 EventEmitter = (require 'events').EventEmitter
 
+
 # Initialize a new game
 # Called when the player first starts or elects to restart
 
@@ -21,9 +22,7 @@ exports.World = class World extends EventEmitter
     # First level: Hidden Valley
     @maps = []
     @maps.push new map 'hiddenvalley'
-    
-    @maps[0].save ->
-  
+        
     ### Load the mobs ###
     # First map has one mob: Warrior
     @mobs = []
@@ -32,54 +31,61 @@ exports.World = class World extends EventEmitter
     @mobs.push new mob @maps[0].mobs[0]
     @mobs.push new mob @maps[0].mobs[0]
 
-    # They exist in memory but need to be spawned
-    @mobs[0].spawn 0, 0, (json) ->
-      console.log 'Mob: ' + mob
-    @mobs[1].spawn 1, 0, (json) ->
-      console.log 'Mob: ' + mob
-  
-    # Now make 'em move.
-    @mobs[0].move 1, 0, (json) ->
-    @mobs[1].move 0, 1, (json) ->
-    
-    # Print basic info about the mob
-    @mobs[0].toString (json) ->
-      console.log json
-    @mobs[1].toString (json) ->
-      console.log json
-    
-    @mobs[0].save ->
-    @mobs[1].save ->
-  
     ### Load the towers ###
     # First map has one tower: Cannon
     @towers = []
   
     # Let's create it
     @towers.push new tower 'cannon'
+
+
+    # Add event listeners so the Tower + Map know if they move
+    self = @ # hack for scope inside closure
+    
+    @towers[0].on 'spawn', (type, loc, json) ->
+      self.handleSpawn type, loc, (json) ->
+        console.log 'finished spawn'
+
+    @mobs[0].on 'spawn', (type, loc, json) ->
+      self.handleSpawn type, loc, (json) ->
+        console.log 'finished spawn'
+    @mobs[1].on 'spawn', (type, loc, json) ->
+      self.handleSpawn type, loc, (json) ->
+        console.log 'finished spawn'
+    
+    @mobs[0].on 'move', (type, oldLoc, newLoc, json) ->
+      self.handleMove type, oldLoc, newLoc, (json) ->
+        console.log 'finished move'
+    @mobs[1].on 'move', (type, oldLoc, newLoc, json) ->
+      self.handleMove type, oldLoc, newLoc, (json) ->
+        console.log 'finished move'
+
+
+    
+    # They exist in memory but need to be spawned
+    @mobs[0].spawn 0, 0, (json) ->
+      console.log 'Mob: ' + mob
+    @mobs[1].spawn 1, 0, (json) ->
+      console.log 'Mob: ' + mob      
   
-    # Spawn it
     @towers[0].spawn 4, 4, (json) ->
       console.log 'Tower: ' + json
   
-    # Print basic info about the tower
-    @towers[0].toString (json) ->
-      console.log json
-    
+    @maps[0].save ->    
     @towers[0].save ->
-    
-    @towers[0].checkTargets (json) ->
-  
+    @mobs[0].save ->
+    @mobs[1].save ->    
+
+         
   gameLoop: ->
     # One iteration of a game loop
     # Runs every '@gameTime' seconds
     @emit 'gameLoop'
     for mob in @mobs
       mob.move 1, 1, (json) ->
-      
-    for tower in @towers
-      tower.checkTargets (json) ->
-        console.log json          
+    
+    @toString (json) ->
+      console.log json
     
   destroy: ->
     console.log 'DESTROYING the game ;('
@@ -88,20 +94,33 @@ exports.World = class World extends EventEmitter
     mobs = []
     towers = []
   
+  
   # Output current game status
-  toString: (json) ->
+  toString: (callback) ->
+    callback @maps[0].grid.grid
     
-    for map in @maps
-      do (map) ->
-        map.toString (json) ->
-          console.log json
+  
+  ### Handle Event Emitters/Listeners ###
+  handleSpawn: (type, loc, json) ->
+    symbol = 0
+    
+    switch type
+      when 'mob'
+        symbol = 'm'
+      when 'tower'
+        symbol = 'T'
 
-    for mob in @mobs
-      do (mob) ->
-        mob.toString (json) ->
-          console.log json
+    if @maps.length      
+      for _map in @maps
+        console.log loc
+        _map.grid.set loc, symbol
     
-    for tower in @towers
-      do (tower) ->
-        tower.toString (json) ->
-          console.log json
+  handleMove: (type, oldLoc, newLoc, json) ->
+    if @maps.length
+      for _map in @maps
+        _map.grid.set oldLoc, 0
+        _map.grid.set newLoc, 'm'
+    if @towers.length      
+      for tower in @towers
+        tower.checkTargets (json) ->
+          # Add hitcode here    
