@@ -25,6 +25,10 @@
       type: Number,
       "default": 1
     },
+    symbol: {
+      type: String,
+      "default": 'W'
+    },
     speed: {
       type: Number,
       "default": 1

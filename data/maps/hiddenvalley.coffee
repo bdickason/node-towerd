@@ -6,5 +6,5 @@ exports.map =
   id: 'hiddenvalley',
   active: 1,
   theme: 'Forest',
-  mobs: [ 'warrior' ],
+  mobs: [ 'warrior', 'warrior' ],
   size: 10  # 10 x 10 grid

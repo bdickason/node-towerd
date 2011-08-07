@@ -12,6 +12,8 @@ exports.Grid = class Grid
       @grid.push(row);
     
   set: (loc, value, callback) ->
+    console.log 'loc: ' + loc
+    console.log 'value: ' + value
     @grid[loc[0]][loc[1]] = value
   
   get: (loc, callback) ->

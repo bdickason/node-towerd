@@ -31,6 +31,9 @@ console.log 'Spawning New Game'
 World = (require './world.js').World
 world = new World
 global.world = world  # world needs to be called from anywhere/everywhere
+world.emit 'load'
+
+console.log world
 
 ### Initialize controllers ###
 Users = (require './controllers/user.js').Users
@@ -107,7 +110,12 @@ app.get '/logout', (req, res) ->
   
 app.listen process.env.PORT or 3000 
 
+### Socket.io Stuff ###
 io.sockets.on 'connection', (socket) ->
   socket.emit 'test', hello: 'world'
   socket.on 'test event', (data) ->
     console.log data
+    
+### Socket/World Event Listners ###
+# 
+# This is the stuff that ties the game to the client

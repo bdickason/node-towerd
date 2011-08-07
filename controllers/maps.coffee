@@ -18,7 +18,20 @@ exports.Map = class Map
     @mobs = toLoad.mobs
     @size = toLoad.size
     @grid = new Grid @size
+    
+    @save ->
+    
+    self = @
+    ### Event Emitters ###
+    world.on 'load', (type, obj) ->
+      if type != 'map'
+        obj.on 'spawn', (loc) ->
+          console.log obj.symbol
+          self.grid.set loc, obj.symbol, (callback) ->
+            
       
+    world.on 'move', () ->
+        
   save: (callback) ->
     # Save to DB
     newmap = new mapModel ( { uid: @uid, id: @id, name: @name, theme: @theme, mobs: @mobs, size: @size } )
@@ -31,4 +44,3 @@ exports.Map = class Map
   toString: (callback) ->
     output = 'MAP ' + @uid + ' [' + @name + ']  Size: ' + @size
     callback output
-    

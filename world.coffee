@@ -1,8 +1,7 @@
+EventEmitter = (require 'events').EventEmitter
 map = (require './controllers/maps').Map  # Map functions like render, etc.
 mob = (require './controllers/mobs').Mob  # Mob functions like move, etc.
-tower = (require './controllers/towers').Tower  # Tower functions like attack, etc. 
-EventEmitter = (require 'events').EventEmitter
-
+tower = (require './controllers/towers').Tower  # Tower functions like attack, etc.
 
 # Initialize a new game
 # Called when the player first starts or elects to restart
@@ -18,74 +17,74 @@ exports.World = class World extends EventEmitter
       world.gameLoop()
     , @gameTime
     
+    # For some reason we have to wait to load everything    
+    self = @
+    @load = setTimeout ->
+      self.loadEntities()
+    , 1000
+    
+      
+  loadEntities: (callback) ->
+    
     ### Load the map ###
     # First level: Hidden Valley
     @maps = []
     @maps.push new map 'hiddenvalley'
-        
-    ### Load the mobs ###
-    # First map has one mob: Warrior
-    @mobs = []
-  
-    # Let's create two of them  
-    @mobs.push new mob @maps[0].mobs[0]
-    @mobs.push new mob @maps[0].mobs[0]
+    @emit 'load', 'map', _map for _map in @maps
 
-    ### Load the towers ###
+    ### Load and spawn the towers ###
     # First map has one tower: Cannon
     @towers = []
-  
-    # Let's create it
     @towers.push new tower 'cannon'
-
-
-    # Add event listeners so the Tower + Map know if they move
-    self = @ # hack for scope inside closure
     
-    @towers[0].on 'spawn', (type, loc, json) ->
-      self.handleSpawn type, loc, (json) ->
-        console.log 'finished spawn'
+    for _tower in @towers
+      @emit 'load', 'tower', _tower
+        
+    ### Load the mobs ###
+    # Each map can have many mobs
+    @mobs = []
+    for _map in @maps
+      console.log _map
+      for mobId in _map.mobs
+        _mob = new mob mobId
+        @mobs.push _mob
+        @emit 'load', 'mob', _mob
 
-    @mobs[0].on 'spawn', (type, loc, json) ->
-      self.handleSpawn type, loc, (json) ->
-        console.log 'finished spawn'
-    @mobs[1].on 'spawn', (type, loc, json) ->
-      self.handleSpawn type, loc, (json) ->
-        console.log 'finished spawn'
-    
-    @mobs[0].on 'move', (type, oldLoc, newLoc, json) ->
-      self.handleMove type, oldLoc, newLoc, (json) ->
-        console.log 'finished move'
-    @mobs[1].on 'move', (type, oldLoc, newLoc, json) ->
-      self.handleMove type, oldLoc, newLoc, (json) ->
-        console.log 'finished move'
-
-
-    
     # They exist in memory but need to be spawned
-    @mobs[0].spawn 0, 0, (json) ->
-      console.log 'Mob: ' + mob
-    @mobs[1].spawn 1, 0, (json) ->
-      console.log 'Mob: ' + mob      
-  
-    @towers[0].spawn 4, 4, (json) ->
-      console.log 'Tower: ' + json
-  
-    @maps[0].save ->    
-    @towers[0].save ->
-    @mobs[0].save ->
-    @mobs[1].save ->    
+    @mobs[0].emit 'spawn', [0, 0]
+    @mobs[1].emit 'spawm', 1, 0
+    @towers[0].emit 'spawn', 4, 4
 
+
+    ### Save everything to mongo
+    @maps[0].save ->    
+
+    console.log 'TOWERS!'
+    console.log @towers
+    @towers[0].save ->
+    
+    console.log 'MOBS!'
+    console.log @mobs
+    
+    @mobs[0].save ->
+    
+    console.log 'MOBS!'
+    console.log @mobs
+    @mobs[1].save -> ###
+    
+    # callback 'success!'
          
   gameLoop: ->
     # One iteration of a game loop
     # Runs every '@gameTime' seconds
     @emit 'gameLoop'
-    for mob in @mobs
-      mob.move 1, 1, (json) ->
     
-    @toString (json) ->
-      console.log json
+    # Temporary disabled while working on events
+    ###for mob in @mobs
+      mob.move 1, 1, (json) -> ###
+    
+    ###@toString (json) ->
+      console.log json ###
     
   destroy: ->
     console.log 'DESTROYING the game ;('

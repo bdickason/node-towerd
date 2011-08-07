@@ -36,6 +36,8 @@
   World = (require('./world.js')).World;
   world = new World;
   global.world = world;
+  world.emit('load');
+  console.log(world);
   /* Initialize controllers */
   Users = (require('./controllers/user.js')).Users;
   /* Start Route Handling */
@@ -108,6 +110,7 @@
     return res.redirect('/');
   });
   app.listen(process.env.PORT || 3000);
+  /* Socket.io Stuff */
   io.sockets.on('connection', function(socket) {
     socket.emit('test', {
       hello: 'world'
@@ -116,4 +119,5 @@
       return console.log(data);
     });
   });
+  /* Socket/World Event Listners */
 }).call(this);

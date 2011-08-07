@@ -15,6 +15,8 @@
       }
     }
     Grid.prototype.set = function(loc, value, callback) {
+      console.log('loc: ' + loc);
+      console.log('value: ' + value);
       return this.grid[loc[0]][loc[1]] = value;
     };
     Grid.prototype.get = function(loc, callback) {

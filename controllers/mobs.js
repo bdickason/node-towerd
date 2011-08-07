@@ -25,6 +25,7 @@
       this["class"] = toLoad["class"];
       this.speed = toLoad.speed;
       this.maxHP = toLoad.maxHP;
+      this.symbol = toLoad.symbol;
       this.loc = [null, null];
       this.curHP = null;
     }
@@ -32,7 +33,8 @@
       this.loc = [X, Y];
       this.curHP = this.maxHP;
       this.emit('spawn', 'mob', this.loc);
-      return console.log('Spawning mob [' + this.id + '] at (' + X + ',' + Y + ') with UID: ' + this.uid);
+      console.log('Spawning mob [' + this.id + '] at (' + X + ',' + Y + ') with UID: ' + this.uid);
+      return this.save(function() {});
     };
     Mob.prototype.hit = function(damage) {
       this.curHP = this.curHP - damage;
@@ -81,8 +83,6 @@
       return newmob.save(function(err, saved) {
         if (err) {
           return console.log('Error saving: ' + err);
-        } else {
-          return console.log('Saved Mob: ' + newmob.uid);
         }
       });
     };
@@ -90,6 +90,9 @@
       var output;
       output = 'MOB ' + this.uid + ' [' + this.id + ']  loc: (' + this.loc[0] + ', ' + this.loc[1] + ')  HP: ' + this.curHP + '/' + this.maxHP;
       return callback(output);
+    };
+    Mob.prototype.defineEmitters = function(callback) {
+      return world.on('test', function() {});
     };
     return Mob;
   })();
