@@ -18,7 +18,7 @@
         return isVerbose = true;
     }
   });
-  jasmine.executeSpecsInFolder(__dirname + '/tests', (function(runner, log) {
+  jasmine.executeSpecsInFolder(__dirname + '/spec', (function(runner, log) {
     if (runner.results().failedCount === 0) {
       return process.exit(0);
     } else {

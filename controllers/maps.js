@@ -2,7 +2,7 @@
   var Grid, Map, cfg, mapModel, redis;
   cfg = require('../config/config.js');
   redis = require('redis');
-  Grid = (require('./utils/utils')).Grid;
+  Grid = (require('./utils/grid.js')).Grid;
   mapModel = require('../models/map-model.js');
   exports.Map = Map = (function() {
     function Map(name) {

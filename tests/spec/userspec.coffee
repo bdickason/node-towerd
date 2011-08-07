@@ -1,7 +1,10 @@
-cfg = require '../config/config.js'  # contains API keys, etc'
-Users = (require '../controllers/user.js').Users
+basedir = '../../'  # 
+cfg = require basedir + 'config/config.js'  # contains API keys, etc'
+Users = (require basedir + 'controllers/user.js').Users
 
 # Unit Tests
+
+# Integration Tests
 describe 'List all users: /users', -> 
   it 'Returns at least one valid user', ->
     user = new Users

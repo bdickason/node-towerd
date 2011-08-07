@@ -1,7 +1,8 @@
 (function() {
-  var Users, cfg;
-  cfg = require('../config/config.js');
-  Users = (require('../controllers/user.js')).Users;
+  var Users, basedir, cfg;
+  basedir = '../../';
+  cfg = require(basedir + 'config/config.js');
+  Users = (require(basedir + 'controllers/user.js')).Users;
   describe('List all users: /users', function() {
     return it('Returns at least one valid user', function() {
       var user;

@@ -13,7 +13,7 @@ process.argv.forEach (arg) ->
     when '--noColor' then showColors = false
     when '--verbose' then isVerbose = true
 
-jasmine.executeSpecsInFolder __dirname + '/tests', ((runner, log) ->
+jasmine.executeSpecsInFolder __dirname + '/spec', ((runner, log) ->
   if runner.results().failedCount == 0
     process.exit 0
   else 
