@@ -15,7 +15,8 @@
   exports.World = World = (function() {
     __extends(World, EventEmitter);
     function World() {
-      /* Initial config */      this.gameTime = 3000;
+      /* Initial config */      var self;
+      this.gameTime = 3000;
       /* Start the game!! */
       this.game = setInterval(function() {
         return world.gameLoop();
@@ -55,6 +56,17 @@
       });
       this.towers[0].save(function() {});
       this.towers[0].checkTargets(function(json) {});
+      self = this;
+      this.mobs[0].on('move', function(oldLoc, newLoc, json) {
+        return self.handleMove(oldLoc, newLoc, function(json) {
+          return console.log('finished move');
+        });
+      });
+      this.mobs[1].on('move', function(oldLoc, newLoc, json) {
+        return self.handleMove(oldLoc, newLoc, function(json) {
+          return console.log('finished move');
+        });
+      });
     }
     World.prototype.gameLoop = function() {
       var mob, _i, _len, _ref;
@@ -77,7 +89,26 @@
       return towers = [];
     };
     World.prototype.toString = function(callback) {
-      return callback(this.maps[0].grid);
+      return callback(this.maps[0].grid.grid);
+    };
+    /* Handle Event Emitters/Listeners */
+    World.prototype.handleMove = function(oldLoc, newLoc, json) {
+      var tower, _i, _j, _len, _len2, _map, _ref, _ref2, _results;
+      _ref = this.maps;
+      for (_i = 0, _len = _ref.length; _i < _len; _i++) {
+        _map = _ref[_i];
+        console.log(oldLoc);
+        console.log(newLoc);
+        _map.grid.set(oldLoc, 0);
+        _map.grid.set(newLoc, 'm');
+      }
+      _ref2 = this.towers;
+      _results = [];
+      for (_j = 0, _len2 = _ref2.length; _j < _len2; _j++) {
+        tower = _ref2[_j];
+        _results.push(tower.checkTargets(function(json) {}));
+      }
+      return _results;
     };
     return World;
   })();

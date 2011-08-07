@@ -43,10 +43,11 @@
       }
     };
     Mob.prototype.move = function(X, Y, callback) {
-      var newloc, oldloc;
+      var newloc, oldloc, self;
       oldloc = this.loc;
       this.loc = [this.loc[0] + X, this.loc[1] + Y];
       newloc = this.loc;
+      self = this;
       mobModel.find({
         uid: this.uid
       }, function(err, mob) {
@@ -58,7 +59,7 @@
             if (err) {
               return console.log('Error saving mob: {@uid} ' + err);
             } else {
-              return this.emit('move');
+              return self.emit('move', oldloc, newloc);
             }
           });
         }

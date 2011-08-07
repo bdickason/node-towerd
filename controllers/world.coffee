@@ -37,7 +37,7 @@ exports.World = class World extends EventEmitter
     @mobs[0].spawn 0, 0, (json) ->
       console.log 'Mob: ' + mob
     @mobs[1].spawn 1, 0, (json) ->
-      console.log 'Mob: ' + mob
+      console.log 'Mob: ' + mob    
   
     # Now make 'em move.
     @mobs[0].move 1, 0, (json) ->
@@ -50,7 +50,7 @@ exports.World = class World extends EventEmitter
       console.log json
     
     @mobs[0].save ->
-    @mobs[1].save ->
+    @mobs[1].save ->    
   
     ### Load the towers ###
     # First map has one tower: Cannon
@@ -71,6 +71,17 @@ exports.World = class World extends EventEmitter
     
     @towers[0].checkTargets (json) ->
   
+    self = @ # hack for scope inside closure
+    # Add event listeners so the Tower + Map know if they move
+    @mobs[0].on 'move', (oldLoc, newLoc, json) ->
+      self.handleMove oldLoc, newLoc, (json) ->
+        console.log 'finished move'
+    @mobs[1].on 'move', (oldLoc, newLoc, json) ->
+      self.handleMove oldLoc, newLoc, (json) ->
+        console.log 'finished move'
+
+
+         
   gameLoop: ->
     # One iteration of a game loop
     # Runs every '@gameTime' seconds
@@ -88,6 +99,19 @@ exports.World = class World extends EventEmitter
     mobs = []
     towers = []
   
+  
   # Output current game status
   toString: (callback) ->
-    callback @maps[0].grid
+    callback @maps[0].grid.grid
+    
+  
+  ### Handle Event Emitters/Listeners ###
+  handleMove: (oldLoc, newLoc, json) ->
+    for _map in @maps
+      console.log oldLoc
+      console.log newLoc
+      _map.grid.set oldLoc, 0
+      _map.grid.set newLoc, 'm'
+    for tower in @towers
+      tower.checkTargets (json) ->
+        # Add hitcode here    
