@@ -21,11 +21,11 @@ exports.Mob = class Mob extends EventEmitter
     @loc = [null, null]  # Hasn't been spawned yet, so position is null
     @curHP = null # Hasn't spawned so has no HP.
     
-  spawn: (X, Y, callback) ->
-    @loc = [X, Y]
+  spawn: (loc, callback) ->
     @curHP = @maxHP # Always spawn with full life (for now!)
-    @emit 'spawn', 'mob', @loc
-    console.log 'Spawning mob [' + @id + '] at (' + X + ',' + Y + ') with UID: ' + @uid
+    @emit 'spawn', 'mob', loc
+    console.log 'Spawning mob [' + @id + '] at (' + loc + ') with UID: ' + @uid
+    @loc = loc
     @save ->
     
   
@@ -61,6 +61,8 @@ exports.Mob = class Mob extends EventEmitter
     newmob.save (err, saved) ->
       if err
         console.log 'Error saving: ' + err
+      else
+        console.log 'Saved mob: ' + newmob.uid
     
   toString: (callback) ->
     output = 'MOB ' + @uid + ' [' + @id + ']  loc: (' + @loc[0] + ', ' + @loc[1] + ')  HP: ' + @curHP + '/' + @maxHP

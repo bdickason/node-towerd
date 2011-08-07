@@ -5,7 +5,7 @@ Users = (require basedir + 'controllers/user.js').Users
 # Unit Tests
 
 # Integration Tests
-describe 'Users -  ', -> 
+describe 'Users - user.js', -> 
   it 'Returns at least one valid user - /users', ->
     user = new Users
     user.get null, (json) ->

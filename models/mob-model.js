@@ -46,4 +46,5 @@
   });
   mongoose.model('Mobs', MobSchema);
   module.exports = db.model('Mobs');
+  module.exports;
 }).call(this);

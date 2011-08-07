@@ -29,11 +29,11 @@
       this.loc = [null, null];
       this.curHP = null;
     }
-    Mob.prototype.spawn = function(X, Y, callback) {
-      this.loc = [X, Y];
+    Mob.prototype.spawn = function(loc, callback) {
       this.curHP = this.maxHP;
-      this.emit('spawn', 'mob', this.loc);
-      console.log('Spawning mob [' + this.id + '] at (' + X + ',' + Y + ') with UID: ' + this.uid);
+      this.emit('spawn', 'mob', loc);
+      console.log('Spawning mob [' + this.id + '] at (' + loc + ') with UID: ' + this.uid);
+      this.loc = loc;
       return this.save(function() {});
     };
     Mob.prototype.hit = function(damage) {
@@ -83,6 +83,8 @@
       return newmob.save(function(err, saved) {
         if (err) {
           return console.log('Error saving: ' + err);
+        } else {
+          return console.log('Saved mob: ' + newmob.uid);
         }
       });
     };

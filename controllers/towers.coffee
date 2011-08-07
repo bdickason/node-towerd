@@ -15,6 +15,7 @@ exports.Tower = class Tower extends EventEmitter
     @uid = Math.floor Math.random()*10000000  # Generate a unique ID for each instance of this tower
     @id = toLoad.id         # Machine readable version
     @name = toLoad.name     # Human readable version
+    @active = toLoad.active
     @damage = toLoad.damage
     @range = toLoad.range
     @symbol = toLoad.symbol
@@ -23,14 +24,16 @@ exports.Tower = class Tower extends EventEmitter
     @model = null
 
   # Activate the tower and place it on the map
-  spawn: (X, Y, callback) ->
-    @loc = [X, Y]
+  spawn: (loc, callback) ->
+    @loc = loc
     @emit 'spawn', 'tower', @loc
-    console.log 'Spawning tower [' + @name + '] at (' + X + ',' + Y + ') with UID: ' + @uid
+    console.log 'Spawning tower [' + @name + '] at (' + @loc + ') with UID: ' + @uid
+    
+    @save ->
 
   
   # Check for anything within range
-  checkTargets: (callback) ->
+  checkTargets: (callback) -> 
     mobModel.find { loc : { $near : @loc , $maxDistance : @range } }, (err, hits) -> 
       if err
         console.log 'Error: ' + err
@@ -41,11 +44,12 @@ exports.Tower = class Tower extends EventEmitter
   save: (callback) ->
     # Save to DB
     @model = new towerModel ( { uid: @uid, id: @id, name: @name, damage: @damage, range: @range, type: @type, loc: @loc } )
+    self = @
     @model.save (err, saved) ->
       if err
         console.log 'Error saving: ' + err
       else
-        console.log 'Saved Tower: ' + @model.uid
+        console.log 'Saved Tower: ' + self.uid
     
   toString: (callback) ->
     output = 'TOWER ' + @uid + ' [' + @id + ']  loc: (' + @loc[0] + ', ' + @loc[1] + ')  Range: ' + @range

@@ -23,6 +23,7 @@
       this.uid = Math.floor(Math.random() * 10000000);
       this.id = toLoad.id;
       this.name = toLoad.name;
+      this.active = toLoad.active;
       this.damage = toLoad.damage;
       this.range = toLoad.range;
       this.symbol = toLoad.symbol;
@@ -30,10 +31,11 @@
       this.loc = [null, null];
       this.model = null;
     }
-    Tower.prototype.spawn = function(X, Y, callback) {
-      this.loc = [X, Y];
+    Tower.prototype.spawn = function(loc, callback) {
+      this.loc = loc;
       this.emit('spawn', 'tower', this.loc);
-      return console.log('Spawning tower [' + this.name + '] at (' + X + ',' + Y + ') with UID: ' + this.uid);
+      console.log('Spawning tower [' + this.name + '] at (' + this.loc + ') with UID: ' + this.uid);
+      return this.save(function() {});
     };
     Tower.prototype.checkTargets = function(callback) {
       return mobModel.find({
@@ -51,6 +53,7 @@
       });
     };
     Tower.prototype.save = function(callback) {
+      var self;
       this.model = new towerModel({
         uid: this.uid,
         id: this.id,
@@ -60,11 +63,12 @@
         type: this.type,
         loc: this.loc
       });
+      self = this;
       return this.model.save(function(err, saved) {
         if (err) {
           return console.log('Error saving: ' + err);
         } else {
-          return console.log('Saved Tower: ' + this.model.uid);
+          return console.log('Saved Tower: ' + self.uid);
         }
       });
     };
