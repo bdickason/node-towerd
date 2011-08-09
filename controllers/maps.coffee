@@ -23,6 +23,7 @@ exports.Map = class Map
     @save ->
     
     self = @
+    
     ### Event Emitters ###
     world.on 'load', (type, obj) ->
       # Ignore all map events

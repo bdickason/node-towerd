@@ -34,6 +34,18 @@
       world.on('gameLoop', function() {
         return self.move(1, 1, function(json) {});
       });
+      world.on('load', function(type, obj) {
+        if (type === 'tower') {
+          console.log('listening to ' + obj.uid);
+          return obj.on('fire', function(uid, damage) {
+            console.log('shots fired captain! uid: ' + uid + ' self.uid: ' + self.uid);
+            if (self.uid === uid) {
+              console.log('Im hit');
+              return self.hit(damage);
+            }
+          });
+        }
+      });
     }
     Mob.prototype.spawn = function(loc, callback) {
       this.curHP = this.maxHP;
@@ -45,8 +57,10 @@
     Mob.prototype.hit = function(damage) {
       this.curHP = this.curHP - damage;
       if (this.curHP > 0) {
+        console.log('We have a hit! ' + this.uid + ' was hit for: ' + damage);
         return this.emit('hit', this.curHP);
       } else {
+        console.log('you sunk my battleship!');
         return this.emit('die', this.curHP);
       }
     };

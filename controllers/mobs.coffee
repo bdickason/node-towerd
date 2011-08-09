@@ -26,7 +26,16 @@ exports.Mob = class Mob extends EventEmitter
     self = @
     world.on 'gameLoop', ->
       self.move 1, 1, (json) ->
-    
+    world.on 'load', (type, obj) ->
+      if type == 'tower'
+        console.log 'listening to ' + obj.uid
+        obj.on 'fire', (uid, damage) ->
+          console.log 'shots fired captain! uid: ' + uid + ' self.uid: ' + self.uid
+          if self.uid == uid
+            # Holy shit, the shot was fired at me!
+            console.log 'Im hit'
+            self.hit(damage)
+          
   spawn: (loc, callback) ->
     @curHP = @maxHP # Always spawn with full life (for now!)
     @loc = loc
@@ -39,9 +48,11 @@ exports.Mob = class Mob extends EventEmitter
   hit: (damage) ->
     @curHP = @curHP - damage
     if @curHP > 0
+      console.log 'We have a hit! ' + @uid + ' was hit for: ' + damage
       @emit 'hit', @curHP 
     else
       # mob is dead!
+      console.log 'you sunk my battleship!'
       @emit 'die', @curHP
   
   move: (X, Y, callback) ->

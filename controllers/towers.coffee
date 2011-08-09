@@ -24,6 +24,8 @@ exports.Tower = class Tower extends EventEmitter
     @model = null
 
     self = @
+    
+    ### Events ###
     world.on 'load', (type, obj) ->
       # Ignore all other towers and maps
       if type == 'mob'
@@ -42,11 +44,14 @@ exports.Tower = class Tower extends EventEmitter
   
   # Check for anything within range
   checkTargets: (callback) -> 
+    self = @
     mobModel.find { loc : { $near : @loc , $maxDistance : @range } }, (err, hits) -> 
       if err
         console.log 'Error: ' + err
       else
-        # @emit 'shot'
+        for mob in hits
+          self.emit 'fire', mob.uid, self.damage
+          console.log 'firing on: ' + mob.uid + ' with damage: ' + self.damage
         callback hits
   
   save: (callback) ->
@@ -56,8 +61,6 @@ exports.Tower = class Tower extends EventEmitter
     @model.save (err, saved) ->
       if err
         console.log 'Error saving: ' + err
-      else
-        console.log 'Saved Tower: ' + self.uid
     
   toString: (callback) ->
     output = 'TOWER ' + @uid + ' [' + @id + ']  loc: (' + @loc[0] + ', ' + @loc[1] + ')  Range: ' + @range

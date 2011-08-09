@@ -39,9 +39,7 @@ exports.World = class World extends EventEmitter
     # First map has one tower: Cannon
     @towers = []
     @towers.push new tower 'cannon'
-    
-    for _tower in @towers
-      @emit 'load', 'tower', _tower
+
         
     ### Load the mobs ###
     # Each map can have many mobs
@@ -52,10 +50,12 @@ exports.World = class World extends EventEmitter
         @emit 'load', 'mob', _mob
         @mobs.push _mob
 
+    # Mobs don't know about the 'load' event because they aren't instantiated in time
+    @emit 'load', 'tower', _tower for _tower in @towers
 
     # They exist in memory but need to be spawned
     @mobs[0].spawn [0, 0]
-    @mobs[1].spawn [1, 0] # Why is this guy not getting called?
+    @mobs[1].spawn [1, 0]
     @towers[0].spawn [4, 4]
 
          

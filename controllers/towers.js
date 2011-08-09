@@ -31,6 +31,7 @@
       this.loc = [null, null];
       this.model = null;
       self = this;
+      /* Events */
       world.on('load', function(type, obj) {
         if (type === 'mob') {
           return obj.on('move', function(loc) {
@@ -46,15 +47,23 @@
       return this.save(function() {});
     };
     Tower.prototype.checkTargets = function(callback) {
+      var self;
+      self = this;
       return mobModel.find({
         loc: {
           $near: this.loc,
           $maxDistance: this.range
         }
       }, function(err, hits) {
+        var mob, _i, _len;
         if (err) {
           return console.log('Error: ' + err);
         } else {
+          for (_i = 0, _len = hits.length; _i < _len; _i++) {
+            mob = hits[_i];
+            self.emit('fire', mob.uid, self.damage);
+            console.log('firing on: ' + mob.uid + ' with damage: ' + self.damage);
+          }
           return callback(hits);
         }
       });
@@ -74,8 +83,6 @@
       return this.model.save(function(err, saved) {
         if (err) {
           return console.log('Error saving: ' + err);
-        } else {
-          return console.log('Saved Tower: ' + self.uid);
         }
       });
     };
