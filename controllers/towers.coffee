@@ -60,7 +60,7 @@ exports.Tower = class Tower extends EventEmitter
     self = @
     @model.save (err, saved) ->
       if err
-        console.warning 'Error saving: ' + err
+        logger.warn 'Error saving: ' + err
     
   toString: (callback) ->
     output = 'TOWER ' + @uid + ' [' + @id + ']  loc: (' + @loc[0] + ', ' + @loc[1] + ')  Range: ' + @range

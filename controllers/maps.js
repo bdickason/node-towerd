@@ -45,7 +45,7 @@
       });
       return newmap.save(function(err, saved) {
         if (err) {
-          return logger.warning('Error saving: ' + err);
+          return logger.warn('Error saving: ' + err);
         }
       });
     };

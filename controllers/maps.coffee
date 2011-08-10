@@ -42,7 +42,7 @@ exports.Map = class Map
     newmap = new mapModel ( { uid: @uid, id: @id, name: @name, theme: @theme, mobs: @mobs, size: @size } )
     newmap.save (err, saved) ->
       if err
-        logger.warning 'Error saving: ' + err
+        logger.warn 'Error saving: ' + err
     
   toString: (callback) ->
     output = 'MAP ' + @uid + ' [' + @name + ']  Size: ' + @size

@@ -82,7 +82,7 @@
       self = this;
       return this.model.save(function(err, saved) {
         if (err) {
-          return console.warning('Error saving: ' + err);
+          return logger.warn('Error saving: ' + err);
         }
       });
     };

@@ -30,7 +30,7 @@
       });
       return newuser.save(function(err, user_saved) {
         if (err) {
-          return logger.warning('Error Saving: ' + err);
+          return logger.warn('Error Saving: ' + err);
         } else {
           return logger.info('Saved: ' + newuser);
         }

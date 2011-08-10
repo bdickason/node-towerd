@@ -37,13 +37,18 @@
     app.use(app.router);
     return app.use(gzippo.staticGzip(__dirname + '/public'));
   });
-  mongoose.connection.on('open', function() {
-    return logger.info('Mongo is connected!');
-  });
   app.dynamicHelpers({
     session: function(req, res) {
       return req.session;
     }
+  });
+  global.db = mongoose.connect(cfg.DB, function(err) {
+    if (err) {
+      return logger.log('error', err);
+    }
+  });
+  mongoose.connection.on('open', function() {
+    return logger.info('Mongo is connected!');
   });
   /* Spawn the world!! */
   logger.info('Spawning New Game');

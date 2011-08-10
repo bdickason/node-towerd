@@ -24,6 +24,6 @@ exports.Users = class Users
     newuser = new User { 'id': id, 'name': name}
     newuser.save (err, user_saved) ->
       if err
-        logger.warning 'Error Saving: ' + err
+        logger.warn 'Error Saving: ' + err
       else
         logger.info 'Saved: ' + newuser

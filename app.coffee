@@ -30,11 +30,18 @@ app.configure ->
   app.use express.session { secret: cfg.SESSION_SECRET, store: new RedisStore}
   app.use app.router
   app.use(gzippo.staticGzip(__dirname + '/public'));  
+
+app.dynamicHelpers { session: (req, res) -> req.session }
+
+# Initialize DB
+global.db = mongoose.connect cfg.DB, (err) ->
+  if err
+    logger.log 'error', err
   
 mongoose.connection.on 'open', ->
   logger.info 'Mongo is connected!'
   
-app.dynamicHelpers { session: (req, res) -> req.session }
+
 
 ### Spawn the world!! ###
 logger.info 'Spawning New Game'  

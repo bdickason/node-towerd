@@ -76,18 +76,18 @@
         uid: this.uid
       }, function(err, mob) {
         if (err) {
-          logger.error('Error finding mob: {@uid} ' + err);
+          return logger.error('Error finding mob: {@uid} ' + err);
         } else {
           mob[0].loc = newloc;
-          mob[0].save(function(err) {
+          return mob[0].save(function(err) {
             if (err) {
-              return logger.warning('Error saving mob: {@uid} ' + err);
+              return logger.warn('Error saving mob: {@uid} ' + err);
             } else {
-              return self.emit('move', 'mob', oldloc, newloc);
+              self.emit('move', 'mob', oldloc, newloc);
+              return logger.info('MOB ' + self.uid + ' [' + self.id + '] moved to (' + self.loc[0] + ',' + self.loc[1] + ')');
             }
           });
         }
-        return logger.info('MOB ' + this.uid + ' [' + this.id + '] moved to (' + this.loc[0] + ',' + this.loc[1] + ')');
       });
     };
     Mob.prototype.save = function(callback) {

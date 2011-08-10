@@ -70,10 +70,10 @@ exports.Mob = class Mob extends EventEmitter
         mob[0].loc = newloc
         mob[0].save (err) ->
           if (err)
-            logger.warning 'Error saving mob: {@uid} ' + err
+            logger.warn 'Error saving mob: {@uid} ' + err
           else
             self.emit 'move', 'mob', oldloc, newloc
-      logger.info 'MOB ' + @uid + ' [' + @id + '] moved to (' + @loc[0] + ',' + @loc[1] + ')'
+            logger.info 'MOB ' + self.uid + ' [' + self.id + '] moved to (' + self.loc[0] + ',' + self.loc[1] + ')'
 
   save: (callback) ->
     # Save to DB

@@ -1,12 +1,7 @@
 (function() {
-  var ObjectId, Schema, UserSchema, cfg, db, mongoose;
+  var ObjectId, Schema, UserSchema, cfg, mongoose;
   cfg = require('../config/config.js');
   mongoose = require('mongoose');
-  db = mongoose.connect(cfg.DB, function(err) {
-    if (err) {
-      return logger.log('error', err);
-    }
-  });
   Schema = mongoose.Schema;
   ObjectId = Schema.ObjectId;
   UserSchema = new Schema({
