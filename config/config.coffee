@@ -11,11 +11,9 @@ exports.REDIS_CACHE_TIME = process.env.REDIS_CACHE_TIME || '10000'    #Time to c
 exports.MONGO_HOST = process.env.MONGO_HOST || 'localhost'
 exports.MONGO_DB = process.env.MONGO_DB || 'game'
 
-
-
-
-
-
+# Loggly (optional)
+exports.LOGGLY_SUBDOMAIN = process.env.LOGGLY_SUBDOMAIN || ''
+exports.LOGGLY_INPUTTOKEN = process.env.LOGGLY_INPUTTOKEN || ''
 
 ## DON'T TOUCH
 exports.DB = 'mongodb://' + @MONGO_HOST + '/' + @MONGO_DB

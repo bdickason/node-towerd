@@ -1,5 +1,5 @@
 (function() {
-  var RedisStore, Users, World, app, cfg, express, gzippo, http, init, io, mongoose, sys, world;
+  var RedisStore, Users, World, app, cfg, express, gzippo, http, init, io, mongoose, sys, winston, world;
   http = require('http');
   express = require('express');
   RedisStore = (require('connect-redis'))(express);
@@ -8,13 +8,26 @@
   gzippo = require('gzippo');
   cfg = require('./config/config.js');
   init = require('./controllers/utils/init.js');
+  winston = require('winston');
+  console.log("Subdomain: " + cfg.LOGGLY_SUBDOMAIN + " input token: " + cfg.LOGGLY_INPUTTOKEN);
+  global.logger = new winston.Logger({
+    transports: [
+      new winston.transports.Console({
+        level: 'debug',
+        colorize: true
+      }), new winston.transports.Loggly({
+        level: 'info',
+        subdomain: cfg.LOGGLY_SUBDOMAIN,
+        inputToken: cfg.LOGGLY_INPUTTOKEN
+      })
+    ]
+  });
   app = express.createServer();
   io = (require('socket.io')).listen(app);
   app.configure(function() {
     app.set('views', __dirname + '/views');
     app.set('view engine', 'jade');
     app.register('.html', require('jade'));
-    app.use(express.logger());
     app.use(express.methodOverride());
     app.use(express.bodyParser());
     app.use(express.cookieParser());

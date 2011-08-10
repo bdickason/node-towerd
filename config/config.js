@@ -5,5 +5,7 @@
   exports.REDIS_CACHE_TIME = process.env.REDIS_CACHE_TIME || '10000';
   exports.MONGO_HOST = process.env.MONGO_HOST || 'localhost';
   exports.MONGO_DB = process.env.MONGO_DB || 'game';
+  exports.LOGGLY_SUBDOMAIN = process.env.LOGGLY_SUBDOMAIN || '';
+  exports.LOGGLY_INPUTTOKEN = process.env.LOGGLY_INPUTTOKEN || '';
   exports.DB = 'mongodb://' + this.MONGO_HOST + '/' + this.MONGO_DB;
 }).call(this);

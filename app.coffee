@@ -6,7 +6,20 @@ mongoose = require 'mongoose'
 gzippo = require 'gzippo'
 cfg = require './config/config.js'    # contains API keys, etc.
 init = require './controllers/utils/init.js'
+winston = require 'winston'
 
+# Setup logging
+
+console.log "Subdomain: " + cfg.LOGGLY_SUBDOMAIN + " input token: " + cfg.LOGGLY_INPUTTOKEN
+
+global.logger = new (winston.Logger)( {
+  transports: [
+    new (winston.transports.Console)({ level: 'debug', colorize: true }),
+    new (winston.transports.Loggly)({ level: 'info', subdomain: cfg.LOGGLY_SUBDOMAIN, inputToken: cfg.LOGGLY_INPUTTOKEN })
+    ]
+})
+
+# Setup Server
 app = express.createServer()
 io = (require 'socket.io').listen app
 
@@ -14,7 +27,6 @@ app.configure ->
   app.set 'views', __dirname + '/views'
   app.set 'view engine', 'jade'
   app.register '.html', require 'jade'
-  app.use express.logger()
   app.use express.methodOverride()
   app.use express.bodyParser()
   app.use express.cookieParser()
