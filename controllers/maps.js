@@ -22,8 +22,9 @@
       self = this;
       /* Event Emitters */
       world.on('load', function(type, obj) {
+        console.log;
         if (type !== 'map') {
-          obj.on('spawn', function() {
+          obj.on('spawn', function(loc) {
             return self.grid.set(obj.loc, obj.symbol, function(callback) {});
           });
           return obj.on('move', function(type, oldloc, newloc) {

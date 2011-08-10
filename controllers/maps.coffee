@@ -26,10 +26,11 @@ exports.Map = class Map
     
     ### Event Emitters ###
     world.on 'load', (type, obj) ->
+      console.log 
       # Ignore all map events
       if type != 'map'
         # Place objects on the map when they spawn
-        obj.on 'spawn', ->
+        obj.on 'spawn', (loc) ->
           self.grid.set obj.loc, obj.symbol, (callback) ->
         
         # Update map when objects move

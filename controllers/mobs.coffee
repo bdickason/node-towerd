@@ -31,10 +31,12 @@ exports.Mob = class Mob extends EventEmitter
         console.log 'listening to ' + obj.uid
         obj.on 'fire', (uid, damage) ->
           console.log 'shots fired captain! uid: ' + uid + ' self.uid: ' + self.uid
-          if self.uid == uid
+          console.log self.uid == uid
+          console.log 'shots fired captain! uid: ' + uid + ' self.uid: ' + self.uid
+          ### if self.uid == uid
             # Holy shit, the shot was fired at me!
             console.log 'Im hit'
-            self.hit(damage)
+            self.hit(damage) ###
           
   spawn: (loc, callback) ->
     @curHP = @maxHP # Always spawn with full life (for now!)

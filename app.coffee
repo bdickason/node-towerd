@@ -5,7 +5,7 @@ sys = require 'sys'
 mongoose = require 'mongoose'
 gzippo = require 'gzippo'
 cfg = require './config/config.js'    # contains API keys, etc.
-
+init = require './controllers/utils/init.js'
 
 app = express.createServer()
 io = (require 'socket.io').listen app
@@ -14,6 +14,7 @@ app.configure ->
   app.set 'views', __dirname + '/views'
   app.set 'view engine', 'jade'
   app.register '.html', require 'jade'
+  app.use express.logger()
   app.use express.methodOverride()
   app.use express.bodyParser()
   app.use express.cookieParser()

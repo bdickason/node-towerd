@@ -15,6 +15,7 @@
       this.size = 10;
       this.fakeMob = new Obj;
       this.fakeMob.symbol = 'm';
+      this.fakeMob.loc = [0, 1];
       return this.map = new Map(this.id);
     });
     it('Loads a new map called hiddenvalley', function() {
@@ -28,7 +29,7 @@
     it('Loads a mob when world calls a load event', function() {
       var self;
       world.emit('load', 'mob', this.fakeMob);
-      this.fakeMob.emit('spawn', [0, 1]);
+      this.fakeMob.emit('spawn', 'mob', [0, 1]);
       self = this;
       return this.map.grid.get([0, 1], function(res) {
         return expect(res).toEqual(self.fakeMob.symbol);

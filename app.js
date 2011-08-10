@@ -1,5 +1,5 @@
 (function() {
-  var RedisStore, Users, World, app, cfg, express, gzippo, http, io, mongoose, sys, world;
+  var RedisStore, Users, World, app, cfg, express, gzippo, http, init, io, mongoose, sys, world;
   http = require('http');
   express = require('express');
   RedisStore = (require('connect-redis'))(express);
@@ -7,12 +7,14 @@
   mongoose = require('mongoose');
   gzippo = require('gzippo');
   cfg = require('./config/config.js');
+  init = require('./controllers/utils/init.js');
   app = express.createServer();
   io = (require('socket.io')).listen(app);
   app.configure(function() {
     app.set('views', __dirname + '/views');
     app.set('view engine', 'jade');
     app.register('.html', require('jade'));
+    app.use(express.logger());
     app.use(express.methodOverride());
     app.use(express.bodyParser());
     app.use(express.cookieParser());

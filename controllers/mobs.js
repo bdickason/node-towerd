@@ -39,10 +39,12 @@
           console.log('listening to ' + obj.uid);
           return obj.on('fire', function(uid, damage) {
             console.log('shots fired captain! uid: ' + uid + ' self.uid: ' + self.uid);
-            if (self.uid === uid) {
-              console.log('Im hit');
-              return self.hit(damage);
-            }
+            console.log(self.uid === uid);
+            return console.log('shots fired captain! uid: ' + uid + ' self.uid: ' + self.uid);
+            /* if self.uid == uid
+              # Holy shit, the shot was fired at me!
+              console.log 'Im hit'
+              self.hit(damage) */
           });
         }
       });
