@@ -9,16 +9,15 @@
   cfg = require('./config/config.js');
   init = require('./controllers/utils/init.js');
   winston = require('winston');
-  console.log("Subdomain: " + cfg.LOGGLY_SUBDOMAIN + " input token: " + cfg.LOGGLY_INPUTTOKEN);
   global.logger = new winston.Logger({
     transports: [
-      new winston.transports.Console({
-        level: 'debug',
-        colorize: true
-      }), new winston.transports.Loggly({
+      new winston.transports.Loggly({
         level: 'info',
         subdomain: cfg.LOGGLY_SUBDOMAIN,
         inputToken: cfg.LOGGLY_INPUTTOKEN
+      }), new winston.transports.Console({
+        level: 'debug',
+        colorize: true
       })
     ]
   });
@@ -39,7 +38,7 @@
     return app.use(gzippo.staticGzip(__dirname + '/public'));
   });
   mongoose.connection.on('open', function() {
-    return console.log('Mongo is connected!');
+    return logger.log('info', 'Mongo is connected!');
   });
   app.dynamicHelpers({
     session: function(req, res) {

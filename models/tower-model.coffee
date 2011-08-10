@@ -2,7 +2,9 @@ cfg = require '../config/config.js'    # contains API keys, etc.
 mongoose = require 'mongoose'
 
 # Initialize DB
-db = mongoose.connect cfg.DB
+db = mongoose.connect cfg.DB, (err) ->
+  if err
+    logger.log 'error', err
 
 Schema = mongoose.Schema
 ObjectId = Schema.ObjectId

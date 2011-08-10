@@ -9,13 +9,10 @@ init = require './controllers/utils/init.js'
 winston = require 'winston'
 
 # Setup logging
-
-console.log "Subdomain: " + cfg.LOGGLY_SUBDOMAIN + " input token: " + cfg.LOGGLY_INPUTTOKEN
-
 global.logger = new (winston.Logger)( {
   transports: [
-    new (winston.transports.Console)({ level: 'debug', colorize: true }),
     new (winston.transports.Loggly)({ level: 'info', subdomain: cfg.LOGGLY_SUBDOMAIN, inputToken: cfg.LOGGLY_INPUTTOKEN })
+    new (winston.transports.Console)({ level: 'debug', colorize: true }), # Should catch 'debug' and 'error' levels
     ]
 })
 
@@ -35,7 +32,7 @@ app.configure ->
   app.use(gzippo.staticGzip(__dirname + '/public'));  
   
 mongoose.connection.on 'open', ->
-  console.log 'Mongo is connected!'
+  logger.log 'info', 'Mongo is connected!'
   
 app.dynamicHelpers { session: (req, res) -> req.session }
 

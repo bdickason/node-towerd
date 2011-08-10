@@ -2,7 +2,11 @@
   var MapSchema, ObjectId, Schema, cfg, db, mongoose;
   cfg = require('../config/config.js');
   mongoose = require('mongoose');
-  db = mongoose.connect(cfg.DB);
+  db = mongoose.connect(cfg.DB, function(err) {
+    if (err) {
+      return logger.log('error', err);
+    }
+  });
   Schema = mongoose.Schema;
   ObjectId = Schema.ObjectId;
   MapSchema = new Schema({
