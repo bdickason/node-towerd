@@ -18,7 +18,7 @@
     function Tower(name) {
       var self, toLoad;
       name = name.toLowerCase();
-      console.log('Loading tower: ' + name);
+      logger.info('Loading tower: ' + name);
       toLoad = (require('../data/towers/' + name + '.js')).tower;
       this.uid = Math.floor(Math.random() * 10000000);
       this.id = toLoad.id;
@@ -43,7 +43,7 @@
     Tower.prototype.spawn = function(loc, callback) {
       this.loc = loc;
       this.emit('spawn', 'tower', this.loc);
-      console.log('Spawning tower [' + this.name + '] at (' + this.loc + ') with UID: ' + this.uid);
+      logger.info('Spawning tower [' + this.name + '] at (' + this.loc + ') with UID: ' + this.uid);
       return this.save(function() {});
     };
     Tower.prototype.checkTargets = function(callback) {
@@ -57,12 +57,12 @@
       }, function(err, hits) {
         var mob, _i, _len;
         if (err) {
-          return console.log('Error: ' + err);
+          return logger.error('Error: ' + err);
         } else {
           for (_i = 0, _len = hits.length; _i < _len; _i++) {
             mob = hits[_i];
             self.emit('fire', mob.uid, self.damage);
-            console.log('firing on: ' + mob.uid + ' with damage: ' + self.damage);
+            logger.debug('firing on: ' + mob.uid + ' with damage: ' + self.damage);
           }
           return callback(hits);
         }
@@ -82,7 +82,7 @@
       self = this;
       return this.model.save(function(err, saved) {
         if (err) {
-          return console.log('Error saving: ' + err);
+          return console.warning('Error saving: ' + err);
         }
       });
     };

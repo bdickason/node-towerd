@@ -70,7 +70,7 @@
     };
     World.prototype.destroy = function() {
       var maps, mobs, towers;
-      console.log('DESTROYING the game ;(');
+      logger.info('DESTROYING the game ;(');
       clearInterval(this.game);
       maps = [];
       mobs = [];

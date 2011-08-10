@@ -65,10 +65,10 @@ exports.World = class World extends EventEmitter
     @emit 'gameLoop'  # A bunch of stuff listens to this to know when a 'turn' has finished    
 
     @toString (json) ->
-      console.log json
+      console.log json  # Have to log via console because of this lame array.
     
   destroy: ->
-    console.log 'DESTROYING the game ;('
+    logger.info 'DESTROYING the game ;('
     clearInterval @game # stop game clock
     maps = []
     mobs = []

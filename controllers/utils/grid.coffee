@@ -26,7 +26,7 @@ exports.Grid = class Grid
     callback @grid[loc[0]][loc[1]]
 
   toString: (callback) ->
-    callback @grid.toString()  
+    callback @grid.toString()
   
   toJSON: (callback) ->
     callback { grid: @grid, w: @w, h: @h}

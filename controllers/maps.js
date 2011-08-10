@@ -8,7 +8,7 @@
     function Map(name) {
       var self, toLoad;
       name = name.toLowerCase();
-      console.log('Loading map: ' + name);
+      logger.info('Loading map: ' + name);
       toLoad = (require('../data/maps/' + name + '.js')).map;
       this.uid = Math.floor(Math.random() * 10000000);
       this.id = toLoad.id;
@@ -22,7 +22,6 @@
       self = this;
       /* Event Emitters */
       world.on('load', function(type, obj) {
-        console.log;
         if (type !== 'map') {
           obj.on('spawn', function(loc) {
             return self.grid.set(obj.loc, obj.symbol, function(callback) {});
@@ -46,9 +45,7 @@
       });
       return newmap.save(function(err, saved) {
         if (err) {
-          return console.log('Error saving: ' + err);
-        } else {
-          return console.log('Saved Map: ' + newmap.uid);
+          return logger.warning('Error saving: ' + err);
         }
       });
     };

@@ -16,7 +16,7 @@
       }
       return User.find(query, function(err, user) {
         if (err) {
-          return console.log('Error Retrieving: ' + err);
+          return logger.error('Error Retrieving: ' + err);
         } else {
           return callback(user);
         }
@@ -30,9 +30,9 @@
       });
       return newuser.save(function(err, user_saved) {
         if (err) {
-          return console.log('Error Saving: ' + err);
+          return logger.warning('Error Saving: ' + err);
         } else {
-          return console.log('Saved: ' + newuser);
+          return logger.info('Saved: ' + newuser);
         }
       });
     };

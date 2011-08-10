@@ -11,8 +11,8 @@ winston = require 'winston'
 # Setup logging
 global.logger = new (winston.Logger)( {
   transports: [
+    new (winston.transports.Console)({ level: 'debug', colorize: true }), # Should catch 'debug' levels (ideally error too but oh well)
     new (winston.transports.Loggly)({ level: 'info', subdomain: cfg.LOGGLY_SUBDOMAIN, inputToken: cfg.LOGGLY_INPUTTOKEN })
-    new (winston.transports.Console)({ level: 'debug', colorize: true }), # Should catch 'debug' and 'error' levels
     ]
 })
 
@@ -32,12 +32,12 @@ app.configure ->
   app.use(gzippo.staticGzip(__dirname + '/public'));  
   
 mongoose.connection.on 'open', ->
-  logger.log 'info', 'Mongo is connected!'
+  logger.info 'Mongo is connected!'
   
 app.dynamicHelpers { session: (req, res) -> req.session }
 
 ### Spawn the world!! ###
-console.log 'Spawning New Game'  
+logger.info 'Spawning New Game'  
 World = (require './world.js').World
 world = new World
 global.world = world  # world needs to be called from anywhere/everywhere
@@ -51,7 +51,7 @@ Users = (require './controllers/user.js').Users
 # Home Page
 app.get '/', (req, res) ->
   if typeof world == 'undefined'
-    console.log 'Game has not started yet.'
+    logger.log 'Game has not started yet.'
     res.redirect '/'
   else
     world.toString (json) ->
@@ -85,7 +85,6 @@ app.get '/register/:id/:name', (req, res) ->
 app.get '/users', (req, res) ->
   user = new Users
   user.get null, (json) ->
-    console.log 'json: ' + json
     res.send json
     # res.render 'users', { json: json }
 
@@ -102,17 +101,16 @@ app.get '/login', (req, res) ->
     # User is already auth'd
     res.redirect '/'
   else
-    console.log 'User logged in.'
+    logger.info 'User logged in.'
     req.session.id = 0
     req.session.name = 'verb'
     req.session.auth = 1
     res.redirect '/'
-    console.log 'TODO - Render Login page and ask for username'
+    logger.warning 'TODO - Render Login page and ask for username'
   
 app.get '/logout', (req, res) ->
-  console.log '--- LOGOUT ---'
-  console.log req.session
-  console.log '--- LOGOUT ---'
+  logger.info '--- LOGOUT ---'
+  logger.info req.session
   req.session.destroy()
   res.redirect '/'
   
@@ -122,7 +120,7 @@ app.listen process.env.PORT or 3000
 io.sockets.on 'connection', (socket) ->
   socket.emit 'test', hello: 'world'
   socket.on 'test event', (data) ->
-    console.log data
+    logger.debug data
     
 ### Socket/World Event Listners ###
 # 

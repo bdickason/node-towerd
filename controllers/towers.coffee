@@ -9,7 +9,7 @@ mobModel = require '../models/mob-model.js'
 exports.Tower = class Tower extends EventEmitter
   constructor: (name) ->
     name = name.toLowerCase() # In case someone throws in some weird name
-    console.log 'Loading tower: ' + name
+    logger.info 'Loading tower: ' + name
     toLoad = (require '../data/towers/' + name + '.js').tower
     
     @uid = Math.floor Math.random()*10000000  # Generate a unique ID for each instance of this tower
@@ -37,7 +37,7 @@ exports.Tower = class Tower extends EventEmitter
   spawn: (loc, callback) ->
     @loc = loc
     @emit 'spawn', 'tower', @loc
-    console.log 'Spawning tower [' + @name + '] at (' + @loc + ') with UID: ' + @uid
+    logger.info 'Spawning tower [' + @name + '] at (' + @loc + ') with UID: ' + @uid
     
     @save ->
 
@@ -47,11 +47,11 @@ exports.Tower = class Tower extends EventEmitter
     self = @
     mobModel.find { loc : { $near : @loc , $maxDistance : @range } }, (err, hits) -> 
       if err
-        console.log 'Error: ' + err
+        logger.error 'Error: ' + err
       else
         for mob in hits
           self.emit 'fire', mob.uid, self.damage
-          console.log 'firing on: ' + mob.uid + ' with damage: ' + self.damage
+          logger.debug 'firing on: ' + mob.uid + ' with damage: ' + self.damage
         callback hits
   
   save: (callback) ->
@@ -60,7 +60,7 @@ exports.Tower = class Tower extends EventEmitter
     self = @
     @model.save (err, saved) ->
       if err
-        console.log 'Error saving: ' + err
+        console.warning 'Error saving: ' + err
     
   toString: (callback) ->
     output = 'TOWER ' + @uid + ' [' + @id + ']  loc: (' + @loc[0] + ', ' + @loc[1] + ')  Range: ' + @range
