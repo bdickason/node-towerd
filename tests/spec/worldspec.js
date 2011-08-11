@@ -1,6 +1,7 @@
 (function() {
-  /* Mob Tests */  var Obj, World, basedir;
+  /* Mob Tests */  var App, Obj, World, basedir;
   basedir = '../../';
+  App = require(basedir + 'app.js');
   World = (require(basedir + 'world.js')).World;
   Obj = (require(basedir + 'controllers/utils/object.js')).Obj;
   describe('Mob mobs.js', function() {

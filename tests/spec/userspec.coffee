@@ -1,10 +1,12 @@
 basedir = '../../'  # 
+App = require basedir + 'app.js'
 cfg = require basedir + 'config/config.js'  # contains API keys, etc'
 Users = (require basedir + 'controllers/user.js').Users
 
 # Unit Tests
 
 # Integration Tests
+### TODO - Rewrite tests when we integrate users
 describe 'Users - user.js', -> 
   it 'Returns at least one valid user - /users', ->
     user = new Users
@@ -25,3 +27,4 @@ describe 'List a single user: /users/:id', ->
       expect(json[1]).toBeUndefined()
       jasmine.asyncSpecDone()
     jasmine.asyncSpecWait()
+###

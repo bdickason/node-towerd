@@ -1,6 +1,7 @@
 (function() {
-  /* Utilities Tests */  var Grid, basedir;
+  /* Utilities Tests */  var App, Grid, basedir;
   basedir = '../../';
+  App = require(basedir + 'app.js');
   Grid = (require(basedir + 'controllers/utils/grid.js')).Grid;
   describe('2d Grid utils/grid.js', function() {
     beforeEach(function() {

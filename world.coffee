@@ -11,22 +11,22 @@ tower = (require './controllers/towers').Tower  # Tower functions like attack, e
 
 exports.World = class World extends EventEmitter
 
-  constructor: ->
+  constructor: (app) ->
     ### Initial config ###
-    @gameTime = 3000  # every 3000ms, the game progresses
+    @gameTime = 2000  # every n ms, the game progresses
 
-    ### Start the game!! ###
-    @game = setInterval ->
-      world.gameLoop()
-    , @gameTime
-    
     # For some reason we have to wait to load everything or else 'world' doesn't get defined as a global var
     self = @
     @load = setTimeout ->
       self.loadEntities( { map: 'hiddenvalley' } )
     , 1000
-    
-      
+
+  ### Start the game!! ###
+  start: ->
+    @game = setInterval ->
+      world.gameLoop()
+    , @gameTime
+  
   loadEntities: (json, callback) ->
     
     ### Load the map ###

@@ -1,11 +1,9 @@
 (function() {
-  var RedisStore, Users, World, app, cfg, express, gzippo, http, init, io, mongoose, sys, winston, world;
+  var RedisStore, Users, World, app, cfg, express, http, init, io, load, sys, winston;
   http = require('http');
   express = require('express');
   RedisStore = (require('connect-redis'))(express);
   sys = require('sys');
-  mongoose = require('mongoose');
-  gzippo = require('gzippo');
   cfg = require('./config/config.js');
   init = require('./controllers/utils/init.js');
   winston = require('winston');
@@ -34,41 +32,26 @@
       secret: cfg.SESSION_SECRET,
       store: new RedisStore
     }));
-    app.use(app.router);
-    return app.use(gzippo.staticGzip(__dirname + '/public'));
+    return app.use(app.router);
   });
   app.dynamicHelpers({
     session: function(req, res) {
       return req.session;
     }
   });
-  global.db = mongoose.connect(cfg.DB, function(err) {
-    if (err) {
-      return logger.log('error', err);
-    }
-  });
-  mongoose.connection.on('open', function() {
-    return logger.info('Mongo is connected!');
-  });
-  /* Spawn the world!! */
-  logger.info('Spawning New Game');
-  World = (require('./world.js')).World;
-  world = new World;
-  global.world = world;
-  world.emit('load');
+  global.db = require('./models/db').db;
   /* Initialize controllers */
   Users = (require('./controllers/user.js')).Users;
+  World = (require('./world.js')).World;
   /* Start Route Handling */
   app.get('/', function(req, res) {
+    logger.debug(typeof world);
     if (typeof world === 'undefined') {
       logger.log('Game has not started yet.');
+      load();
       return res.redirect('/');
     } else {
-      return world.toString(function(json) {
-        return res.render('game', {
-          json: json
-        });
-      });
+      return res.render('game', {});
     }
     /* Handle logins
     if req.session.auth == 1
@@ -78,7 +61,9 @@
       res.send "You are not logged in. <A HREF='/login'>Click here</A> to login"
     */
   });
+  /* Start a new game! */
   app.get('/start', function(req, res) {
+    world.start();
     return res.redirect('/');
   });
   app.get('/end', function(req, res) {
@@ -125,6 +110,13 @@
     req.session.destroy();
     return res.redirect('/');
   });
+  load = function() {
+    /* Spawn the world!! */    var world;
+    logger.info('Spawning New Game');
+    world = new World(app);
+    global.world = world;
+    return world.emit('load');
+  };
   app.listen(process.env.PORT || 3000);
   /* Socket.io Stuff */
   io.sockets.on('connection', function(socket) {

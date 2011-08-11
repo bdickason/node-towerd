@@ -1,5 +1,6 @@
 ### Mob Tests ###
 basedir = '../../'
+App = require basedir + 'app.js'
 Mob = (require basedir + 'controllers/mobs.js').Mob
 MobModel = require basedir + 'models/mob-model.js'
 

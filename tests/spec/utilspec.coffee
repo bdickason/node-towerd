@@ -1,5 +1,6 @@
 ### Utilities Tests ###
 basedir = '../../'  # 
+App = require basedir + 'app.js'
 Grid = (require basedir + 'controllers/utils/grid.js').Grid
 
 # Unit Tests

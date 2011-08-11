@@ -1,9 +1,12 @@
 ### Maps Tests ###
 basedir = '../../'
+
+# Initialize DB
+global.db = require(basedir + 'models/db').db
+
 Map = (require basedir + 'controllers/maps.js').Map
 MapModel = require basedir + 'models/map-model.js' 
 Obj = (require basedir + 'controllers/utils/object.js').Obj
-
 
 # Unit Tests
 describe 'Map map.js', ->

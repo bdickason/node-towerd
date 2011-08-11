@@ -1,33 +1,29 @@
 (function() {
-  var Users, basedir, cfg;
+  var App, Users, basedir, cfg;
   basedir = '../../';
+  App = require(basedir + 'app.js');
   cfg = require(basedir + 'config/config.js');
   Users = (require(basedir + 'controllers/user.js')).Users;
-  describe('Users - user.js', function() {
-    return it('Returns at least one valid user - /users', function() {
-      var user;
-      user = new Users;
-      user.get(null, function(json) {
-        expect(json).toBeDefined();
-        expect(json[0].name).toBeDefined();
-        expect(json[0].id).toBeDefined();
-        return jasmine.asyncSpecDone();
-      });
-      return jasmine.asyncSpecWait();
-    });
-  });
-  describe('List a single user: /users/:id', function() {
-    return it('Returns only one valid user', function() {
-      var user;
-      user = new Users;
-      user.get('0', function(json) {
-        expect(json).toBeDefined();
-        expect(json[0].name).toBeDefined();
-        expect(json[0].id).toBeDefined();
-        expect(json[1]).toBeUndefined();
-        return jasmine.asyncSpecDone();
-      });
-      return jasmine.asyncSpecWait();
-    });
-  });
+  /* TODO - Rewrite tests when we integrate users
+  describe 'Users - user.js', -> 
+    it 'Returns at least one valid user - /users', ->
+      user = new Users
+      user.get null, (json) ->
+        expect(json).toBeDefined()
+        expect(json[0].name).toBeDefined()
+        expect(json[0].id).toBeDefined()
+        jasmine.asyncSpecDone()
+      jasmine.asyncSpecWait()
+  
+  describe 'List a single user: /users/:id', ->
+    it 'Returns only one valid user', ->
+      user = new Users
+      user.get '0', (json) ->
+        expect(json).toBeDefined()
+        expect(json[0].name).toBeDefined()
+        expect(json[0].id).toBeDefined()
+        expect(json[1]).toBeUndefined()
+        jasmine.asyncSpecDone()
+      jasmine.asyncSpecWait()
+  */
 }).call(this);
