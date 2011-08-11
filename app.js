@@ -1,10 +1,9 @@
 (function() {
-  var RedisStore, Users, World, app, cfg, express, gzippo, http, init, io, load, sys, winston;
+  var RedisStore, Users, World, app, cfg, express, http, init, io, load, sys, winston;
   http = require('http');
   express = require('express');
   RedisStore = (require('connect-redis'))(express);
   sys = require('sys');
-  gzippo = require('gzippo');
   cfg = require('./config/config.js');
   init = require('./controllers/utils/init.js');
   winston = require('winston');
@@ -13,10 +12,6 @@
       new winston.transports.Console({
         level: 'debug',
         colorize: true
-      }), new winston.transports.Loggly({
-        level: 'info',
-        subdomain: cfg.LOGGLY_SUBDOMAIN,
-        inputToken: cfg.LOGGLY_INPUTTOKEN
       })
     ]
   });
@@ -34,7 +29,7 @@
       store: new RedisStore
     }));
     app.use(app.router);
-    return app.use(gzippo.staticGzip(__dirname + '/public'));
+    return app.use(express.static(__dirname + '/public'));
   });
   app.dynamicHelpers({
     session: function(req, res) {
@@ -122,19 +117,12 @@
   app.listen(process.env.PORT || 3000);
   /* Socket.io Stuff */
   io.sockets.on('connection', function(socket) {
-    /* Socket/World Event Listners */    if (typeof world !== 'undefined') {
-      return world.on('load', function(type, obj) {
-        if (type === 'mob') {
-          socket.emit('load', type, obj);
-          obj.on('spawn', function(loc) {
-            return socket.emit('spawn', type, obj);
-          });
-          return obj.on('move', function(type, oldloc, newloc) {
-            logger.debug("logging move: [" + newloc + "]");
-            return socket.emit('move', type, obj);
-          });
-        }
-      });
-    }
+    socket.emit('test', {
+      hello: 'world'
+    });
+    return socket.on('test event', function(data) {
+      return logger.debug(data);
+    });
   });
+  /* Socket/World Event Listners */
 }).call(this);

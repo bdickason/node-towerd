@@ -2,7 +2,6 @@ http = require 'http'
 express = require 'express'
 RedisStore = (require 'connect-redis')(express)
 sys = require 'sys'
-gzippo = require 'gzippo'
 cfg = require './config/config.js'    # contains API keys, etc.
 init = require './controllers/utils/init.js'
 winston = require 'winston'
@@ -11,7 +10,7 @@ winston = require 'winston'
 global.logger = new (winston.Logger)( {
   transports: [
     new (winston.transports.Console)({ level: 'debug', colorize: true }), # Should catch 'debug' levels (ideally error too but oh well)
-    new (winston.transports.Loggly)({ level: 'info', subdomain: cfg.LOGGLY_SUBDOMAIN, inputToken: cfg.LOGGLY_INPUTTOKEN })
+    # new (winston.transports.Loggly)({ level: 'info', subdomain: cfg.LOGGLY_SUBDOMAIN, inputToken: cfg.LOGGLY_INPUTTOKEN })
     ]
 })
 
@@ -28,7 +27,7 @@ app.configure ->
   app.use express.cookieParser()
   app.use express.session { secret: cfg.SESSION_SECRET, store: new RedisStore}
   app.use app.router
-  app.use(gzippo.staticGzip(__dirname + '/public'));  
+  app.use express.static __dirname + '/public'  
 
 app.dynamicHelpers { session: (req, res) -> req.session }
 
@@ -118,23 +117,10 @@ app.listen process.env.PORT or 3000
 
 ### Socket.io Stuff ###
 io.sockets.on 'connection', (socket) ->
+  socket.emit 'test', hello: 'world'
+  socket.on 'test event', (data) ->
+    logger.debug data
 
-  ### Socket/World Event Listners ###
-  # 
-  # This is the stuff that ties the game to the client
-
-  if typeof world != 'undefined'
-    world.on 'load', (type, obj) ->
-      if type == 'mob'
-        
-        # Load any mob resources
-        socket.emit 'load', type, obj
-        
-        # Placed the spawned mob on the map
-        obj.on 'spawn', (loc) ->
-          socket.emit 'spawn', type, obj
-      
-        # Update map when the mob moves
-        obj.on 'move', (type, oldloc, newloc) ->
-          logger.debug "logging move: [#{newloc}]"
-          socket.emit 'move', type, obj
+### Socket/World Event Listners ###
+# 
+# This is the stuff that ties the game to the client
