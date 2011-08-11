@@ -15,7 +15,7 @@ exports.Users = class Users
     
     User.find query, (err, user) ->
       if err
-        console.log 'Error Retrieving: ' + err        
+        logger.error 'Error Retrieving: ' + err        
       else
         callback user
 
@@ -24,6 +24,6 @@ exports.Users = class Users
     newuser = new User { 'id': id, 'name': name}
     newuser.save (err, user_saved) ->
       if err
-        console.log 'Error Saving: ' + err
+        logger.warn 'Error Saving: ' + err
       else
-        console.log 'Saved: ' + newuser
+        logger.info 'Saved: ' + newuser

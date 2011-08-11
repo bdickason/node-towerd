@@ -17,7 +17,7 @@
     function Mob(name) {
       var self, toLoad;
       name = name.toLowerCase();
-      console.log('Loading mob: ' + name);
+      logger.info('Loading mob: ' + name);
       toLoad = (require('../data/mobs/' + name + '.js')).mob;
       this.uid = Math.floor(Math.random() * 10000000);
       this.id = toLoad.id;
@@ -34,19 +34,30 @@
       world.on('gameLoop', function() {
         return self.move(1, 1, function(json) {});
       });
+      world.on('load', function(type, obj) {
+        if (type === 'tower') {
+          return obj.on('fire', function(uid, damage) {
+            if (self.uid === uid) {
+              return self.hit(damage);
+            }
+          });
+        }
+      });
     }
     Mob.prototype.spawn = function(loc, callback) {
       this.curHP = this.maxHP;
       this.loc = loc;
       this.emit('spawn', 'mob', this.loc);
-      console.log('Spawning mob [' + this.id + '] at (' + this.loc + ') with UID: ' + this.uid);
+      logger.info('Spawning mob [' + this.id + '] at (' + this.loc + ') with UID: ' + this.uid);
       return this.save(function() {});
     };
     Mob.prototype.hit = function(damage) {
       this.curHP = this.curHP - damage;
       if (this.curHP > 0) {
+        logger.info("MOB " + this.uid + " [" + this.curHP + "/" + this.maxHP + "] was hit for " + damage);
         return this.emit('hit', this.curHP);
       } else {
+        logger.info("MOB [" + this.uid + "] is dead!");
         return this.emit('die', this.curHP);
       }
     };
@@ -56,23 +67,23 @@
       this.loc = [this.loc[0] + X, this.loc[1] + Y];
       newloc = this.loc;
       self = this;
-      mobModel.find({
+      return mobModel.find({
         uid: this.uid
       }, function(err, mob) {
         if (err) {
-          return console.log('Error finding mob: {@uid} ' + err);
+          return logger.error('Error finding mob: {@uid} ' + err);
         } else {
           mob[0].loc = newloc;
           return mob[0].save(function(err) {
             if (err) {
-              return console.log('Error saving mob: {@uid} ' + err);
+              return logger.warn('Error saving mob: {@uid} ' + err);
             } else {
-              return self.emit('move', 'mob', oldloc, newloc);
+              self.emit('move', 'mob', oldloc, newloc);
+              return logger.info('MOB ' + self.uid + ' [' + self.id + '] moved to (' + self.loc[0] + ',' + self.loc[1] + ')');
             }
           });
         }
       });
-      return console.log('MOB ' + this.uid + ' [' + this.id + '] moved to (' + this.loc[0] + ',' + this.loc[1] + ')');
     };
     Mob.prototype.save = function(callback) {
       var newmob;
@@ -88,9 +99,7 @@
       });
       return newmob.save(function(err, saved) {
         if (err) {
-          return console.log('Error saving: ' + err);
-        } else {
-          return console.log('Saved mob: ' + newmob.uid);
+          return logger.error('Error saving: ' + err);
         }
       });
     };
@@ -98,9 +107,6 @@
       var output;
       output = 'MOB ' + this.uid + ' [' + this.id + ']  loc: (' + this.loc[0] + ', ' + this.loc[1] + ')  HP: ' + this.curHP + '/' + this.maxHP;
       return callback(output);
-    };
-    Mob.prototype.defineEmitters = function(callback) {
-      return world.on('test', function() {});
     };
     return Mob;
   })();

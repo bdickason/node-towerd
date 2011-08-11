@@ -18,7 +18,7 @@
     function Tower(name) {
       var self, toLoad;
       name = name.toLowerCase();
-      console.log('Loading tower: ' + name);
+      logger.info('Loading tower: ' + name);
       toLoad = (require('../data/towers/' + name + '.js')).tower;
       this.uid = Math.floor(Math.random() * 10000000);
       this.id = toLoad.id;
@@ -31,30 +31,41 @@
       this.loc = [null, null];
       this.model = null;
       self = this;
+      /* Events */
       world.on('load', function(type, obj) {
         if (type === 'mob') {
-          return obj.on('move', function(loc) {
-            return self.checkTargets(function(res) {});
+          obj.on('move', function(loc) {
+            return self.checkTarget(obj, function(res) {});
           });
+          return obj.on('die', function(hp) {});
         }
       });
     }
     Tower.prototype.spawn = function(loc, callback) {
       this.loc = loc;
       this.emit('spawn', 'tower', this.loc);
-      console.log('Spawning tower [' + this.name + '] at (' + this.loc + ') with UID: ' + this.uid);
+      logger.info('Spawning tower [' + this.name + '] at (' + this.loc + ') with UID: ' + this.uid);
       return this.save(function() {});
     };
-    Tower.prototype.checkTargets = function(callback) {
+    Tower.prototype.checkTarget = function(obj, callback) {
+      var self;
+      self = this;
       return mobModel.find({
         loc: {
           $near: this.loc,
           $maxDistance: this.range
         }
       }, function(err, hits) {
+        var mob, _i, _len;
         if (err) {
-          return console.log('Error: ' + err);
+          return logger.error('Error: ' + err);
         } else {
+          for (_i = 0, _len = hits.length; _i < _len; _i++) {
+            mob = hits[_i];
+            if (obj.loc.join('') === mob.loc.join('')) {
+              self.emit('fire', mob.uid.valueOf(), self.damage);
+            }
+          }
           return callback(hits);
         }
       });
@@ -73,9 +84,7 @@
       self = this;
       return this.model.save(function(err, saved) {
         if (err) {
-          return console.log('Error saving: ' + err);
-        } else {
-          return console.log('Saved Tower: ' + self.uid);
+          return logger.warn('Error saving: ' + err);
         }
       });
     };

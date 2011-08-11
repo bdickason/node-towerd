@@ -8,7 +8,7 @@ mapModel = require '../models/map-model.js'
 exports.Map = class Map
   constructor: (name) ->
     name = name.toLowerCase() # In case someone throws in some weird name
-    console.log 'Loading map: ' + name
+    logger.info 'Loading map: ' + name
     toLoad = (require '../data/maps/' + name + '.js').map
     
     @uid = Math.floor Math.random()*10000000  # Generate a unique ID for each instance of this map
@@ -23,12 +23,13 @@ exports.Map = class Map
     @save ->
     
     self = @
+    
     ### Event Emitters ###
     world.on 'load', (type, obj) ->
       # Ignore all map events
       if type != 'map'
         # Place objects on the map when they spawn
-        obj.on 'spawn', ->
+        obj.on 'spawn', (loc) ->
           self.grid.set obj.loc, obj.symbol, (callback) ->
         
         # Update map when objects move
@@ -41,9 +42,7 @@ exports.Map = class Map
     newmap = new mapModel ( { uid: @uid, id: @id, name: @name, theme: @theme, mobs: @mobs, size: @size } )
     newmap.save (err, saved) ->
       if err
-        console.log 'Error saving: ' + err
-      else
-        console.log 'Saved Map: ' + newmap.uid
+        logger.warn 'Error saving: ' + err
     
   toString: (callback) ->
     output = 'MAP ' + @uid + ' [' + @name + ']  Size: ' + @size

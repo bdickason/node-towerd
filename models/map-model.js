@@ -1,8 +1,7 @@
 (function() {
-  var MapSchema, ObjectId, Schema, cfg, db, mongoose;
+  var MapSchema, ObjectId, Schema, cfg, mongoose;
   cfg = require('../config/config.js');
   mongoose = require('mongoose');
-  db = mongoose.connect(cfg.DB);
   Schema = mongoose.Schema;
   ObjectId = Schema.ObjectId;
   MapSchema = new Schema({

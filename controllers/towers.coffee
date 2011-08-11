@@ -9,7 +9,7 @@ mobModel = require '../models/mob-model.js'
 exports.Tower = class Tower extends EventEmitter
   constructor: (name) ->
     name = name.toLowerCase() # In case someone throws in some weird name
-    console.log 'Loading tower: ' + name
+    logger.info 'Loading tower: ' + name
     toLoad = (require '../data/towers/' + name + '.js').tower
     
     @uid = Math.floor Math.random()*10000000  # Generate a unique ID for each instance of this tower
@@ -24,29 +24,35 @@ exports.Tower = class Tower extends EventEmitter
     @model = null
 
     self = @
+    
+    ### Events ###
     world.on 'load', (type, obj) ->
       # Ignore all other towers and maps
       if type == 'mob'
         # Check targets each time a mob moves        
         obj.on 'move', (loc) ->
-          self.checkTargets (res) ->
+          self.checkTarget obj, (res) ->
+        obj.on 'die', (hp) ->          
       
   # Activate the tower and place it on the map
   spawn: (loc, callback) ->
     @loc = loc
     @emit 'spawn', 'tower', @loc
-    console.log 'Spawning tower [' + @name + '] at (' + @loc + ') with UID: ' + @uid
+    logger.info 'Spawning tower [' + @name + '] at (' + @loc + ') with UID: ' + @uid
     
     @save ->
 
   
   # Check for anything within range
-  checkTargets: (callback) -> 
+  checkTarget: (obj, callback) -> 
+    self = @
     mobModel.find { loc : { $near : @loc , $maxDistance : @range } }, (err, hits) -> 
       if err
-        console.log 'Error: ' + err
+        logger.error 'Error: ' + err
       else
-        # @emit 'shot'
+        for mob in hits
+          if obj.loc.join('') == mob.loc.join('') # can't compare two objects directly
+            self.emit 'fire', mob.uid.valueOf(), self.damage
         callback hits
   
   save: (callback) ->
@@ -55,9 +61,7 @@ exports.Tower = class Tower extends EventEmitter
     self = @
     @model.save (err, saved) ->
       if err
-        console.log 'Error saving: ' + err
-      else
-        console.log 'Saved Tower: ' + self.uid
+        logger.warn 'Error saving: ' + err
     
   toString: (callback) ->
     output = 'TOWER ' + @uid + ' [' + @id + ']  loc: (' + @loc[0] + ', ' + @loc[1] + ')  Range: ' + @range

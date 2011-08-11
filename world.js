@@ -40,23 +40,23 @@
       /* Load and spawn the towers */
       this.towers = [];
       this.towers.push(new tower('cannon'));
-      _ref2 = this.towers;
-      for (_j = 0, _len2 = _ref2.length; _j < _len2; _j++) {
-        _tower = _ref2[_j];
-        this.emit('load', 'tower', _tower);
-      }
       /* Load the mobs */
       this.mobs = [];
-      _ref3 = this.maps;
-      for (_k = 0, _len3 = _ref3.length; _k < _len3; _k++) {
-        _map = _ref3[_k];
-        _ref4 = _map.mobs;
-        for (_l = 0, _len4 = _ref4.length; _l < _len4; _l++) {
-          mobId = _ref4[_l];
+      _ref2 = this.maps;
+      for (_j = 0, _len2 = _ref2.length; _j < _len2; _j++) {
+        _map = _ref2[_j];
+        _ref3 = _map.mobs;
+        for (_k = 0, _len3 = _ref3.length; _k < _len3; _k++) {
+          mobId = _ref3[_k];
           _mob = new mob(mobId);
           this.emit('load', 'mob', _mob);
           this.mobs.push(_mob);
         }
+      }
+      _ref4 = this.towers;
+      for (_l = 0, _len4 = _ref4.length; _l < _len4; _l++) {
+        _tower = _ref4[_l];
+        this.emit('load', 'tower', _tower);
       }
       this.mobs[0].spawn([0, 0]);
       this.mobs[1].spawn([1, 0]);
@@ -70,7 +70,7 @@
     };
     World.prototype.destroy = function() {
       var maps, mobs, towers;
-      console.log('DESTROYING the game ;(');
+      logger.info('DESTROYING the game ;(');
       clearInterval(this.game);
       maps = [];
       mobs = [];

@@ -1,5 +1,5 @@
 (function() {
-  var RedisStore, Users, World, app, cfg, express, gzippo, http, io, mongoose, sys, world;
+  var RedisStore, Users, World, app, cfg, express, gzippo, http, init, io, mongoose, sys, winston, world;
   http = require('http');
   express = require('express');
   RedisStore = (require('connect-redis'))(express);
@@ -7,6 +7,20 @@
   mongoose = require('mongoose');
   gzippo = require('gzippo');
   cfg = require('./config/config.js');
+  init = require('./controllers/utils/init.js');
+  winston = require('winston');
+  global.logger = new winston.Logger({
+    transports: [
+      new winston.transports.Console({
+        level: 'debug',
+        colorize: true
+      }), new winston.transports.Loggly({
+        level: 'info',
+        subdomain: cfg.LOGGLY_SUBDOMAIN,
+        inputToken: cfg.LOGGLY_INPUTTOKEN
+      })
+    ]
+  });
   app = express.createServer();
   io = (require('socket.io')).listen(app);
   app.configure(function() {
@@ -23,16 +37,21 @@
     app.use(app.router);
     return app.use(gzippo.staticGzip(__dirname + '/public'));
   });
-  mongoose.connection.on('open', function() {
-    return console.log('Mongo is connected!');
-  });
   app.dynamicHelpers({
     session: function(req, res) {
       return req.session;
     }
   });
+  global.db = mongoose.connect(cfg.DB, function(err) {
+    if (err) {
+      return logger.log('error', err);
+    }
+  });
+  mongoose.connection.on('open', function() {
+    return logger.info('Mongo is connected!');
+  });
   /* Spawn the world!! */
-  console.log('Spawning New Game');
+  logger.info('Spawning New Game');
   World = (require('./world.js')).World;
   world = new World;
   global.world = world;
@@ -42,7 +61,7 @@
   /* Start Route Handling */
   app.get('/', function(req, res) {
     if (typeof world === 'undefined') {
-      console.log('Game has not started yet.');
+      logger.log('Game has not started yet.');
       return res.redirect('/');
     } else {
       return world.toString(function(json) {
@@ -77,7 +96,6 @@
     var user;
     user = new Users;
     return user.get(null, function(json) {
-      console.log('json: ' + json);
       return res.send(json);
     });
   });
@@ -93,18 +111,17 @@
     if (req.session.auth === 1) {
       return res.redirect('/');
     } else {
-      console.log('User logged in.');
+      logger.info('User logged in.');
       req.session.id = 0;
       req.session.name = 'verb';
       req.session.auth = 1;
       res.redirect('/');
-      return console.log('TODO - Render Login page and ask for username');
+      return logger.warning('TODO - Render Login page and ask for username');
     }
   });
   app.get('/logout', function(req, res) {
-    console.log('--- LOGOUT ---');
-    console.log(req.session);
-    console.log('--- LOGOUT ---');
+    logger.info('--- LOGOUT ---');
+    logger.info(req.session);
     req.session.destroy();
     return res.redirect('/');
   });
@@ -115,7 +132,7 @@
       hello: 'world'
     });
     return socket.on('test event', function(data) {
-      return console.log(data);
+      return logger.debug(data);
     });
   });
   /* Socket/World Event Listners */
