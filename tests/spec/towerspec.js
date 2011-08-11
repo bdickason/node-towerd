@@ -36,7 +36,7 @@
         return expect(res[0].name).toEqual(self.name);
       });
     });
-    return it('Spawns itself on the map at 5, 4', function() {
+    it('Spawns itself on the map at 5, 4', function() {
       var self;
       self = this;
       this.tower.on('spawn', function(type, loc, callback) {
@@ -44,31 +44,23 @@
       });
       return this.tower.spawn([5, 4], function(callback) {});
     });
-    /* TODO - Find a way to gracefully clear the DB before tests run
-    it 'Finds no targets when none are in range', ->
-      
-      # Spawn the tower    
-      @tower.spawn [5, 4], (callback) ->      
-      
-      # Spawn a fake mob
-      fakeMob = new Mob 'warrior'
-    
-      fakeMob.spawn [0, 0], (callback) ->
-      
-      @tower.checkTargets (res) ->
-        expect(res).toEqual []
-    
-    it 'Fires on a target when one is in range', ->
-      # Spawn the tower    
-      @tower.spawn [5, 4], (callback) ->      
-    
-      # Spawn a fake mob
-      fakeMob = new Mob 'warrior'
-    
-      fakeMob.spawn [5, 5], (callback) ->
-    
-    
-      @tower.checkTarget fakeMob, (res) ->
-        expect(res[0].id).toEqual 'warrior'  */
+    it('Finds no targets when none are in range', function() {
+      var fakeMob;
+      this.tower.spawn([5, 4], function(callback) {});
+      fakeMob = new Mob('warrior');
+      fakeMob.spawn([0, 0], function(callback) {});
+      return this.tower.checkTarget(fakeMob, function(res) {
+        return expect(res).toEqual([]);
+      });
+    });
+    return it('Fires on a target when one is in range', function() {
+      var fakeMob;
+      this.tower.spawn([5, 4], function(callback) {});
+      fakeMob = new Mob('warrior');
+      fakeMob.spawn([5, 5], function(callback) {});
+      return this.tower.checkTarget(fakeMob, function(res) {
+        return expect(res[0].id).toEqual('warrior');
+      });
+    });
   });
 }).call(this);

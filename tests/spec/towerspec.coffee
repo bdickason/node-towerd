@@ -46,7 +46,6 @@ describe 'Towers towers.js', ->
       expect(self.tower.loc).toEqual([5, 4])
     @tower.spawn [5, 4], (callback) ->  
 
-  ### TODO - Find a way to gracefully clear the DB before tests run
   it 'Finds no targets when none are in range', ->
     
     # Spawn the tower    
@@ -57,7 +56,7 @@ describe 'Towers towers.js', ->
 
     fakeMob.spawn [0, 0], (callback) ->
     
-    @tower.checkTargets (res) ->
+    @tower.checkTarget fakeMob, (res) ->
       expect(res).toEqual []
 
   it 'Fires on a target when one is in range', ->
@@ -71,4 +70,4 @@ describe 'Towers towers.js', ->
 
 
     @tower.checkTarget fakeMob, (res) ->
-      expect(res[0].id).toEqual 'warrior'  ###
+      expect(res[0].id).toEqual 'warrior'
