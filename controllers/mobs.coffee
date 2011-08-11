@@ -40,12 +40,10 @@ exports.Mob = class Mob extends EventEmitter
     logger.info 'Spawning mob [' + @id + '] at (' + @loc + ') with UID: ' + @uid
     @save ->
    
-    
-  
   hit: (damage) ->
     @curHP = @curHP - damage
     if @curHP > 0
-      logger.debug "MOB #{@uid} [#{@curHP}/#{@maxHP}] was hit for #{damage}"
+      logger.info "MOB #{@uid} [#{@curHP}/#{@maxHP}] was hit for #{damage}"
       @emit 'hit', @curHP 
     else
       # mob is dead!

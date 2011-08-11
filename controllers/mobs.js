@@ -54,7 +54,7 @@
     Mob.prototype.hit = function(damage) {
       this.curHP = this.curHP - damage;
       if (this.curHP > 0) {
-        logger.debug("MOB " + this.uid + " [" + this.curHP + "/" + this.maxHP + "] was hit for " + damage);
+        logger.info("MOB " + this.uid + " [" + this.curHP + "/" + this.maxHP + "] was hit for " + damage);
         return this.emit('hit', this.curHP);
       } else {
         logger.info("MOB [" + this.uid + "] is dead!");

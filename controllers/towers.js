@@ -35,7 +35,7 @@
       world.on('load', function(type, obj) {
         if (type === 'mob') {
           obj.on('move', function(loc) {
-            return self.checkTarget(function(res) {});
+            return self.checkTarget(obj, function(res) {});
           });
           return obj.on('die', function(hp) {});
         }
@@ -47,7 +47,7 @@
       logger.info('Spawning tower [' + this.name + '] at (' + this.loc + ') with UID: ' + this.uid);
       return this.save(function() {});
     };
-    Tower.prototype.checkTargets = function(callback) {
+    Tower.prototype.checkTarget = function(obj, callback) {
       var self;
       self = this;
       return mobModel.find({
@@ -62,8 +62,9 @@
         } else {
           for (_i = 0, _len = hits.length; _i < _len; _i++) {
             mob = hits[_i];
-            self.emit('fire', mob.uid.valueOf(), self.damage);
-            logger.debug('firing on: ' + mob.uid + ' with damage: ' + self.damage);
+            if (obj.loc.join('') === mob.loc.join('')) {
+              self.emit('fire', mob.uid.valueOf(), self.damage);
+            }
           }
           return callback(hits);
         }

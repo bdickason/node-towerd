@@ -31,7 +31,7 @@ exports.Tower = class Tower extends EventEmitter
       if type == 'mob'
         # Check targets each time a mob moves        
         obj.on 'move', (loc) ->
-          self.checkTarget (res) ->
+          self.checkTarget obj, (res) ->
         obj.on 'die', (hp) ->          
       
   # Activate the tower and place it on the map
@@ -44,15 +44,15 @@ exports.Tower = class Tower extends EventEmitter
 
   
   # Check for anything within range
-  checkTargets: (callback) -> 
+  checkTarget: (obj, callback) -> 
     self = @
     mobModel.find { loc : { $near : @loc , $maxDistance : @range } }, (err, hits) -> 
       if err
         logger.error 'Error: ' + err
       else
         for mob in hits
-          self.emit 'fire', mob.uid.valueOf(), self.damage
-          logger.debug 'firing on: ' + mob.uid + ' with damage: ' + self.damage
+          if obj.loc.join('') == mob.loc.join('') # can't compare two objects directly
+            self.emit 'fire', mob.uid.valueOf(), self.damage
         callback hits
   
   save: (callback) ->
