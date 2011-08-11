@@ -8,7 +8,7 @@ Obj = (require basedir + 'controllers/utils/object.js').Obj
 
 
 # Unit Tests
-describe 'Mob mobs.js', ->
+describe 'World world.js', ->
   beforeEach ->
     global.world = new Obj # Required because maps relies on 'world' for some events
     

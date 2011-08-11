@@ -4,7 +4,7 @@
   App = require(basedir + 'app.js');
   World = (require(basedir + 'world.js')).World;
   Obj = (require(basedir + 'controllers/utils/object.js')).Obj;
-  describe('Mob mobs.js', function() {
+  describe('World world.js', function() {
     beforeEach(function() {
       global.world = new Obj;
       return this.world = new World;

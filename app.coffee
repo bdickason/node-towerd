@@ -118,10 +118,23 @@ app.listen process.env.PORT or 3000
 
 ### Socket.io Stuff ###
 io.sockets.on 'connection', (socket) ->
-  socket.emit 'test', hello: 'world'
-  socket.on 'test event', (data) ->
-    logger.debug data
 
-### Socket/World Event Listners ###
-# 
-# This is the stuff that ties the game to the client
+  ### Socket/World Event Listners ###
+  # 
+  # This is the stuff that ties the game to the client
+
+  if typeof world != 'undefined'
+    world.on 'load', (type, obj) ->
+      if type == 'mob'
+        
+        # Load any mob resources
+        socket.emit 'load', type, obj
+        
+        # Placed the spawned mob on the map
+        obj.on 'spawn', (loc) ->
+          socket.emit 'spawn', type, obj
+      
+        # Update map when the mob moves
+        obj.on 'move', (type, oldloc, newloc) ->
+          logger.debug "logging move: [#{newloc}]"
+          socket.emit 'move', type, obj

@@ -122,12 +122,19 @@
   app.listen(process.env.PORT || 3000);
   /* Socket.io Stuff */
   io.sockets.on('connection', function(socket) {
-    socket.emit('test', {
-      hello: 'world'
-    });
-    return socket.on('test event', function(data) {
-      return logger.debug(data);
-    });
+    /* Socket/World Event Listners */    if (typeof world !== 'undefined') {
+      return world.on('load', function(type, obj) {
+        if (type === 'mob') {
+          socket.emit('load', type, obj);
+          obj.on('spawn', function(loc) {
+            return socket.emit('spawn', type, obj);
+          });
+          return obj.on('move', function(type, oldloc, newloc) {
+            logger.debug("logging move: [" + newloc + "]");
+            return socket.emit('move', type, obj);
+          });
+        }
+      });
+    }
   });
-  /* Socket/World Event Listners */
 }).call(this);
