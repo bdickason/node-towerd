@@ -1,9 +1,10 @@
 (function() {
-  var RedisStore, Users, World, app, cfg, express, http, init, io, load, sys, winston;
+  var RedisStore, Users, World, app, cfg, express, gzippo, http, init, io, load, sys, winston;
   http = require('http');
   express = require('express');
   RedisStore = (require('connect-redis'))(express);
   sys = require('sys');
+  gzippo = require('gzippo');
   cfg = require('./config/config.js');
   init = require('./controllers/utils/init.js');
   winston = require('winston');
@@ -32,7 +33,8 @@
       secret: cfg.SESSION_SECRET,
       store: new RedisStore
     }));
-    return app.use(app.router);
+    app.use(app.router);
+    return app.use(gzippo.staticGzip(__dirname + '/public'));
   });
   app.dynamicHelpers({
     session: function(req, res) {

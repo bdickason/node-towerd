@@ -2,7 +2,7 @@ http = require 'http'
 express = require 'express'
 RedisStore = (require 'connect-redis')(express)
 sys = require 'sys'
-# gzippo = require 'gzippo'
+gzippo = require 'gzippo'
 cfg = require './config/config.js'    # contains API keys, etc.
 init = require './controllers/utils/init.js'
 winston = require 'winston'
@@ -28,7 +28,7 @@ app.configure ->
   app.use express.cookieParser()
   app.use express.session { secret: cfg.SESSION_SECRET, store: new RedisStore}
   app.use app.router
-#   app.use(gzippo.staticGzip(__dirname + '/public'));  
+  app.use(gzippo.staticGzip(__dirname + '/public'));  
 
 app.dynamicHelpers { session: (req, res) -> req.session }
 
