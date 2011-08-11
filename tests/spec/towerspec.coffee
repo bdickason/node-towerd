@@ -1,5 +1,6 @@
 ### Tower Tests ###
 basedir = '../../'
+App = require basedir + 'app.js'
 Tower = (require basedir + 'controllers/towers.js').Tower
 TowerModel = require basedir + 'models/tower-model.js'
 Mob = (require basedir + 'controllers/mobs.js').Mob
@@ -19,7 +20,7 @@ describe 'Towers towers.js', ->
     @id = 'cannon'
     @active = 1
     @symbol = 'C'
-    @damage = 5
+    @damage = 10
     @range = 2
 
     @fakeMob = new Obj   # Load a fake mob to emit events
@@ -58,9 +59,8 @@ describe 'Towers towers.js', ->
     
     @tower.checkTargets (res) ->
       expect(res).toEqual []
-  ###
 
-  it 'Finds targets when one is in range', ->
+  it 'Fires on a target when one is in range', ->
     # Spawn the tower    
     @tower.spawn [5, 4], (callback) ->      
   
@@ -70,5 +70,5 @@ describe 'Towers towers.js', ->
     fakeMob.spawn [5, 5], (callback) ->
 
 
-    @tower.checkTargets (res) ->
-      expect(res[0].id).toEqual 'warrior'
+    @tower.checkTarget fakeMob, (res) ->
+      expect(res[0].id).toEqual 'warrior'  ###

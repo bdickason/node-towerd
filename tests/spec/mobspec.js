@@ -1,6 +1,7 @@
 (function() {
-  /* Mob Tests */  var Mob, MobModel, Obj, basedir;
+  /* Mob Tests */  var App, Mob, MobModel, Obj, basedir;
   basedir = '../../';
+  App = require(basedir + 'app.js');
   Mob = (require(basedir + 'controllers/mobs.js')).Mob;
   MobModel = require(basedir + 'models/mob-model.js');
   Obj = (require(basedir + 'controllers/utils/object.js')).Obj;

@@ -1,6 +1,7 @@
 (function() {
-  /* Tower Tests */  var Mob, MobModel, Obj, Tower, TowerModel, basedir;
+  /* Tower Tests */  var App, Mob, MobModel, Obj, Tower, TowerModel, basedir;
   basedir = '../../';
+  App = require(basedir + 'app.js');
   Tower = (require(basedir + 'controllers/towers.js')).Tower;
   TowerModel = require(basedir + 'models/tower-model.js');
   Mob = (require(basedir + 'controllers/mobs.js')).Mob;
@@ -13,7 +14,7 @@
       this.id = 'cannon';
       this.active = 1;
       this.symbol = 'C';
-      this.damage = 5;
+      this.damage = 10;
       this.range = 2;
       this.fakeMob = new Obj;
       this.fakeMob.symbol = 'm';
@@ -35,7 +36,7 @@
         return expect(res[0].name).toEqual(self.name);
       });
     });
-    it('Spawns itself on the map at 5, 4', function() {
+    return it('Spawns itself on the map at 5, 4', function() {
       var self;
       self = this;
       this.tower.on('spawn', function(type, loc, callback) {
@@ -56,15 +57,18 @@
       
       @tower.checkTargets (res) ->
         expect(res).toEqual []
-    */
-    return it('Finds targets when one is in range', function() {
-      var fakeMob;
-      this.tower.spawn([5, 4], function(callback) {});
-      fakeMob = new Mob('warrior');
-      fakeMob.spawn([5, 5], function(callback) {});
-      return this.tower.checkTargets(function(res) {
-        return expect(res[0].id).toEqual('warrior');
-      });
-    });
+    
+    it 'Fires on a target when one is in range', ->
+      # Spawn the tower    
+      @tower.spawn [5, 4], (callback) ->      
+    
+      # Spawn a fake mob
+      fakeMob = new Mob 'warrior'
+    
+      fakeMob.spawn [5, 5], (callback) ->
+    
+    
+      @tower.checkTarget fakeMob, (res) ->
+        expect(res[0].id).toEqual 'warrior'  */
   });
 }).call(this);

@@ -2,8 +2,7 @@ http = require 'http'
 express = require 'express'
 RedisStore = (require 'connect-redis')(express)
 sys = require 'sys'
-mongoose = require 'mongoose'
-gzippo = require 'gzippo'
+# gzippo = require 'gzippo'
 cfg = require './config/config.js'    # contains API keys, etc.
 init = require './controllers/utils/init.js'
 winston = require 'winston'
@@ -29,40 +28,27 @@ app.configure ->
   app.use express.cookieParser()
   app.use express.session { secret: cfg.SESSION_SECRET, store: new RedisStore}
   app.use app.router
-  app.use(gzippo.staticGzip(__dirname + '/public'));  
+#   app.use(gzippo.staticGzip(__dirname + '/public'));  
 
 app.dynamicHelpers { session: (req, res) -> req.session }
 
 # Initialize DB
-global.db = mongoose.connect cfg.DB, (err) ->
-  if err
-    logger.log 'error', err
-  
-mongoose.connection.on 'open', ->
-  logger.info 'Mongo is connected!'
-  
-
-
-### Spawn the world!! ###
-logger.info 'Spawning New Game'  
-World = (require './world.js').World
-world = new World
-global.world = world  # world needs to be called from anywhere/everywhere
-world.emit 'load'
+global.db = require('./models/db').db
 
 ### Initialize controllers ###
 Users = (require './controllers/user.js').Users
-
+World = (require './world.js').World
 ### Start Route Handling ###
 
 # Home Page
 app.get '/', (req, res) ->
+  logger.debug typeof world
   if typeof world == 'undefined'
     logger.log 'Game has not started yet.'
+    load()  # Load basic game info
     res.redirect '/'
   else
-    world.toString (json) ->
-      res.render 'game', { json: json } 
+    res.render 'game', { }
 
   ### Handle logins
   if req.session.auth == 1
@@ -72,9 +58,9 @@ app.get '/', (req, res) ->
     res.send "You are not logged in. <A HREF='/login'>Click here</A> to login"
   ###
 
-# Start a new game!
+### Start a new game! ###
 app.get '/start', (req, res) ->
-  
+  world.start()  # Start the game!
   res.redirect '/'
     
   
@@ -120,6 +106,13 @@ app.get '/logout', (req, res) ->
   logger.info req.session
   req.session.destroy()
   res.redirect '/'
+
+load = ->
+  ### Spawn the world!! ###
+  logger.info 'Spawning New Game'  
+  world = new World app
+  global.world = world  # world needs to be called from anywhere/everywhere
+  world.emit 'load'
   
 app.listen process.env.PORT or 3000 
 
@@ -128,7 +121,7 @@ io.sockets.on 'connection', (socket) ->
   socket.emit 'test', hello: 'world'
   socket.on 'test event', (data) ->
     logger.debug data
-    
+
 ### Socket/World Event Listners ###
 # 
 # This is the stuff that ties the game to the client

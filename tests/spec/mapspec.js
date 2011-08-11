@@ -1,6 +1,7 @@
 (function() {
   /* Maps Tests */  var Map, MapModel, Obj, basedir;
   basedir = '../../';
+  global.db = require(basedir + 'models/db').db;
   Map = (require(basedir + 'controllers/maps.js')).Map;
   MapModel = require(basedir + 'models/map-model.js');
   Obj = (require(basedir + 'controllers/utils/object.js')).Obj;

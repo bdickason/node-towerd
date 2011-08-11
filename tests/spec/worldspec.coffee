@@ -1,5 +1,6 @@
 ### Mob Tests ###
 basedir = '../../'
+App = require basedir + 'app.js'
 World = (require basedir + 'world.js').World
 
 Obj = (require basedir + 'controllers/utils/object.js').Obj
