@@ -31,7 +31,8 @@ exports.Tower = class Tower extends EventEmitter
       if type == 'mob'
         # Check targets each time a mob moves        
         obj.on 'move', (loc) ->
-          self.checkTargets (res) ->
+          self.checkTarget (res) ->
+        obj.on 'die', (hp) ->          
       
   # Activate the tower and place it on the map
   spawn: (loc, callback) ->
@@ -50,7 +51,7 @@ exports.Tower = class Tower extends EventEmitter
         logger.error 'Error: ' + err
       else
         for mob in hits
-          self.emit 'fire', mob.uid, self.damage
+          self.emit 'fire', mob.uid.valueOf(), self.damage
           logger.debug 'firing on: ' + mob.uid + ' with damage: ' + self.damage
         callback hits
   

@@ -7,5 +7,5 @@ exports.tower =
   type: 'Cannon',
   symbol: 'C',
   active: 1,
-  damage: 5,
+  damage: 10,
   range: 2

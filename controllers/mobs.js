@@ -36,15 +36,10 @@
       });
       world.on('load', function(type, obj) {
         if (type === 'tower') {
-          logger.debug('listening to ' + obj.uid);
           return obj.on('fire', function(uid, damage) {
-            logger.debug('shots fired captain! uid: ' + uid + ' self.uid: ' + self.uid);
-            logger.debug(self.uid === uid);
-            return logger.debug('shots fired captain! uid: ' + uid + ' self.uid: ' + self.uid);
-            /* if self.uid == uid
-              # Holy shit, the shot was fired at me!
-              logger.debug 'Im hit'
-              self.hit(damage) */
+            if (self.uid === uid) {
+              return self.hit(damage);
+            }
           });
         }
       });
@@ -59,10 +54,10 @@
     Mob.prototype.hit = function(damage) {
       this.curHP = this.curHP - damage;
       if (this.curHP > 0) {
-        logger.debug('We have a hit! ' + this.uid + ' was hit for: ' + damage);
+        logger.debug("MOB " + this.uid + " [" + this.curHP + "/" + this.maxHP + "] was hit for " + damage);
         return this.emit('hit', this.curHP);
       } else {
-        logger.debug('you sunk my battleship!');
+        logger.info("MOB [" + this.uid + "] is dead!");
         return this.emit('die', this.curHP);
       }
     };

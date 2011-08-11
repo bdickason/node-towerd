@@ -28,15 +28,10 @@ exports.Mob = class Mob extends EventEmitter
       self.move 1, 1, (json) ->
     world.on 'load', (type, obj) ->
       if type == 'tower'
-        logger.debug 'listening to ' + obj.uid
         obj.on 'fire', (uid, damage) ->
-          logger.debug 'shots fired captain! uid: ' + uid + ' self.uid: ' + self.uid
-          logger.debug self.uid == uid
-          logger.debug 'shots fired captain! uid: ' + uid + ' self.uid: ' + self.uid
-          ### if self.uid == uid
+          if self.uid == uid
             # Holy shit, the shot was fired at me!
-            logger.debug 'Im hit'
-            self.hit(damage) ###
+            self.hit(damage)
           
   spawn: (loc, callback) ->
     @curHP = @maxHP # Always spawn with full life (for now!)
@@ -50,11 +45,11 @@ exports.Mob = class Mob extends EventEmitter
   hit: (damage) ->
     @curHP = @curHP - damage
     if @curHP > 0
-      logger.debug 'We have a hit! ' + @uid + ' was hit for: ' + damage
+      logger.debug "MOB #{@uid} [#{@curHP}/#{@maxHP}] was hit for #{damage}"
       @emit 'hit', @curHP 
     else
       # mob is dead!
-      logger.debug 'you sunk my battleship!'
+      logger.info "MOB [#{ @uid }] is dead!"
       @emit 'die', @curHP
   
   move: (X, Y, callback) ->

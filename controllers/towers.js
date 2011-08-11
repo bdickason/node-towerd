@@ -34,9 +34,10 @@
       /* Events */
       world.on('load', function(type, obj) {
         if (type === 'mob') {
-          return obj.on('move', function(loc) {
-            return self.checkTargets(function(res) {});
+          obj.on('move', function(loc) {
+            return self.checkTarget(function(res) {});
           });
+          return obj.on('die', function(hp) {});
         }
       });
     }
@@ -61,7 +62,7 @@
         } else {
           for (_i = 0, _len = hits.length; _i < _len; _i++) {
             mob = hits[_i];
-            self.emit('fire', mob.uid, self.damage);
+            self.emit('fire', mob.uid.valueOf(), self.damage);
             logger.debug('firing on: ' + mob.uid + ' with damage: ' + self.damage);
           }
           return callback(hits);
