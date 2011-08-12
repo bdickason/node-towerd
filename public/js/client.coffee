@@ -11,11 +11,11 @@ socket.on 'spawn', (data) ->
   console.log data
   
 # Move an object across the canvas
-socket.on 'move', (obj) ->
-  console.log obj
-  console.log obj.loc
+socket.on 'move', (data) ->
+  console.log data.obj.loc
   
 $ ->
   $('#start').click ->
     console.log 'test'
     socket.emit 'start', { }
+    $('#start').html('Game started').unbind 'click'

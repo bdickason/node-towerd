@@ -8,14 +8,14 @@
   socket.on('spawn', function(data) {
     return console.log(data);
   });
-  socket.on('move', function(obj) {
-    console.log(obj);
-    return console.log(obj.loc);
+  socket.on('move', function(data) {
+    return console.log(data.obj.loc);
   });
   $(function() {
     return $('#start').click(function() {
       console.log('test');
-      return socket.emit('start', {});
+      socket.emit('start', {});
+      return $('#start').html('Game started').unbind('click');
     });
   });
 }).call(this);
