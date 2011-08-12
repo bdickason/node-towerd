@@ -10,7 +10,7 @@ winston = require 'winston'
 global.logger = new (winston.Logger)( {
   transports: [
     new (winston.transports.Console)({ level: 'debug', colorize: true }), # Should catch 'debug' levels (ideally error too but oh well)
-    # new (winston.transports.Loggly)({ level: 'info', subdomain: cfg.LOGGLY_SUBDOMAIN, inputToken: cfg.LOGGLY_INPUTTOKEN })
+    new (winston.transports.Loggly)({ level: 'info', subdomain: cfg.LOGGLY_SUBDOMAIN, inputToken: cfg.LOGGLY_INPUTTOKEN })
     ]
 })
 
@@ -41,12 +41,11 @@ World = (require './world.js').World
 
 # Home Page
 app.get '/', (req, res) ->
-  logger.debug typeof world
   if typeof world == 'undefined'
-    logger.log 'Game has not started yet.'
     load()  # Load basic game info
     res.redirect '/'
   else
+    # Game is loaded
     res.render 'game', { }
 
   ### Handle logins
@@ -117,10 +116,24 @@ app.listen process.env.PORT or 3000
 
 ### Socket.io Stuff ###
 io.sockets.on 'connection', (socket) ->
-  socket.emit 'test', hello: 'world'
-  socket.on 'test event', (data) ->
-    logger.debug data
+  global.socket = socket
 
-### Socket/World Event Listners ###
-# 
-# This is the stuff that ties the game to the client
+  logger.debug 'TODO: Implement this fix for socket sessions: http://www.danielbaulig.de/socket-ioexpress/'
+
+  ### Socket/World Event Listeners ###
+  # 
+  # This is the stuff that ties the game to the client
+
+  world.on 'load', (type, obj) ->
+    switch type
+      when 'mob'
+        logger.debug 'mob loaded with uid: ' + obj.uid
+        socket.emit 'load', { obj: obj, type: type }
+      
+        obj.on 'move', (type, oldloc, newloc) ->
+          logger.debug 'mob moving to loc: ' + obj.loc
+          socket.emit 'move'
+                  
+      when 'tower'
+        logger.debug 'tower loaded'
+        socket.emit 'load ', { obj: obj, type: type }

@@ -12,6 +12,10 @@
       new winston.transports.Console({
         level: 'debug',
         colorize: true
+      }), new winston.transports.Loggly({
+        level: 'info',
+        subdomain: cfg.LOGGLY_SUBDOMAIN,
+        inputToken: cfg.LOGGLY_INPUTTOKEN
       })
     ]
   });
@@ -42,9 +46,7 @@
   World = (require('./world.js')).World;
   /* Start Route Handling */
   app.get('/', function(req, res) {
-    logger.debug(typeof world);
     if (typeof world === 'undefined') {
-      logger.log('Game has not started yet.');
       load();
       return res.redirect('/');
     } else {
@@ -117,12 +119,28 @@
   app.listen(process.env.PORT || 3000);
   /* Socket.io Stuff */
   io.sockets.on('connection', function(socket) {
-    socket.emit('test', {
-      hello: 'world'
-    });
-    return socket.on('test event', function(data) {
-      return logger.debug(data);
+    global.socket = socket;
+    logger.debug('TODO: Implement this fix for socket sessions: http://www.danielbaulig.de/socket-ioexpress/');
+    /* Socket/World Event Listeners */
+    return world.on('load', function(type, obj) {
+      switch (type) {
+        case 'mob':
+          logger.debug('mob loaded with uid: ' + obj.uid);
+          socket.emit('load', {
+            obj: obj,
+            type: type
+          });
+          return obj.on('move', function(type, oldloc, newloc) {
+            logger.debug('mob moving to loc: ' + obj.loc);
+            return socket.emit('move');
+          });
+        case 'tower':
+          logger.debug('tower loaded');
+          return socket.emit('load ', {
+            obj: obj,
+            type: type
+          });
+      }
     });
   });
-  /* Socket/World Event Listners */
 }).call(this);
