@@ -1,6 +1,7 @@
 ### Config.coffee - Configuration of random stuffs ###
 
 exports.SESSION_SECRET = process.env.SESSION_SECRET || 'internets'
+exports.SESSION_ID = process.env.SESSION_ID || 'express.sid'
 
 # Redis
 exports.REDIS_HOSTNAME = process.env.REDIS_HOSTNAME || 'localhost'

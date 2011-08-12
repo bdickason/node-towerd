@@ -1,10 +1,12 @@
 http = require 'http'
 express = require 'express'
+redis = require 'redis'
 RedisStore = (require 'connect-redis')(express)
 sys = require 'sys'
 cfg = require './config/config.js'    # contains API keys, etc.
 init = require './controllers/utils/init.js'
 winston = require 'winston'
+connect = require 'express/node_modules/connect'
 
 # Setup logging
 global.logger = new (winston.Logger)( {
@@ -14,6 +16,9 @@ global.logger = new (winston.Logger)( {
     ]
 })
 
+# Setup Memory Store (split it out so socket.io can leverage it)
+redis_store = new RedisStore
+ 
 # Setup Server
 app = express.createServer()
 io = (require 'socket.io').listen app
@@ -25,7 +30,7 @@ app.configure ->
   app.use express.methodOverride()
   app.use express.bodyParser()
   app.use express.cookieParser()
-  app.use express.session { secret: cfg.SESSION_SECRET, store: new RedisStore}
+  app.use express.session { secret: cfg.SESSION_SECRET, store: redis_store, key: cfg.SESSION_ID }
   app.use app.router
   app.use express.static __dirname + '/public'  
 
@@ -115,11 +120,43 @@ load = ->
 app.listen process.env.PORT or 3000 
 
 ### Socket.io Stuff ###
+
+# handle cookies and sessions for socket clients
+parseCookie = connect.utils.parseCookie; # Needed for socket.io cookies
+Session = connect.middleware.session.Session
+
+io.set 'authorization', (data, accept) ->
+  if data.headers.cookie
+    data.cookie = parseCookie data.headers.cookie
+    data.sessionID = data.cookie[cfg.SESSION_ID]
+    # save the session store to the data object (required by Session constructor)
+    data.sessionStore = redis_store
+    redis_store.get data.sessionID, (err, session) ->
+      if err
+        # if we can't grab a session, turn down the connection
+        accept err.message, false
+      else
+        # save the session and accept the connection
+        data.session = session
+        accept null, true
+  else
+    # Create a session passing data and new session data
+    data.session = new Session data, session
+    accept 'No cookie transmitted', false
+  accept null, true
+
 io.sockets.on 'connection', (socket) ->
-  global.socket = socket
+  hs = socket.handshake
+  logger.debug 'A socket with conncetion ID: ' + hs.sessionID + ' connected.'
 
-  logger.debug 'TODO: Implement this fix for socket sessions: http://www.danielbaulig.de/socket-ioexpress/'
-
+  # setup an interval that will keep our session fresh
+  intervalID = setInterval () ->
+    # reload the session, in case something changed
+    console.log hs.session
+    hs.session.reload ->
+      hs.session.touch().save()
+  , 60 * 1000
+    
   ### Socket/World Event Listeners ###
   # 
   # This is the stuff that ties the game to the client
@@ -137,3 +174,8 @@ io.sockets.on 'connection', (socket) ->
       when 'tower'
         logger.debug 'tower loaded'
         socket.emit 'load ', { obj: obj, type: type }
+  
+  socket.on 'disconnect', ->
+    # clear the socket interval to stop refreshing the session
+    logger.debug 'A socket with the session ID: ' + hs.sessionID + ' disconnected.'
+    clearInterval intervalID

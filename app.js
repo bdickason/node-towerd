@@ -1,12 +1,14 @@
 (function() {
-  var RedisStore, Users, World, app, cfg, express, http, init, io, load, sys, winston;
+  var RedisStore, Session, Users, World, app, cfg, connect, express, http, init, io, load, parseCookie, redis, redis_store, sys, winston;
   http = require('http');
   express = require('express');
+  redis = require('redis');
   RedisStore = (require('connect-redis'))(express);
   sys = require('sys');
   cfg = require('./config/config.js');
   init = require('./controllers/utils/init.js');
   winston = require('winston');
+  connect = require('express/node_modules/connect');
   global.logger = new winston.Logger({
     transports: [
       new winston.transports.Console({
@@ -19,6 +21,7 @@
       })
     ]
   });
+  redis_store = new RedisStore;
   app = express.createServer();
   io = (require('socket.io')).listen(app);
   app.configure(function() {
@@ -30,7 +33,8 @@
     app.use(express.cookieParser());
     app.use(express.session({
       secret: cfg.SESSION_SECRET,
-      store: new RedisStore
+      store: redis_store,
+      key: cfg.SESSION_ID
     }));
     app.use(app.router);
     return app.use(express.static(__dirname + '/public'));
@@ -118,11 +122,39 @@
   };
   app.listen(process.env.PORT || 3000);
   /* Socket.io Stuff */
+  parseCookie = connect.utils.parseCookie;
+  Session = connect.middleware.session.Session;
+  io.set('authorization', function(data, accept) {
+    if (data.headers.cookie) {
+      data.cookie = parseCookie(data.headers.cookie);
+      data.sessionID = data.cookie[cfg.SESSION_ID];
+      data.sessionStore = redis_store;
+      redis_store.get(data.sessionID, function(err, session) {
+        if (err) {
+          return accept(err.message, false);
+        } else {
+          data.session = session;
+          return accept(null, true);
+        }
+      });
+    } else {
+      data.session = new Session(data, session);
+      accept('No cookie transmitted', false);
+    }
+    return accept(null, true);
+  });
   io.sockets.on('connection', function(socket) {
-    global.socket = socket;
-    logger.debug('TODO: Implement this fix for socket sessions: http://www.danielbaulig.de/socket-ioexpress/');
+    var hs, intervalID;
+    hs = socket.handshake;
+    logger.debug('A socket with conncetion ID: ' + hs.sessionID + ' connected.');
+    intervalID = setInterval(function() {
+      console.log(hs.session);
+      return hs.session.reload(function() {
+        return hs.session.touch().save();
+      });
+    }, 60 * 1000);
     /* Socket/World Event Listeners */
-    return world.on('load', function(type, obj) {
+    world.on('load', function(type, obj) {
       switch (type) {
         case 'mob':
           logger.debug('mob loaded with uid: ' + obj.uid);
@@ -141,6 +173,10 @@
             type: type
           });
       }
+    });
+    return socket.on('disconnect', function() {
+      logger.debug('A socket with the session ID: ' + hs.sessionID + ' disconnected.');
+      return clearInterval(intervalID);
     });
   });
 }).call(this);

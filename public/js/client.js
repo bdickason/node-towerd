@@ -12,4 +12,10 @@
     console.log(obj);
     return console.log(obj.loc);
   });
+  $(function() {
+    return $('#start').click(function() {
+      console.log('test');
+      return socket.emit('start', {});
+    });
+  });
 }).call(this);

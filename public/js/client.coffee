@@ -14,3 +14,8 @@ socket.on 'spawn', (data) ->
 socket.on 'move', (obj) ->
   console.log obj
   console.log obj.loc
+  
+$ ->
+  $('#start').click ->
+    console.log 'test'
+    socket.emit 'start', { }
