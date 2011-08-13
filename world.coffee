@@ -64,6 +64,8 @@ exports.World = class World extends EventEmitter
       @spawnobj obj
     obj.on 'move', (oldloc) =>
       @moveobj obj, oldloc
+    obj.on 'fire', (target) =>
+      @fireobj obj, target
   
   ### Event functions ###
   spawnobj: (obj) ->
@@ -71,6 +73,10 @@ exports.World = class World extends EventEmitter
     
   moveobj: (obj, oldloc) ->
     @emit 'move', obj, oldloc
+  
+  fireobj: (obj, target) ->
+    console.log obj.type
+    @emit 'fire', obj, target
            
   gameLoop: ->
     # One iteration of a game loop

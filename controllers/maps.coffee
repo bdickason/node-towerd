@@ -26,14 +26,14 @@ exports.Map = class Map extends EventEmitter
     world.on 'spawn', (obj) =>
       # Ignore all map events
       if obj.type != 'map'
-        # Place objects on the map when they spawn
-        @grid.set obj.loc, obj.symbol, (callback) ->
+          # Place objects on the map when they spawn
+          @grid.set obj.loc, obj.symbol, (callback) ->
     
     world.on 'move', (obj, oldloc) =>
       # Update map when objects move
       @grid.set oldloc, 0, (callback) =>
       @grid.set obj.loc, obj.symbol, (callback) ->
-        
+
   save: (callback) ->
     # Save to DB
     newmap = new mapModel ( { uid: @uid, id: @id, name: @name, theme: @theme, mobs: @mobs, size: @size } )

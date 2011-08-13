@@ -23,7 +23,8 @@ exports.Grid = class Grid
       @grid.push(row);
     
   set: (loc, value, callback) ->
-    @grid[loc[0]][loc[1]] = value
+    if @isInGrid(loc)
+      @grid[loc[0]][loc[1]] = value
   
   get: (loc, callback) ->
     callback @grid[loc[0]][loc[1]]
@@ -33,4 +34,11 @@ exports.Grid = class Grid
   
   toJSON: (callback) ->
     callback { grid: @grid, w: @w, h: @h}
+
+  isInGrid: (loc) ->
+    # Check to make sure it's on the grid
+    if loc[0] >= 0 and loc[0] < @w and loc[1] >= 0 and loc[1] < @h
+      return true
+    else
+      return false
 

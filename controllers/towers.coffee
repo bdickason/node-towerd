@@ -14,7 +14,7 @@ exports.Tower = class Tower extends EventEmitter
     toLoad = (require '../data/towers/' + name + '.js').tower
     
     @uid = Math.floor Math.random()*10000000  # Generate a unique ID for each instance of this tower
-    { id: @id, name: @name, active: @active, damage: @damage, range: @range, symbol: @symbol, type: @type } = toLoad
+    { id: @id, name: @name, active: @active, damage: @damage, range: @range, symbol: @symbol } = toLoad
     @loc = [null, null]  # Hasn't been spawned yet, so position is null
     @model = null
     
@@ -38,12 +38,13 @@ exports.Tower = class Tower extends EventEmitter
   # Check for anything within range
   checkTarget: (obj, callback) -> 
     mobModel.find { loc : { $near : @loc , $maxDistance : @range } }, (err, hits) =>
+      console.log 'checking target: ' + obj.uid
       if err
         logger.error 'Error: ' + err
       else
         for mob in hits
           if obj.loc.join('') == mob.loc.join('') # can't compare two objects directly
-            @emit 'fire', mob.uid.valueOf(), @damage
+            @emit 'fire', mob
         callback hits
   
   save: (callback) ->

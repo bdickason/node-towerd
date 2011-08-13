@@ -36,13 +36,26 @@ describe 'Map map.js', ->
     expect(@map.mobs).toEqual(@mobs)
     expect(@map.size).toEqual(@size)
 
-  it 'Loads a mob when world calls a load event', ->
-    world.emit 'load', @fakeMob  # called when a mob is loaded
+  it 'Loads a mob onto the map when world calls a spawn event', ->
     world.emit 'spawn', @fakeMob # called when a mob is spawned
 
     @map.grid.get [0, 1], (res) =>
       expect(res).toEqual(@fakeMob.symbol)
   
+  it 'Doesn\'t display mobs that are spawned outside the map', ->
+    @fakeMob.loc = [10, 15]
+    world.emit 'spawn', @fakeMob
+    
+    @map.grid.get [10, 15], (res) =>
+      expect(@fakeMob).loc.toEqual([10, 15])
+      expect(res).toEqual(undefined)
+
+  it 'Updates a mob\'s position as it moves across the map', ->
+    console.log 'blah'
+  
+  it 'Ignores mobs that move outside of the map', ->
+    console.log 'blah'
+    
   it 'Saves itself to the DB once loaded', ->
     MapModel.find { id: @id }, (err, res) =>
       expect(res[0].name).toEqual @name
