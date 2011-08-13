@@ -56,14 +56,13 @@ exports.World = class World extends EventEmitter
     @towers[0].spawn [4, 4]
 
   loadobj: (obj) ->
-    console.log 'world emitting load for: ' + obj.uid
     # proxies 'load' events from objects
     @emit 'load', obj
     
     ### Event Emitters - set them up! ###
     obj.on 'spawn', =>
       @spawnobj obj
-    obj.on 'move', (obj, oldloc) =>
+    obj.on 'move', (oldloc) =>
       @moveobj obj, oldloc
   
   ### Event functions ###
@@ -71,7 +70,6 @@ exports.World = class World extends EventEmitter
     @emit 'spawn', obj
     
   moveobj: (obj, oldloc) ->
-    console.log 'world emitting move for: ' + obj.uid
     @emit 'move', obj, oldloc
            
   gameLoop: ->

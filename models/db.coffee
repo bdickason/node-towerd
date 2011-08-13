@@ -17,6 +17,5 @@ truncate = () ->
   for _, model of db.models
     m = db.model Object.keys(model)[0]
     m.find {}, (err, docs) ->
-      console.log 'removing doc: ' + docs
       doc.remove() for doc in docs
 

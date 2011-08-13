@@ -44,7 +44,6 @@ World = (require './world.js').World
 # Home Page
 app.get '/', (req, res) ->
   if typeof world == 'undefined'
-    load()  # Load basic game info
     res.redirect '/'
   else
     # Game is loaded
@@ -61,16 +60,6 @@ app.get '/', (req, res) ->
 app.get '/end', (req, res) ->
   world.destroy()
 
-
-
-load = ->
-  ### Spawn the world!! ###
-  logger.info 'Spawning New Game'  
-  world = new World app
-  global.world = world  # world needs to be called from anywhere/everywhere
-  world.emit 'load'
-  
-app.listen process.env.PORT or 3000 
 
 ### Socket.io Stuff ###
 # Note, may need authentication later: https://github.com/dvv/socket.io/commit/ff1bcf0fb2721324a20f9d7516ff32fbe893a693#L0R111
@@ -140,3 +129,15 @@ app.get '/logout', (req, res) ->
   logger.info req.session
   req.session.destroy()
   res.redirect '/'
+  
+load = ->
+  console.log 'spawning new game'
+  ### Spawn the world!! ###
+  logger.info 'Spawning New Game'  
+  world = new World app
+  global.world = world  # world needs to be called from anywhere/everywhere
+  world.emit 'load'
+    
+load()  # Load basic game info
+
+app.listen process.env.PORT or 3000 

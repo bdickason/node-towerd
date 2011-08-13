@@ -20,7 +20,6 @@ exports.Map = class Map extends EventEmitter
     
     @save ->
     
-    console.log 'map loaded'
     @emit 'load' # Done loading, tell everyone else to react
     
     ### Event Emitters ###
@@ -32,11 +31,8 @@ exports.Map = class Map extends EventEmitter
     
     world.on 'move', (obj, oldloc) =>
       # Update map when objects move
-      console.log 'map moving: ' + obj.uid + ' ' + obj.loc
       @grid.set oldloc, 0, (callback) =>
-      console.log 'set oldloc: ' + oldloc
       @grid.set obj.loc, obj.symbol, (callback) ->
-      console.log 'set newloc: ' + obj.loc
         
   save: (callback) ->
     # Save to DB
