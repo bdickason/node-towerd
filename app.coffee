@@ -67,6 +67,13 @@ app.get '/end', (req, res) ->
 
 io.sockets.on 'connection', (socket) ->
   logger.debug 'A socket with ID: ' + socket.id + ' connected'
+  
+  ### Load core game data ###
+  #
+  # When a client connects, we should dump the current gamestate
+  world.getGameData (data) ->
+    socket.emit 'init', { data: data }
+
     
   ### World Event Listeners ###
   # 
@@ -74,19 +81,19 @@ io.sockets.on 'connection', (socket) ->
   
   world.on 'load', (obj) ->
     # Tell the client to load some game data
-    socket.emit 'load ', { obj: obj }
+    socket.emit 'load ', { obj }
   
   world.on 'spawn', (obj) ->
     # Tell the client to spawn an object
-    socket.emit 'spawn', { obj: obj }
+    socket.emit 'spawn', { obj }
 
   world.on 'move', (obj, oldloc) ->
     # object is moving from oldloc to obj.loc
-    socket.emit 'move', { obj: obj, oldloc: oldloc }
+    socket.emit 'move', { obj, oldloc }
   
   world.on 'fire', (obj, target) ->
     # object fired on target
-    socket.emit 'fire', { obj: obj, target: target }
+    socket.emit 'fire', { obj, target }
 
   ### Socket Event Listeners ###
   # 

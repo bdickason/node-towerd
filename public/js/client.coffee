@@ -2,6 +2,11 @@ socket = io.connect 'http://localhost'
 
 ### Game Events ###
 
+# Initialize core game data on connect
+socket.on 'init', (data) ->
+  console.log 'Init event'
+  console.log data
+  
 # Load an object's resources into memory
 socket.on 'load', (data) ->
   console.log 'Load event'

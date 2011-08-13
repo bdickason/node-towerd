@@ -84,6 +84,16 @@ exports.World = class World extends EventEmitter
 
     @toString (json) ->
       console.log json  # Have to log via console because of this lame array.
+
+  getGameData: (callback) ->
+    # Returns a snapshot of the current game so client can load everything
+    data = { 
+      maps: @maps,
+      mobs: @mobs,
+      towers: @towers
+    }
+    
+    callback data
     
   destroy: ->
     logger.info 'DESTROYING the game ;('

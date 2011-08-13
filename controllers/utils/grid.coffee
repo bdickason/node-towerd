@@ -33,8 +33,8 @@ exports.Grid = class Grid
   toString: (callback) ->
     callback @grid.toString()
   
-  toJSON: (callback) ->
-    callback { grid: @grid, w: @w, h: @h}
+  ### toJSON: (callback) ->
+    callback { grid: @grid, w: @w, h: @h } ###
 
   isInGrid: (loc) ->
     # Check to make sure it's on the grid
