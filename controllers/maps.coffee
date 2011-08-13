@@ -12,12 +12,7 @@ exports.Map = class Map
     toLoad = (require '../data/maps/' + name + '.js').map
     
     @uid = Math.floor Math.random()*10000000  # Generate a unique ID for each instance of this map
-    @id = toLoad.id
-    @name = toLoad.name
-    @theme = toLoad.theme
-    @mobs = toLoad.mobs
-    @size = toLoad.size
-    @active = toLoad.active
+    { id: @id, name: @name, theme: @theme, mobs: @mobs, size: @size, active: @active } = toLoad
     @grid = new Grid @size
     
     @save ->

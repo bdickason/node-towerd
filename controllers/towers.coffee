@@ -13,13 +13,7 @@ exports.Tower = class Tower extends EventEmitter
     toLoad = (require '../data/towers/' + name + '.js').tower
     
     @uid = Math.floor Math.random()*10000000  # Generate a unique ID for each instance of this tower
-    @id = toLoad.id         # Machine readable version
-    @name = toLoad.name     # Human readable version
-    @active = toLoad.active
-    @damage = toLoad.damage
-    @range = toLoad.range
-    @symbol = toLoad.symbol
-    @type = toLoad.type     # e.g. cannon, arrow, etc.
+    { id: @id, name: @name, active: @active, damage: @damage, range: @range, symbol: @symbol, type: @type } = toLoad
     @loc = [null, null]  # Hasn't been spawned yet, so position is null
     @model = null
     

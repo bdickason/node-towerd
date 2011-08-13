@@ -11,16 +11,10 @@ exports.Mob = class Mob extends EventEmitter
     logger.info 'Loading mob: ' + name
     toLoad = (require '../data/mobs/' + name + '.js').mob
     
-    @uid = Math.floor Math.random()*10000000  # Generate a unique ID for each instance of this mob
-    @id = toLoad.id
-    @name = toLoad.name
-    @class = toLoad.class
-    @active = toLoad.active
-    @speed = toLoad.speed
-    @maxHP = toLoad.maxHP
-    @symbol = toLoad.symbol
+    @uid = Math.floor Math.random()*10000000  # Generate a unique ID for each instance of this mob    
+    { id: @id, name: @name, class: @class, active: @active, speed: @speed, maxHP: @maxHP, curHP: @curHP, symbol: @symbol } = toLoad
     @loc = [null, null]  # Hasn't been spawned yet, so position is null
-    @curHP = toLoad.curHP
+
     
     ### Event Emitters ###
     world.on 'gameLoop', =>
