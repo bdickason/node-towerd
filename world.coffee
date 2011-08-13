@@ -72,7 +72,9 @@ exports.World = class World extends EventEmitter
     @emit 'spawn', obj
     
   moveobj: (obj, oldloc) ->
-    @emit 'move', obj, oldloc
+    # Check if mob is visible before sending move
+    if @maps[0].grid.isInGrid obj.loc
+      @emit 'move', obj, oldloc
   
   fireobj: (obj, target) ->
     @emit 'fire', obj, target
