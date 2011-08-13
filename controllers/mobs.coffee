@@ -49,8 +49,6 @@ exports.Mob = class Mob extends EventEmitter
     @loc = [@loc[0] + X, @loc[1] + Y]
     newloc = @loc
 
-    console.log @
-
     mobModel.find { uid: @uid }, (err, mob) =>
 
       if(err)

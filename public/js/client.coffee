@@ -4,15 +4,22 @@ socket = io.connect 'http://localhost'
 
 # Load an object's resources into memory
 socket.on 'load', (data) ->
+  console.log 'Load event'
   console.log data
 
 # Spawn an object on the canvas
 socket.on 'spawn', (data) ->
+  console.log 'Spawn event'
   console.log data
   
 # Move an object across the canvas
 socket.on 'move', (data) ->
-  console.log data.obj.loc
+  console.log 'Move event'
+  console.log data
+
+socket.on 'fire', (data) ->
+  console.log 'Fire event'
+  console.log data
   
 ### Initialize Canvas ###
 drawGrid = ->

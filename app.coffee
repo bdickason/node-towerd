@@ -68,20 +68,30 @@ app.get '/end', (req, res) ->
 io.sockets.on 'connection', (socket) ->
   logger.debug 'A socket with ID: ' + socket.id + ' connected'
     
-  ### Socket/World Event Listeners ###
+  ### World Event Listeners ###
   # 
-  # This is the stuff that ties the game to the client
+  # These are events coming from the world (so send 'em to the client!)
+  
   world.on 'load', (obj) ->
-    switch obj.type
-      when 'mob'
-        socket.emit 'load', { obj: obj }
-                        
-      when 'tower'
-        socket.emit 'load ', { obj: obj }
+    # Tell the client to load some game data
+    socket.emit 'load ', { obj: obj }
+  
+  world.on 'spawn', (obj) ->
+    # Tell the client to spawn an object
+    socket.emit 'spawn', { obj: obj }
 
-  world.on 'move', (obj) ->
-    socket.emit 'move', { obj: obj }
+  world.on 'move', (obj, oldloc) ->
+    # object is moving from oldloc to obj.loc
+    socket.emit 'move', { obj: obj, oldloc: oldloc }
+  
+  world.on 'fire', (obj, target) ->
+    # object fired on target
+    socket.emit 'fire', { obj: obj, target: target }
 
+  ### Socket Event Listeners ###
+  # 
+  # These are events coming from the client
+  
   socket.on 'start', ->
     world.start()
   
