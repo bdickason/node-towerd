@@ -10,26 +10,27 @@ The basic structure goes something like this:
 ![Event Model] (http://i51.tinypic.com/34owjv7.png)
 
 Here's an example of when a mob moves
-![Event Example] (http://i51.tinypic.com/2zso1o5.png)
+![Event Example] (http://i56.tinypic.com/2egbedc.png)
 
 I'll let the code do the talking:
 **world.js**
 `@maps.push new map json.map
-    @emit 'load', 'map', _map for _map in @maps
+    @emit 'load', _map for _map in @maps
     # any class listening to world.on 'load' now has access to _map`
   
 
 `@mobs[0].spawn [0, 0]
-  # a mob will now emit a spawn event, causing all others`
+  # a mob will now emit a spawn event, causing all others to react`
 
 **towers.js**
-`world.on 'load', (type, obj) ->
+`world.on 'load', (obj) ->
       # Ignore all other towers and maps
       if type == 'mob'
         # Check targets each time a mob moves        
-        obj.on 'move', (loc) ->
-          self.checkTargets (res) ->`
-             ## Shoot some shit!~
+
+obj.on 'move', (obj, loc) ->
+      @checkTargets obj, (res) ->
+         ## Shoot some shit!~`
 
 I'm still exploring this pattern so it may change dramatically, but it's the best I've got for now :D
 

@@ -2,9 +2,9 @@
 
 EventEmitter = (require 'events').EventEmitter
 # TODO - rename 'map' to 'Map' etc.
-map = (require './controllers/maps').Map  # Map functions like render, etc.
-mob = (require './controllers/mobs').Mob  # Mob functions like move, etc.
-tower = (require './controllers/towers').Tower  # Tower functions like attack, etc.
+Map = (require './controllers/maps').Map  # Map functions like render, etc.
+Mob = (require './controllers/mobs').Mob  # Mob functions like move, etc.
+Tower = (require './controllers/towers').Tower  # Tower functions like attack, etc.
 
 # Initialize a new game
 # Called when the player first starts or elects to restart
@@ -31,26 +31,26 @@ exports.World = class World extends EventEmitter
     ### Load the map ###
     # First level: Hidden Valley
     @maps = []
-    @maps.push new map json.map
-    @emit 'load', 'map', _map for _map in @maps
+    @maps.push new Map json.map
+    @emit 'load', 'map', map for map in @maps
 
     ### Load and spawn the towers ###
     # First map has one tower: Cannon
     @towers = []
-    @towers.push new tower 'cannon'
+    @towers.push new Tower 'cannon'
 
         
     ### Load the mobs ###
     # Each map can have many mobs
     @mobs = []
-    for _map in @maps
-      for mobId in _map.mobs
-        _mob = new mob mobId
-        @emit 'load', 'mob', _mob
-        @mobs.push _mob
+    for map in @maps
+      for mobId in map.mobs
+        mob = new Mob mobId
+        @emit 'load', 'mob', mob
+        @mobs.push mob
 
     # Mobs don't know about the 'load' event because they aren't instantiated in time
-    @emit 'load', 'tower', _tower for _tower in @towers
+    @emit 'load', 'tower', tower for tower in @towers
 
     # They exist in memory but need to be spawned
     @mobs[0].spawn [0, 0]
