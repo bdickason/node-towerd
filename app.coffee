@@ -61,6 +61,47 @@ app.get '/', (req, res) ->
 app.get '/end', (req, res) ->
   world.destroy()
 
+
+
+load = ->
+  ### Spawn the world!! ###
+  logger.info 'Spawning New Game'  
+  world = new World app
+  global.world = world  # world needs to be called from anywhere/everywhere
+  world.emit 'load'
+  
+app.listen process.env.PORT or 3000 
+
+### Socket.io Stuff ###
+# Note, may need authentication later: https://github.com/dvv/socket.io/commit/ff1bcf0fb2721324a20f9d7516ff32fbe893a693#L0R111
+
+
+io.sockets.on 'connection', (socket) ->
+  logger.debug 'A socket with ID: ' + socket.id + ' connected'
+    
+  ### Socket/World Event Listeners ###
+  # 
+  # This is the stuff that ties the game to the client
+
+  world.on 'load', (type, obj) ->
+    switch type
+      when 'mob'
+        socket.emit 'load', { obj: obj, type: type }
+      
+        obj.on 'move', (type, oldloc, newloc) ->
+          socket.emit 'move', { obj: obj, type: type }
+                  
+      when 'tower'
+        socket.emit 'load ', { obj: obj, type: type }
+  
+  socket.on 'start', ->
+    world.start()
+  
+  socket.on 'disconnect', ->
+    logger.debug 'A socket with the session ID: ' + socket.id + ' disconnected.'
+    
+    
+### Will use later ###
 app.get '/register/:id/:name', (req, res) ->
   # Allow a user to register
   console.log 'TODO - Render registration page and ask for username'
@@ -100,38 +141,3 @@ app.get '/logout', (req, res) ->
   logger.info req.session
   req.session.destroy()
   res.redirect '/'
-
-load = ->
-  ### Spawn the world!! ###
-  logger.info 'Spawning New Game'  
-  world = new World app
-  global.world = world  # world needs to be called from anywhere/everywhere
-  world.emit 'load'
-  
-app.listen process.env.PORT or 3000 
-
-### Socket.io Stuff ###
-
-io.sockets.on 'connection', (socket) ->
-  logger.debug 'A socket with ID: ' + socket.id + ' connected'
-    
-  ### Socket/World Event Listeners ###
-  # 
-  # This is the stuff that ties the game to the client
-
-  world.on 'load', (type, obj) ->
-    switch type
-      when 'mob'
-        socket.emit 'load', { obj: obj, type: type }
-      
-        obj.on 'move', (type, oldloc, newloc) ->
-          socket.emit 'move', { obj: obj, type: type }
-                  
-      when 'tower'
-        socket.emit 'load ', { obj: obj, type: type }
-  
-  socket.on 'start', ->
-    world.start()
-  
-  socket.on 'disconnect', ->
-    logger.debug 'A socket with the session ID: ' + socket.id + ' disconnected.'

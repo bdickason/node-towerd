@@ -65,6 +65,46 @@
   app.get('/end', function(req, res) {
     return world.destroy();
   });
+  load = function() {
+    /* Spawn the world!! */    var world;
+    logger.info('Spawning New Game');
+    world = new World(app);
+    global.world = world;
+    return world.emit('load');
+  };
+  app.listen(process.env.PORT || 3000);
+  /* Socket.io Stuff */
+  io.sockets.on('connection', function(socket) {
+    logger.debug('A socket with ID: ' + socket.id + ' connected');
+    /* Socket/World Event Listeners */
+    world.on('load', function(type, obj) {
+      switch (type) {
+        case 'mob':
+          socket.emit('load', {
+            obj: obj,
+            type: type
+          });
+          return obj.on('move', function(type, oldloc, newloc) {
+            return socket.emit('move', {
+              obj: obj,
+              type: type
+            });
+          });
+        case 'tower':
+          return socket.emit('load ', {
+            obj: obj,
+            type: type
+          });
+      }
+    });
+    socket.on('start', function() {
+      return world.start();
+    });
+    return socket.on('disconnect', function() {
+      return logger.debug('A socket with the session ID: ' + socket.id + ' disconnected.');
+    });
+  });
+  /* Will use later */
   app.get('/register/:id/:name', function(req, res) {
     var user;
     console.log('TODO - Render registration page and ask for username');
@@ -105,44 +145,5 @@
     logger.info(req.session);
     req.session.destroy();
     return res.redirect('/');
-  });
-  load = function() {
-    /* Spawn the world!! */    var world;
-    logger.info('Spawning New Game');
-    world = new World(app);
-    global.world = world;
-    return world.emit('load');
-  };
-  app.listen(process.env.PORT || 3000);
-  /* Socket.io Stuff */
-  io.sockets.on('connection', function(socket) {
-    logger.debug('A socket with ID: ' + socket.id + ' connected');
-    /* Socket/World Event Listeners */
-    world.on('load', function(type, obj) {
-      switch (type) {
-        case 'mob':
-          socket.emit('load', {
-            obj: obj,
-            type: type
-          });
-          return obj.on('move', function(type, oldloc, newloc) {
-            return socket.emit('move', {
-              obj: obj,
-              type: type
-            });
-          });
-        case 'tower':
-          return socket.emit('load ', {
-            obj: obj,
-            type: type
-          });
-      }
-    });
-    socket.on('start', function() {
-      return world.start();
-    });
-    return socket.on('disconnect', function() {
-      return logger.debug('A socket with the session ID: ' + socket.id + ' disconnected.');
-    });
   });
 }).call(this);
