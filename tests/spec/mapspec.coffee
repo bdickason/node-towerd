@@ -38,12 +38,10 @@ describe 'Map map.js', ->
   it 'Loads a mob when world calls a load event', ->
     world.emit 'load', 'mob', @fakeMob  # called when a mob is loaded
     @fakeMob.emit 'spawn', 'mob', [0, 1]       # called when a mob is spawned
-    self = @
   
-    @map.grid.get [0, 1], (res) ->
-      expect(res).toEqual(self.fakeMob.symbol)
+    @map.grid.get [0, 1], (res) =>
+      expect(res).toEqual(@fakeMob.symbol)
   
   it 'Saves itself to the DB once loaded', ->
-    self = @
-    MapModel.find { id: @id }, (err, res) ->
-      expect(res[0].name).toEqual self.name
+    MapModel.find { id: @id }, (err, res) =>
+      expect(res[0].name).toEqual @name

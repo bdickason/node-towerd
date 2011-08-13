@@ -22,16 +22,14 @@ exports.Tower = class Tower extends EventEmitter
     @type = toLoad.type     # e.g. cannon, arrow, etc.
     @loc = [null, null]  # Hasn't been spawned yet, so position is null
     @model = null
-
-    self = @
     
     ### Events ###
-    world.on 'load', (type, obj) ->
+    world.on 'load', (type, obj) =>
       # Ignore all other towers and maps
       if type == 'mob'
         # Check targets each time a mob moves        
-        obj.on 'move', (loc) ->
-          self.checkTarget obj, (res) ->
+        obj.on 'move', (loc) =>
+          @checkTarget obj, (res) ->
         obj.on 'die', (hp) ->          
       
   # Activate the tower and place it on the map
@@ -45,20 +43,18 @@ exports.Tower = class Tower extends EventEmitter
   
   # Check for anything within range
   checkTarget: (obj, callback) -> 
-    self = @
-    mobModel.find { loc : { $near : @loc , $maxDistance : @range } }, (err, hits) -> 
+    mobModel.find { loc : { $near : @loc , $maxDistance : @range } }, (err, hits) =>
       if err
         logger.error 'Error: ' + err
       else
         for mob in hits
           if obj.loc.join('') == mob.loc.join('') # can't compare two objects directly
-            self.emit 'fire', mob.uid.valueOf(), self.damage
+            @emit 'fire', mob.uid.valueOf(), @damage
         callback hits
   
   save: (callback) ->
     # Save to DB
     @model = new towerModel ( { uid: @uid, id: @id, name: @name, damage: @damage, range: @range, type: @type, loc: @loc } )
-    self = @
     @model.save (err, saved) ->
       if err
         logger.warn 'Error saving: ' + err

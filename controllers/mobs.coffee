@@ -23,15 +23,14 @@ exports.Mob = class Mob extends EventEmitter
     @curHP = toLoad.curHP
     
     ### Event Emitters ###
-    self = @
-    world.on 'gameLoop', ->
-      self.move 1, 1, (json) ->
-    world.on 'load', (type, obj) ->
+    world.on 'gameLoop', =>
+      @move 1, 1, (json) ->
+    world.on 'load', (type, obj) =>
       if type == 'tower'
-        obj.on 'fire', (uid, damage) ->
-          if self.uid == uid
+        obj.on 'fire', (uid, damage) =>
+          if @uid == uid
             # Holy shit, the shot was fired at me!
-            self.hit(damage)
+            @hit(damage)
           
   spawn: (loc, callback) ->
     @curHP = @maxHP # Always spawn with full life (for now!)
@@ -54,19 +53,18 @@ exports.Mob = class Mob extends EventEmitter
     oldloc = @loc
     @loc = [@loc[0] + X, @loc[1] + Y]
     newloc = @loc
-    self = @
-
-    mobModel.find { uid: @uid }, (err, mob) ->
+    
+    mobModel.find { uid: @uid }, (err, mob) =>
       if(err)
         logger.error 'Error finding mob: {@uid} ' + err
       else
         mob[0].loc = newloc
-        mob[0].save (err) ->
+        mob[0].save (err) =>
           if (err)
             logger.warn 'Error saving mob: {@uid} ' + err
           else
-            self.emit 'move', 'mob', oldloc, newloc
-            logger.info 'MOB ' + self.uid + ' [' + self.id + '] moved to (' + self.loc[0] + ',' + self.loc[1] + ')'
+            @emit 'move', 'mob', oldloc, newloc
+            logger.info 'MOB ' + @uid + ' [' + @id + '] moved to (' + @loc[0] + ',' + @loc[1] + ')'
 
   save: (callback) ->
     # Save to DB

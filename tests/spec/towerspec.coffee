@@ -36,14 +36,12 @@ describe 'Towers towers.js', ->
     expect(@tower.range).toEqual(@range)
 
   it 'Saves itself to the DB once loaded', ->
-    self = @
-    TowerModel.find { id: @id }, (err, res) ->
-      expect(res[0].name).toEqual self.name
+    TowerModel.find { id: @id }, (err, res) =>
+      expect(res[0].name).toEqual @name
   
   it 'Spawns itself on the map at 5, 4', ->
-    self = @
-    @tower.on 'spawn', (type, loc, callback) ->
-      expect(self.tower.loc).toEqual([5, 4])
+    @tower.on 'spawn', (type, loc, callback) =>
+      expect(@tower.loc).toEqual([5, 4])
     @tower.spawn [5, 4], (callback) ->  
 
   it 'Finds no targets when none are in range', ->

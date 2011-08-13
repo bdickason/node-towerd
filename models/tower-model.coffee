@@ -13,7 +13,7 @@ TowerSchema = new Schema
   damage: { type: Number },
   range: { type: Number },
   loc: [ Number ]
-  }
+  
 
 # Enable geospatial indexing
 TowerSchema.index { loc: '2d' }

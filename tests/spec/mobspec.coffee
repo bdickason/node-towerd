@@ -34,31 +34,25 @@ describe 'Mob mobs.js', ->
     expect(@mob.maxHP).toEqual(@maxHP)    
   
   it 'Saves itself to the DB once loaded', ->
-    self = @
-    MobModel.find { id: @id }, (err, res) ->
-      expect(res[0].name).toEqual self.name
+    MobModel.find { id: @id }, (err, res) =>
+      expect(res[0].name).toEqual @name
   
   it 'Spawns itself on the map at 2, 3', ->
-    self = @
-    @mob.on 'spawn', (type, loc, callback) ->
-      expect(self.mob.loc).toEqual([2, 3])
+    @mob.on 'spawn', (type, loc, callback) =>
+      expect(@mob.loc).toEqual([2, 3])
     @mob.spawn [2, 3], (callback) ->
   
   it 'Takes damage when hit', ->
-    self = @
-    @mob.on 'hit', (curHP, callback) ->
-      expect(self.mob.curHP).toEqual(47)
+    @mob.on 'hit', (curHP, callback) =>
+      expect(@mob.curHP).toEqual(47)
     @mob.hit 3, (callback) ->
   
   it 'Dies when its HP drops to 0', ->
-    self = @
-    @mob.on 'die', (curHP, callback) ->
-      expect(self.mob.curHP).toBeLessThan(1)
+    @mob.on 'die', (curHP, callback) =>
+      expect(@mob.curHP).toBeLessThan(1)
     @mob.hit 50, (callback) ->
   
   it 'Moves across the map', ->
-    self = @
-    
     @mob.spawn [0, 0], (callback) ->
     
     @mob.on 'move', (type, oldLoc, newLoc) ->

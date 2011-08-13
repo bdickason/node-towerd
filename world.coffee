@@ -16,9 +16,8 @@ exports.World = class World extends EventEmitter
     @gameTime = 2000  # every n ms, the game progresses
 
     # For some reason we have to wait to load everything or else 'world' doesn't get defined as a global var
-    self = @
-    @load = setTimeout ->
-      self.loadEntities( { map: 'hiddenvalley' } )
+    @load = setTimeout =>
+      @loadEntities( { map: 'hiddenvalley' } )
     , 1000
 
   ### Start the game!! ###
