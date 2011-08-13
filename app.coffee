@@ -82,18 +82,17 @@ io.sockets.on 'connection', (socket) ->
   ### Socket/World Event Listeners ###
   # 
   # This is the stuff that ties the game to the client
-
-  world.on 'load', (type, obj) ->
-    switch type
+  world.on 'load', (obj) ->
+    switch obj.type
       when 'mob'
-        socket.emit 'load', { obj: obj, type: type }
-      
-        obj.on 'move', (type, oldloc, newloc) ->
-          socket.emit 'move', { obj: obj, type: type }
-                  
+        socket.emit 'load', { obj: obj }
+                        
       when 'tower'
-        socket.emit 'load ', { obj: obj, type: type }
-  
+        socket.emit 'load ', { obj: obj }
+
+  world.on 'move', (obj) ->
+    socket.emit 'move', { obj: obj }
+
   socket.on 'start', ->
     world.start()
   

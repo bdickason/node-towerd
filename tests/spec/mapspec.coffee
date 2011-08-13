@@ -22,6 +22,7 @@ describe 'Map map.js', ->
     @size = 10
 
     @fakeMob = new Obj   # Load a fake mob to emit events
+    @fakeMob.type = 'mob'
     @fakeMob.symbol = 'm'
     @fakeMob.loc = [0, 1]
     
@@ -36,9 +37,9 @@ describe 'Map map.js', ->
     expect(@map.size).toEqual(@size)
 
   it 'Loads a mob when world calls a load event', ->
-    world.emit 'load', 'mob', @fakeMob  # called when a mob is loaded
-    @fakeMob.emit 'spawn', 'mob', [0, 1]       # called when a mob is spawned
-  
+    world.emit 'load', @fakeMob  # called when a mob is loaded
+    world.emit 'spawn', @fakeMob # called when a mob is spawned
+
     @map.grid.get [0, 1], (res) =>
       expect(res).toEqual(@fakeMob.symbol)
   

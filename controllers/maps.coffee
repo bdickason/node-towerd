@@ -1,12 +1,15 @@
 cfg = require '../config/config.js'    # contains API keys, etc.
 redis = require 'redis'
+EventEmitter = (require 'events').EventEmitter
 Grid = (require './utils/grid.js').Grid
 
 # Models
 mapModel = require '../models/map-model.js'
 
-exports.Map = class Map
+exports.Map = class Map extends EventEmitter
   constructor: (name) ->
+    @type = 'map' # So other objects know I'm a map
+    
     name = name.toLowerCase() # In case someone throws in some weird name
     logger.info 'Loading map: ' + name
     toLoad = (require '../data/maps/' + name + '.js').map
@@ -17,18 +20,23 @@ exports.Map = class Map
     
     @save ->
     
+    console.log 'map loaded'
+    @emit 'load' # Done loading, tell everyone else to react
+    
     ### Event Emitters ###
-    world.on 'load', (type, obj) =>
+    world.on 'spawn', (obj) =>
       # Ignore all map events
-      if type != 'map'
+      if obj.type != 'map'
         # Place objects on the map when they spawn
-        obj.on 'spawn', (loc) =>
-          @grid.set obj.loc, obj.symbol, (callback) ->
-        
-        # Update map when objects move
-        obj.on 'move', (type, oldloc, newloc) =>
-          @grid.set oldloc, 0, (callback) =>
-          @grid.set newloc, obj.symbol, (callback) ->
+        @grid.set obj.loc, obj.symbol, (callback) ->
+    
+    world.on 'move', (obj, oldloc) =>
+      # Update map when objects move
+      console.log 'map moving: ' + obj.uid + ' ' + obj.loc
+      @grid.set oldloc, 0, (callback) =>
+      console.log 'set oldloc: ' + oldloc
+      @grid.set obj.loc, obj.symbol, (callback) ->
+      console.log 'set newloc: ' + obj.loc
         
   save: (callback) ->
     # Save to DB
@@ -37,6 +45,6 @@ exports.Map = class Map
       if err
         logger.warn 'Error saving: ' + err
     
-  toString: (callback) ->
+  showString: (callback) ->
     output = 'MAP ' + @uid + ' [' + @name + ']  Size: ' + @size
     callback output

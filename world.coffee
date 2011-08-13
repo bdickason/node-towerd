@@ -22,8 +22,8 @@ exports.World = class World extends EventEmitter
 
   ### Start the game!! ###
   start: ->
-    @game = setInterval ->
-      world.gameLoop()
+    @game = setInterval =>
+      @gameLoop()
     , @gameTime
   
   loadEntities: (json, callback) ->
@@ -32,13 +32,14 @@ exports.World = class World extends EventEmitter
     # First level: Hidden Valley
     @maps = []
     @maps.push new Map json.map
-    @emit 'load', 'map', map for map in @maps
+    for map in @maps
+      @loadobj map 
 
     ### Load and spawn the towers ###
     # First map has one tower: Cannon
     @towers = []
     @towers.push new Tower 'cannon'
-
+    @loadobj tower for tower in @towers
         
     ### Load the mobs ###
     # Each map can have many mobs
@@ -46,18 +47,33 @@ exports.World = class World extends EventEmitter
     for map in @maps
       for mobId in map.mobs
         mob = new Mob mobId
-        @emit 'load', 'mob', mob
         @mobs.push mob
-
-    # Mobs don't know about the 'load' event because they aren't instantiated in time
-    @emit 'load', 'tower', tower for tower in @towers
+        @loadobj mob
 
     # They exist in memory but need to be spawned
     @mobs[0].spawn [0, 0]
     @mobs[1].spawn [1, 0]
     @towers[0].spawn [4, 4]
 
-         
+  loadobj: (obj) ->
+    console.log 'world emitting load for: ' + obj.uid
+    # proxies 'load' events from objects
+    @emit 'load', obj
+    
+    ### Event Emitters - set them up! ###
+    obj.on 'spawn', =>
+      @spawnobj obj
+    obj.on 'move', (obj, oldloc) =>
+      @moveobj obj, oldloc
+  
+  ### Event functions ###
+  spawnobj: (obj) ->
+    @emit 'spawn', obj
+    
+  moveobj: (obj, oldloc) ->
+    console.log 'world emitting move for: ' + obj.uid
+    @emit 'move', obj, oldloc
+           
   gameLoop: ->
     # One iteration of a game loop
     # Runs every '@gameTime' seconds
@@ -77,4 +93,4 @@ exports.World = class World extends EventEmitter
   # Output current game status
   toString: (callback) ->
     callback @maps[0].grid
-    
+  

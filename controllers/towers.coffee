@@ -8,6 +8,7 @@ mobModel = require '../models/mob-model.js'
 
 exports.Tower = class Tower extends EventEmitter
   constructor: (name) ->
+    @type = 'tower' # So other objects know I'm a tower    
     name = name.toLowerCase() # In case someone throws in some weird name
     logger.info 'Loading tower: ' + name
     toLoad = (require '../data/towers/' + name + '.js').tower
@@ -17,19 +18,18 @@ exports.Tower = class Tower extends EventEmitter
     @loc = [null, null]  # Hasn't been spawned yet, so position is null
     @model = null
     
+    @emit 'load'
+    
     ### Events ###
-    world.on 'load', (type, obj) =>
+    world.on 'move', (obj) =>    
       # Ignore all other towers and maps
-      if type == 'mob'
-        # Check targets each time a mob moves        
-        obj.on 'move', (loc) =>
+      if obj.type == 'mob'
           @checkTarget obj, (res) ->
-        obj.on 'die', (hp) ->          
       
   # Activate the tower and place it on the map
   spawn: (loc, callback) ->
     @loc = loc
-    @emit 'spawn', 'tower', @loc
+    @emit 'spawn'
     logger.info 'Spawning tower [' + @name + '] at (' + @loc + ') with UID: ' + @uid
     
     @save ->
@@ -53,6 +53,6 @@ exports.Tower = class Tower extends EventEmitter
       if err
         logger.warn 'Error saving: ' + err
     
-  toString: (callback) ->
+  showString: (callback) ->
     output = 'TOWER ' + @uid + ' [' + @id + ']  loc: (' + @loc[0] + ', ' + @loc[1] + ')  Range: ' + @range
     callback output

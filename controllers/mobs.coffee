@@ -7,6 +7,7 @@ mobModel = require '../models/mob-model.js'
 
 exports.Mob = class Mob extends EventEmitter
   constructor: (name) ->
+    @type = 'mob' # So other objects know I'm a mob
     name = name.toLowerCase()   # In case someone throws in some weird name
     logger.info 'Loading mob: ' + name
     toLoad = (require '../data/mobs/' + name + '.js').mob
@@ -15,21 +16,21 @@ exports.Mob = class Mob extends EventEmitter
     { id: @id, name: @name, class: @class, active: @active, speed: @speed, maxHP: @maxHP, curHP: @curHP, symbol: @symbol } = toLoad
     @loc = [null, null]  # Hasn't been spawned yet, so position is null
 
+    @emit 'load'
     
     ### Event Emitters ###
     world.on 'gameLoop', =>
       @move 1, 1, (json) ->
-    world.on 'load', (type, obj) =>
-      if type == 'tower'
-        obj.on 'fire', (uid, damage) =>
-          if @uid == uid
-            # Holy shit, the shot was fired at me!
-            @hit(damage)
+    world.on 'fire', (obj, uid, damage) =>
+      if obj.type == 'tower'
+        if @uid == uid
+          # Holy shit, the shot was fired at me!
+          @hit(damage)
           
   spawn: (loc, callback) ->
     @curHP = @maxHP # Always spawn with full life (for now!)
     @loc = loc
-    @emit 'spawn', 'mob', @loc 
+    @emit 'spawn'
     logger.info 'Spawning mob [' + @id + '] at (' + @loc + ') with UID: ' + @uid
     @save ->
    
@@ -57,7 +58,7 @@ exports.Mob = class Mob extends EventEmitter
           if (err)
             logger.warn 'Error saving mob: {@uid} ' + err
           else
-            @emit 'move', 'mob', oldloc, newloc
+            @emit 'move', oldloc
             logger.info 'MOB ' + @uid + ' [' + @id + '] moved to (' + @loc[0] + ',' + @loc[1] + ')'
 
   save: (callback) ->
@@ -67,6 +68,6 @@ exports.Mob = class Mob extends EventEmitter
       if err
         logger.error 'Error saving: ' + err
     
-  toString: (callback) ->
+  showString: (callback) ->
     output = 'MOB ' + @uid + ' [' + @id + ']  loc: (' + @loc[0] + ', ' + @loc[1] + ')  HP: ' + @curHP + '/' + @maxHP
     callback output
