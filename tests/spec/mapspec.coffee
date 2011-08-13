@@ -37,7 +37,7 @@ describe 'Map map.js', ->
     expect(@map.size).toEqual(@size)
 
   it 'Loads a mob onto the map when world calls a spawn event', ->
-    world.emit 'spawn', @fakeMob # called when a mob is spawned
+    world.emit 'spawn', @fakeMob
 
     @map.grid.get [0, 1], (res) =>
       expect(res).toEqual(@fakeMob.symbol)
@@ -47,15 +47,43 @@ describe 'Map map.js', ->
     world.emit 'spawn', @fakeMob
     
     @map.grid.get [10, 15], (res) =>
-      expect(@fakeMob).loc.toEqual([10, 15])
-      expect(res).toEqual(undefined)
+      expect(@fakeMob.loc).toEqual([10, 15])
+      expect(res).toBeUndefined()
 
   it 'Updates a mob\'s position as it moves across the map', ->
-    console.log 'blah'
+    world.emit 'spawn', @fakeMob
+
+    @map.grid.get [0, 1], (res) =>
+      expect(res).toEqual(@fakeMob.symbol)
+    
+    oldloc = @fakeMob.loc
+    
+    @fakeMob.loc = [5, 6]
+    world.emit 'move', @fakeMob, oldloc
+    
+    @map.grid.get oldloc, (res) =>
+      expect(res).toEqual(0)
+    
+    @map.grid.get [5, 6], (res) =>
+      expect(res).toEqual(@fakeMob.symbol)
   
   it 'Ignores mobs that move outside of the map', ->
-    console.log 'blah'
+    world.emit 'spawn', @fakeMob
     
+    @map.grid.get [0, 1], (res) =>
+      expect(res).toEqual(@fakeMob.symbol)
+  
+    oldloc = @fakeMob.loc
+    @fakeMob.loc = [11, 6]
+    world.emit 'move', @fakeMob, oldloc
+  
+    @map.grid.get [5, 6], (res) =>
+      expect(res).toEqual(0)
+    
+    @map.grid.get [11, 6], (res) =>
+      expect(@fakeMob.loc).toEqual([11, 6])
+      expect(res).toBeUndefined()
+
   it 'Saves itself to the DB once loaded', ->
     MapModel.find { id: @id }, (err, res) =>
       expect(res[0].name).toEqual @name

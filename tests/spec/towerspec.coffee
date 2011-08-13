@@ -65,7 +65,6 @@ describe 'Towers towers.js', ->
     fakeMob = new Mob 'warrior'
 
     fakeMob.spawn [5, 5], (callback) ->
-
-
+    
     @tower.checkTarget fakeMob, (res) ->
       expect(res[0].id).toEqual 'warrior'

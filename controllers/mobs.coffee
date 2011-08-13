@@ -48,8 +48,11 @@ exports.Mob = class Mob extends EventEmitter
     oldloc = @loc
     @loc = [@loc[0] + X, @loc[1] + Y]
     newloc = @loc
-    
+
+    console.log @
+
     mobModel.find { uid: @uid }, (err, mob) =>
+
       if(err)
         logger.error 'Error finding mob: {@uid} ' + err
       else
@@ -58,6 +61,7 @@ exports.Mob = class Mob extends EventEmitter
           if (err)
             logger.warn 'Error saving mob: {@uid} ' + err
           else
+
             @emit 'move', oldloc
             logger.info 'MOB ' + @uid + ' [' + @id + '] moved to (' + @loc[0] + ',' + @loc[1] + ')'
 

@@ -27,7 +27,8 @@ exports.Grid = class Grid
       @grid[loc[0]][loc[1]] = value
   
   get: (loc, callback) ->
-    callback @grid[loc[0]][loc[1]]
+    if @isInGrid(loc)
+      callback @grid[loc[0]][loc[1]]
 
   toString: (callback) ->
     callback @grid.toString()
