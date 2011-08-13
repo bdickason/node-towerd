@@ -88,7 +88,7 @@ exports.World = class World extends EventEmitter
   getGameData: (callback) ->
     # Returns a snapshot of the current game so client can load everything
     data = { 
-      maps: @maps,
+      map: @maps[0],  # A user can only see the current map
       mobs: @mobs,
       towers: @towers
     }

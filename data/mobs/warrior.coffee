@@ -6,7 +6,7 @@ exports.mob =
   id: 'warrior',
   class: 'warrior',
   active: 1,
-  symbol: 'W'
+  symbol: '%' # See Pictos: http://pictos.drewwilson.com/
   speed: 1,
   maxHP: 50,
   curHP: 50
