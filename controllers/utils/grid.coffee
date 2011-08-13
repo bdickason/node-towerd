@@ -37,7 +37,7 @@ exports.Grid = class Grid
 
   isInGrid: (loc) ->
     # Check to make sure it's on the grid
-    if loc[0] >= 0 and loc[0] < @w and loc[1] >= 0 and loc[1] < @h
+    if loc[0] >= 0 and loc[0] <= @w and loc[1] >= 0 and loc[1] <= @h
       return true
     else
       return false

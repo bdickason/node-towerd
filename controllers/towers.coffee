@@ -38,7 +38,6 @@ exports.Tower = class Tower extends EventEmitter
   # Check for anything within range
   checkTarget: (obj, callback) -> 
     mobModel.find { loc : { $near : @loc , $maxDistance : @range } }, (err, hits) =>
-      console.log 'checking target: ' + obj.uid
       if err
         logger.error 'Error: ' + err
       else

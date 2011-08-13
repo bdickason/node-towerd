@@ -131,7 +131,6 @@ app.get '/logout', (req, res) ->
   res.redirect '/'
   
 load = ->
-  console.log 'spawning new game'
   ### Spawn the world!! ###
   logger.info 'Spawning New Game'  
   world = new World app

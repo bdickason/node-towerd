@@ -75,7 +75,6 @@ exports.World = class World extends EventEmitter
     @emit 'move', obj, oldloc
   
   fireobj: (obj, target) ->
-    console.log obj.type
     @emit 'fire', obj, target
            
   gameLoop: ->

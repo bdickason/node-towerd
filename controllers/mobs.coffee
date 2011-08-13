@@ -22,10 +22,8 @@ exports.Mob = class Mob extends EventEmitter
     world.on 'gameLoop', =>
       @move 1, 1, (json) ->
     world.on 'fire', (obj, target) =>
-      console.log 'mob got fire event. mob: ' + @uid + ' target: ' + target.uid
       if obj.type == 'tower'
         if @uid == target.uid.valueOf()
-          console.log 'hit'
           # Holy shit, the shot was fired at me!
           @hit(obj.damage)
           
