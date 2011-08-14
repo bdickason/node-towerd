@@ -68,9 +68,8 @@ $ ->
       _loc[1] = getLoc oldloc[1]
       # get rid of the old one first
       context.fillStyle='#FFF'
-      context.fillRect _loc[0]+1, _loc[1]+1, 47, 47 # Guesstimate at the width of one mob
+      context.fillRect _loc[0]+1, _loc[1]-49, 48, 48 # Guesstimate at the width of one mob
       
-    console.log 'old: ' + oldloc + ' new: ' + mob.loc
     context.fillStyle='#000'
     loc = []
     loc[0] = getLoc mob.loc[0]
