@@ -16,7 +16,7 @@ exports.World = class World extends EventEmitter
 
   constructor: (app) ->
     ### Initial config ###
-    @gameTime = 2000  # every n ms, the game progresses
+    @gameTime = cfg.GAMETIMER  # every n ms, the game progresses
 
     # For some reason we have to wait to load everything or else 'world' doesn't get defined as a global var
     @load = setTimeout =>
