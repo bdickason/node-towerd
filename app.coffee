@@ -64,6 +64,8 @@ app.get '/end', (req, res) ->
 ### Socket.io Stuff ###
 # Note, may need authentication later: https://github.com/dvv/socket.io/commit/ff1bcf0fb2721324a20f9d7516ff32fbe893a693#L0R111
 
+io.enable 'browser client minification'
+# io.set 'log level', 1
 
 io.sockets.on 'connection', (socket) ->
   logger.debug 'A socket with ID: ' + socket.id + ' connected'
@@ -101,6 +103,9 @@ io.sockets.on 'connection', (socket) ->
   
   socket.on 'start', ->
     world.start()
+  
+  socket.on 'pause', ->
+    world.pause()
   
   socket.on 'disconnect', ->
     logger.debug 'A socket with the session ID: ' + socket.id + ' disconnected.'

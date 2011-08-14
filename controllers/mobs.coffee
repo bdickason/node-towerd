@@ -20,7 +20,8 @@ exports.Mob = class Mob extends EventEmitter
     
     ### Event Emitters ###
     world.on 'gameLoop', =>
-      @move 1, 1, (json) ->
+      @move @speed, @speed, (json) ->
+      
     world.on 'fire', (obj, target) =>
       if obj.type == 'tower'
         if @uid == target.uid.valueOf()

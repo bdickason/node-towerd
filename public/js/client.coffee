@@ -16,7 +16,7 @@ $ ->
     towers = data.data.towers
     
     if canvas.getContext
-      drawGrid map.size  
+      drawGrid map.size, data.data.cfg.tileSize 
       drawMob mob for mob in mobs
       drawTower tower for tower in towers
 
@@ -73,8 +73,7 @@ $ ->
     loc = []
     loc[0] = getLoc mob.loc[0]
     loc[1] = getLoc mob.loc[1]
-    context.font = 'bold 5em'
-    console.log 'Drawing Mob: at ' + loc[0] + ', ' + loc[1]    
+    context.font = '50pt Arial'
     context.fillText mob.symbol, loc[0], loc[1]
     
   # Draw a tower on the map
@@ -82,7 +81,7 @@ $ ->
     loc = []
     loc[0] = getLoc tower.loc[0]
     loc[1] = getLoc tower.loc[1]
-    context.font = 'bold 5em'
+    context.font = '50pt Arial'
     context.fillText tower.symbol, loc[0], loc[1]
 
     
@@ -90,14 +89,23 @@ $ ->
     if typeof loc is 'number'
       return (loc*squarewidth)+0.5
 
-
   ### on-page actions (clicks, etc) ###
   
-  $('#start').click ->
-    console.log 'test'
-    socket.emit 'start', { }
-    $('#start').html('Game started').unbind 'click'
+  # Play/Pause button
+  $('#toggle').bind 'click', ->
+    if $(@).attr('class') == 'play'
+      socket.emit 'start', { }
+      $(@).html('5').attr('class', 'pause')
+    else
+      socket.emit 'pause', { }
+      $(@).html('4').attr('class', 'play')
+      
+    $('#start').html('Game started').click ->
+      socket.emit 'pause', { }
 
-
+  $('#tower').click ->
+    console.log 'adding tower'
+    
+    
   ### Define canvas, etc ###
   canvas = document.getElementById 'game_canvas'

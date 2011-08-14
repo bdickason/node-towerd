@@ -1,7 +1,10 @@
 ### World - Runs the game world like a pro! ###
 
 EventEmitter = (require 'events').EventEmitter
-# TODO - rename 'map' to 'Map' etc.
+
+cfg = require './config/config.js'    # contains API keys, etc.
+
+# Init Controllers
 Map = (require './controllers/maps').Map  # Map functions like render, etc.
 Mob = (require './controllers/mobs').Mob  # Mob functions like move, etc.
 Tower = (require './controllers/towers').Tower  # Tower functions like attack, etc.
@@ -25,6 +28,9 @@ exports.World = class World extends EventEmitter
     @game = setInterval =>
       @gameLoop()
     , @gameTime
+  
+  pause: ->
+    clearTimeout @game
   
   loadEntities: (json, callback) ->
     
@@ -84,12 +90,13 @@ exports.World = class World extends EventEmitter
     # Runs every '@gameTime' seconds
     @emit 'gameLoop'  # A bunch of stuff listens to this to know when a 'turn' has finished    
 
-    @toString (json) ->
-      console.log json  # Have to log via console because of this lame array.
+    # @toString (json) ->
+    #   console.log json  # Have to log via console because of this lame array.
 
   getGameData: (callback) ->
     # Returns a snapshot of the current game so client can load everything
     data = { 
+      cfg: cfg.TILESIZE,
       map: @maps[0],  # A user can only see the current map
       mobs: @mobs,
       towers: @towers

@@ -1,12 +1,21 @@
 ### Config.coffee - Configuration of random stuffs ###
 
+# Game Configuration
+exports.GAMETIMER = process.env.GAMETIMER || 2000   # The amount of time between 'world' events
+
+# Client - Tile Size, etc
+exports.TILESIZE = process.env.TILESIZE || 10
+
+
+# Individual unit configs are in /data/
+
 exports.SESSION_SECRET = process.env.SESSION_SECRET || 'internets'
 exports.SESSION_ID = process.env.SESSION_ID || 'express.sid'
 
 # Redis
 exports.REDIS_HOSTNAME = process.env.REDIS_HOSTNAME || 'localhost'
-exports.REDIS_PORT = process.env.REDIS_PORT || '6379'
-exports.REDIS_CACHE_TIME = process.env.REDIS_CACHE_TIME || '10000'    #Time to cache objects (in seconds)
+exports.REDIS_PORT = process.env.REDIS_PORT || 6379
+exports.REDIS_CACHE_TIME = process.env.REDIS_CACHE_TIME || 10000    #Time to cache objects (in seconds)
 
 # Mongo
 exports.MONGO_HOST = process.env.MONGO_HOST || 'localhost'
