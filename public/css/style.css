@@ -514,11 +514,7 @@ table {
   
   @font-face {
     font-family:'Pictos';
-    src:url("/fonts/pictos-web.eot");
-    src:local("☺"),
-    url("/fonts/pictos-web.woff") format("woff"),
-    url("/fonts/pictos-web.ttf") format("truetype"),
-    url("/fonts/pictos-web.svg#webfontIyfZbseF") format("svg");
+    src:url("/fonts/pictos-web.ttf");
     font-weight:normal;
     font-style:normal
   }
@@ -535,9 +531,10 @@ table {
    ================================================== */
 
    #toggle {
-         font-family: Pictos;
+    font-family: Pictos;
     color: #00A;
     font-size: 2.9em;
+    padding: 20px;
   }
 
 }
