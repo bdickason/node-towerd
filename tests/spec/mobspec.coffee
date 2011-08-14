@@ -18,7 +18,7 @@ describe 'Mob mobs.js', ->
     @id = 'warrior'
     @active = 1
     @class = 'warrior'
-    @symbol = 'W'
+    @symbol = '%'
     @speed = 1
     @maxHP = 50
 

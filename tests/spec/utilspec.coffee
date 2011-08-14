@@ -17,13 +17,6 @@ describe '2d Grid utils/grid.js', ->
   it 'Populates with 0s', ->
     @grid.get [1,1], (res) ->
       expect(res).toEqual(0)
-  it 'Converts to JSON', ->
-    @grid.toJSON (res) =>
-      expect(res.grid).toBeDefined()
-      expect(res.grid.length).toEqual(11)    # Check first dimension
-      expect(res.grid[0].length).toEqual(11) # Check second dimension
-      expect(res.h).toEqual(@size)
-      expect(res.w).toEqual(@size)  
   it 'Converts to a String', ->
     @grid.toString (res) ->
       expect(res).toBeDefined()
