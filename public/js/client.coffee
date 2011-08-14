@@ -41,10 +41,14 @@ $ ->
   socket.on 'fire', (data) ->
     console.log 'Fire event'
     console.log data
+    mob = data.target
+    tower = data.obj
+    drawFire mob, tower
+
   
   ### Initialize Canvas ###
   canvas = document.getElementById 'game_canvas'
-  context = canvas.getContext '2d'
+  ctx = canvas.getContext '2d'
   
   ### World Rendering Functions ###
   
@@ -52,13 +56,13 @@ $ ->
   drawGrid = (size) ->
     # Draw the map    
     for x in [0..size] by 1
-      context.moveTo getLoc(x), getLoc(0)
-      context.lineTo getLoc(x), getLoc(size)
-      context.moveTo getLoc(0), getLoc(x)
-      context.lineTo getLoc(size), getLoc(x)
+      ctx.moveTo getLoc(x), getLoc(0)
+      ctx.lineTo getLoc(x), getLoc(size)
+      ctx.moveTo getLoc(0), getLoc(x)
+      ctx.lineTo getLoc(size), getLoc(x)
 
-    context.strokeStyle = '#000'
-    context.stroke()
+    ctx.strokeStyle = '#000'
+    ctx.stroke()
   
   # Draw a mob on the map
   drawMob = (mob, oldloc) ->
@@ -67,24 +71,31 @@ $ ->
       _loc[0] = getLoc oldloc[0]
       _loc[1] = getLoc oldloc[1]
       # get rid of the old one first
-      context.fillStyle='#FFF'
-      context.fillRect _loc[0]+1, _loc[1]-49, 48, 48 # Guesstimate at the width of one mob
+      ctx.fillStyle='#FFF'
+      ctx.fillRect _loc[0]+1, _loc[1]-49, 48, 48 # Guesstimate at the width of one mob
       
-    context.fillStyle='#000'
+    ctx.fillStyle='#000'
     loc = []
     loc[0] = getLoc mob.loc[0]
     loc[1] = getLoc mob.loc[1]
-    context.font = '40pt Pictos'
-    context.fillText mob.symbol, loc[0]+2, loc[1]-10
+    ctx.font = '40pt Pictos'
+    ctx.fillText mob.symbol, loc[0]+2, loc[1]-10
     
   # Draw a tower on the map
   drawTower = (tower) =>
     loc = []
     loc[0] = getLoc tower.loc[0]
     loc[1] = getLoc tower.loc[1]
-    context.font = '40pt Pictos'
-    context.fillText tower.symbol, loc[0]+2, loc[1]-10
+    ctx.font = '40pt Pictos'
+    ctx.fillText tower.symbol, loc[0]+2, loc[1]-10
 
+  drawFire = (mob, tower) =>
+    loc = []
+    loc[0] = getLoc mob.loc[0]
+    loc[1] = getLoc mob.loc[1]
+    ctx.fillStyle = '#F00'
+    ctx.font = '20pt Georgia'
+    ctx.fillText '-' + tower.damage, loc[0], loc[1]
     
   getLoc = (loc) ->
     if typeof loc is 'number'

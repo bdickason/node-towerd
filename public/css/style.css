@@ -534,7 +534,8 @@ table {
     font-family: Pictos;
     color: #00A;
     font-size: 2.9em;
-    padding: 20px;
+    padding: 20px 0px 0px 20px;
+    display: block;
   }
 
 }
