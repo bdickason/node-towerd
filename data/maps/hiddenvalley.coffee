@@ -7,4 +7,4 @@ exports.map =
   active: 1,
   theme: 'Forest',
   mobs: [ 'warrior', 'warrior' ],
-  size: 100  # 100 x 100 grid
+  size: 15  # 20 x 20 grid

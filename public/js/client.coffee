@@ -1,4 +1,8 @@
 $ -> 
+  ### Config Variables ###
+  window.squarewidth = 50  # Size of one square in the grid
+  window.FPS = 300          # Frames per second
+
   socket = io.connect 'http://localhost'
   
   ### Game Events ###
@@ -30,7 +34,6 @@ $ ->
   # Move an object across the canvas
   socket.on 'move', (data) ->
     console.log 'Move event'
-    # console.log data
     mobdata = data.obj
 
     # Only move the mob that sent the event
@@ -43,12 +46,6 @@ $ ->
     ###    mob = data.target
     tower = data.obj
     drawFire mob, tower ###
-
-  ### Config Variables ###
-  window.squarewidth = 50  # Size of one square in the grid
-  window.FPS = 300          # Frames per second
-
-  ### on-page actions (clicks, etc) ###
  
   ### Define canvas, etc ###
   window.canvas = document.getElementById 'game_canvas'
@@ -58,9 +55,6 @@ $ ->
   draw = ->
     if canvas.getContext
       ctx.clearRect 0, 0, canvas.width, canvas.height # Clear the canvas
-      #console.log 'Map: ' + map
-      #console.log 'Tower: ' + towers
-      #console.log 'Mob: ' + mobs
       map.draw()
       tower.draw() for tower in towers
       mob.draw() for mob in mobs
@@ -70,12 +64,8 @@ $ ->
 
   ### World Rendering Functions ###
 
-
+  ### on-page actions (clicks, etc) ###
   
-  getLoc = (loc) ->
-    if typeof loc is 'number'
-      return (loc*squarewidth)+0.5
-      
   # Play/Pause button
   $('#toggle').bind 'click', ->
     if $(@).attr('class') == 'play'

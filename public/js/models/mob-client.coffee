@@ -13,14 +13,6 @@ $ ->
 
     # Draw a mob on the map
     draw: (oldloc) ->
-      console.log 'drawing mob: ' + @
-      if oldloc
-        _loc = []
-        _loc[0] = @getLoc oldloc[0]
-        _loc[1] = @getLoc oldloc[1]
-        # get rid of the old one first
-        ctx.fillStyle='#FFF'
-        ctx.fillRect _loc[0]+1, _loc[1]-49, 48, 48 # Guesstimate at the width of one mob
       ctx.fillStyle='#000'
       loc = []
       loc[0] = @getLoc @loc[0]
