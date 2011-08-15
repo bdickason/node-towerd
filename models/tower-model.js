@@ -1,0 +1,46 @@
+(function() {
+  var ObjectId, Schema, TowerSchema, cfg, mongoose;
+  cfg = require('../config/config.js');
+  mongoose = require('mongoose');
+  Schema = mongoose.Schema;
+  ObjectId = Schema.ObjectId;
+  TowerSchema = new Schema({
+    uid: {
+      type: Number,
+      required: true
+    },
+    name: {
+      type: String,
+      required: true
+    },
+    id: {
+      type: String,
+      required: true,
+      unique: true
+    },
+    type: {
+      type: String,
+      "default": 'Cannon'
+    },
+    active: {
+      type: Number,
+      "default": 1
+    },
+    symbol: {
+      type: String,
+      "default": 'C'
+    },
+    damage: {
+      type: Number
+    },
+    range: {
+      type: Number
+    },
+    loc: [Number]
+  });
+  TowerSchema.index({
+    loc: '2d'
+  });
+  mongoose.model('Towers', TowerSchema);
+  module.exports = db.model('Towers');
+}).call(this);
