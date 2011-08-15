@@ -6,19 +6,20 @@ $ ->
   class window.Map
     constructor: (data) ->
       { @uid, @size } = data
+      @draw(bg_ctx)
   
     # Draw a square grid based on size denoted by the server
-    draw: ->
+    draw: (context) ->
       # Draw the map    
       for x in [0..@size] by 1
-        ctx.moveTo @getLoc(x), @getLoc(0)
-        ctx.lineTo @getLoc(x), @getLoc(@size)
-        ctx.moveTo @getLoc(0), @getLoc(x)
-        ctx.lineTo @getLoc(@size), @getLoc(x)
+        context.moveTo @getLoc(x), @getLoc(0)
+        context.lineTo @getLoc(x), @getLoc(@size)
+        context.moveTo @getLoc(0), @getLoc(x)
+        context.lineTo @getLoc(@size), @getLoc(x)
 
-      ctx.strokeStyle = '#000'
-      ctx.stroke()
+      context.strokeStyle = '#000'
+      context.stroke()
 
     getLoc: (loc) ->
        if typeof loc is 'number'
-         return (loc*squarewidth)+0.5
+         return (loc*squarewidth)+0.5 

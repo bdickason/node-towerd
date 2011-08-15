@@ -523,6 +523,9 @@ table {
     font-family: Pictos;
     color: #00A;
     font-size: 2.9em;
+    position: absolute;
+    left: 70px;
+    top: 70px;
   }
   
 

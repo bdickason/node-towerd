@@ -9,6 +9,9 @@ $ ->
   # Initialize core game data on connect
   socket.on 'init', (data) ->
     console.log 'Init event'
+    
+    window.mapChanged = 1 # If mapchanged = 1, redraw the map
+    
     # cleanup the ugly socket-io data
     _map = data.data.map
     _mobs = data.data.mobs
@@ -48,16 +51,19 @@ $ ->
     drawFire mob, tower ###
  
   ### Define canvas, etc ###
-  window.canvas = document.getElementById 'game_canvas'
-  window.ctx = canvas.getContext '2d'
+  window.fg_canvas = document.getElementById 'game_canvas'
+  window.fg_ctx = fg_canvas.getContext '2d'
+  
+  window.bg_canvas = document.getElementById 'game_background'
+  window.bg_ctx = bg_canvas.getContext '2d'
+
 
   # Loop to draw the game world each frame
   draw = ->
-    if canvas.getContext
-      ctx.clearRect 0, 0, canvas.width, canvas.height # Clear the canvas
-      map.draw()
-      tower.draw() for tower in towers
-      mob.draw() for mob in mobs
+    if fg_canvas.getContext
+      fg_ctx.clearRect 0, 0, fg_canvas.width, fg_canvas.height # Clear the canvas
+      tower.draw fg_ctx for tower in towers
+      mob.draw fg_ctx for mob in mobs
       
   # Start draw loop
   setInterval draw, 1000 / FPS
