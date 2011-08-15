@@ -13,14 +13,14 @@ exports.Mob = class Mob extends EventEmitter
     toLoad = (require '../data/mobs/' + name + '.js').mob
     
     @uid = Math.floor Math.random()*10000000  # Generate a unique ID for each instance of this mob    
-    { id: @id, name: @name, class: @class, active: @active, speed: @speed, maxHP: @maxHP, curHP: @curHP, symbol: @symbol } = toLoad
     @loc = [null, null]  # Hasn't been spawned yet, so position is null
-
+    { @dx, @dy } = 0 # Mob will be stationary when spawned
+    { id: @id, name: @name, class: @class, active: @active, speed: @speed, maxHP: @maxHP, curHP: @curHP, symbol: @symbol } = toLoad
     @emit 'load'
     
     ### Event Emitters ###
     world.on 'gameLoop', =>
-      @move @speed, @speed, (json) ->
+      @move @dx, @dy, @speed, (json) ->
       
     world.on 'fire', (obj, target) =>
       if obj.type == 'tower'
@@ -28,9 +28,10 @@ exports.Mob = class Mob extends EventEmitter
           # Holy shit, the shot was fired at me!
           @hit(obj.damage)
           
-  spawn: (loc, callback) ->
+  spawn: (loc, dx, dy, callback) ->
     @curHP = @maxHP # Always spawn with full life (for now!)
-    @loc = loc
+    { @loc, @dx, @dy } = { loc, dx, dy }
+    
     @emit 'spawn'
     logger.info 'Spawning mob [' + @id + '] at (' + @loc + ') with UID: ' + @uid
     @save ->
@@ -45,24 +46,26 @@ exports.Mob = class Mob extends EventEmitter
       logger.info "MOB [#{ @uid }] is dead!"
       @emit 'die'
   
-  move: (X, Y, callback) ->
+  move: (dx, dy, speed, callback) ->
     oldloc = @loc
-    @loc = [@loc[0] + X, @loc[1] + Y]
+    
+    @loc = [(@loc[0] + dx) * speed, (@loc[1] + dy) * speed]
     newloc = @loc
+    
+    if oldloc != newloc # Don't do anything if we haven't actually moved
+      mobModel.find { uid: @uid }, (err, mob) =>
 
-    mobModel.find { uid: @uid }, (err, mob) =>
+        if(err)
+          logger.error 'Error finding mob: {@uid} ' + err
+        else
+          mob[0].loc = newloc
+          mob[0].save (err) =>
+            if (err)
+              logger.warn 'Error saving mob: {@uid} ' + err
+            else
 
-      if(err)
-        logger.error 'Error finding mob: {@uid} ' + err
-      else
-        mob[0].loc = newloc
-        mob[0].save (err) =>
-          if (err)
-            logger.warn 'Error saving mob: {@uid} ' + err
-          else
-
-            @emit 'move', oldloc
-            logger.info 'MOB ' + @uid + ' [' + @id + '] moved to (' + @loc[0] + ',' + @loc[1] + ')'
+              @emit 'move', oldloc
+              logger.info 'MOB ' + @uid + ' [' + @id + '] moved to (' + @loc[0] + ',' + @loc[1] + ')'
 
   save: (callback) ->
     # Save to DB

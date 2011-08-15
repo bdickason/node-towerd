@@ -11,6 +11,8 @@ MobSchema = new Schema {
   class: { type: String, default: 'Warrior' },
   active: { type: Number, default: 1 },
   symbol: { type: String, default: 'W' },
+  dx: { type: Number, default: 0 },
+  dy: { type: Number, default: 0 },
   speed: { type: Number, default: 1 },
   maxHP: { type: Number },
   curHP: { type: Number },

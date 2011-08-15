@@ -2,6 +2,7 @@ socket = io.connect 'http://localhost'
 
 ### Config Variables ###
 squarewidth = 50  # Size of one square in the grid
+FPS = 30          # Frames per second
 
 $ ->
   ### Game Events ###
@@ -49,8 +50,15 @@ $ ->
   ### Initialize Canvas ###
   canvas = document.getElementById 'game_canvas'
   ctx = canvas.getContext '2d'
+  setInterval draw, 1000 / FPS
   
   ### World Rendering Functions ###
+  
+  # Loop to draw the game world each frame
+  draw = ->
+    # ctx.clearRect 0, 0, canvas.width, canvas.height # Clear the canvas
+    
+    
   
   # Draw a square grid based on size denoted by the server
   drawGrid = (size) ->
@@ -95,7 +103,7 @@ $ ->
     loc[1] = getLoc mob.loc[1]
     ctx.fillStyle = '#F00'
     ctx.font = '20pt Georgia'
-    ctx.fillText '-' + tower.damage, loc[0], loc[1]
+    ctx.fillText '-' + tower.damage, loc[0]+5, loc[1]-20
     
   getLoc = (loc) ->
     if typeof loc is 'number'
