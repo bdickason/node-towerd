@@ -5,6 +5,7 @@ Schema = mongoose.Schema
 ObjectId = Schema.ObjectId
 
 TowerSchema = new Schema
+  uid: { type: Number, required: true },
   name: { type: String, required: true },
   id: { type: String, required: true, unique: true },
   type: { type: String, default: 'Cannon' },
