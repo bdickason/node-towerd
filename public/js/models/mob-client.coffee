@@ -13,7 +13,12 @@ $ ->
 
     # Draw a mob on the map
     draw: (context) ->
+      # Calculate new trajectory for each redraw
+      @loc[0] = @loc[0] + (@dx*@speed/FPS)
+      @loc[1] = @loc[1] + (@dx*@speed/FPS)
+      
       context.fillStyle='#000'
+
       loc = []
       loc[0] = @getLoc @loc[0]
       loc[1] = @getLoc @loc[1]

@@ -1,7 +1,7 @@
 ### Config.coffee - Configuration of random stuffs ###
 
 # Game Configuration
-exports.GAMETIMER = process.env.GAMETIMER || 200   # The amount of time between 'world' events
+exports.GAMETIMER = process.env.GAMETIMER || 600   # The amount of time between 'world' events
 
 # Client - Tile Size, etc
 exports.TILESIZE = process.env.TILESIZE || 10

@@ -1,7 +1,7 @@
 $ -> 
   ### Config Variables ###
   window.squarewidth = 50  # Size of one square in the grid
-  window.FPS = 300          # Frames per second
+  window.FPS = 30          # Frames per second
 
   socket = io.connect 'http://localhost'
   

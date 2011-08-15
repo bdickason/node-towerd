@@ -28,6 +28,9 @@ exports.World = class World extends EventEmitter
     @game = setInterval =>
       @gameLoop()
     , @gameTime
+    for mob in @mobs
+      mob.dx = 1
+      mob.dy = 1
   
   pause: ->
     clearTimeout @game
@@ -57,8 +60,8 @@ exports.World = class World extends EventEmitter
         @loadobj mob
 
     # They exist in memory but need to be spawned
-    @mobs[0].spawn [0, 1], 1, 1
-    @mobs[1].spawn [1, 1], 1, 0
+    @mobs[0].spawn [0, 1], 0, 0
+    @mobs[1].spawn [1, 1], 0, 0
     @towers[0].spawn [4, 4]
 
   loadobj: (obj) ->
