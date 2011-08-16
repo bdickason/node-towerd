@@ -15,13 +15,13 @@ describe '2d Grid utils/grid.js', ->
     expect(@grid.h).toEqual(@size)
     expect(@grid.w).toEqual(@size)
   it 'Populates with 0s', ->
-    @grid.get [1,1], (res) ->
+    @grid.get 1,1, (res) ->
       expect(res).toEqual(0)
   it 'Converts to a String', ->
     @grid.toString (res) ->
       expect(res).toBeDefined()
       expect(res).toEqual('0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0')
   it 'Sets 1,1 to a monster', ->
-    @grid.set [1,1], 'm', ->
-    @grid.get [1, 1], (res) ->
+    @grid.set 1, 1, 'm', ->
+    @grid.get 1, 1, (res) ->
       expect(res).toEqual('m')

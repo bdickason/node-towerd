@@ -14,7 +14,7 @@
       return expect(this.grid.w).toEqual(this.size);
     });
     it('Populates with 0s', function() {
-      return this.grid.get([1, 1], function(res) {
+      return this.grid.get(1, 1, function(res) {
         return expect(res).toEqual(0);
       });
     });
@@ -25,8 +25,8 @@
       });
     });
     return it('Sets 1,1 to a monster', function() {
-      this.grid.set([1, 1], 'm', function() {});
-      return this.grid.get([1, 1], function(res) {
+      this.grid.set(1, 1, 'm', function() {});
+      return this.grid.get(1, 1, function(res) {
         return expect(res).toEqual('m');
       });
     });

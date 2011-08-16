@@ -165,9 +165,9 @@ filter = (obj) ->
   
   switch obj.type
     when 'mob'
-      newobj = { uid, loc, dx, dy, speed, maxHP, curHP, symbol   } = obj
+      newobj = { uid, x, y, dx, dy, speed, maxHP, curHP, symbol   } = obj
     when 'tower'
-      newobj = { uid, symbol, damage, loc, type } = obj
+      newobj = { uid, x, y, symbol, damage, type } = obj
     when 'map'
       newobj = { uid, size, type } = obj
   return newobj

@@ -4,8 +4,8 @@
 #
 # Usage: 
 #   grid = new Grid 20    # Creates a new 20x20 grid
-#   grid.set [0,0], 'm'   # changes 0,0 to display 'm'
-#   grid.get [1,0]        # Returns the value of position 1, 0
+#   grid.set 0,0, 'm'   # changes 0,0 to display 'm'
+#   grid.get 1,0        # Returns the value of position 1, 0
 #   grid.toString()       # Returns a nice pretty grid string
 
  
@@ -22,13 +22,13 @@ exports.Grid = class Grid
         row.push(0)
       @grid.push(row);
     
-  set: (loc, value, callback) ->
-    if @isInGrid(loc)
-      @grid[loc[0]][loc[1]] = value
+  set: (x, y, value, callback) ->
+    if @isInGrid(x, y)
+      @grid[x][y] = value
   
-  get: (loc, callback) ->
-    if @isInGrid(loc)
-      callback @grid[loc[0]][loc[1]]
+  get: (x, y, callback) ->
+    if @isInGrid(x, y)
+      callback @grid[x][y]
 
   toString: (callback) ->
     callback @grid.toString()
@@ -36,9 +36,9 @@ exports.Grid = class Grid
   ### toJSON: (callback) ->
     callback { grid: @grid, w: @w, h: @h } ###
 
-  isInGrid: (loc) ->
+  isInGrid: (x, y) ->
     # Check to make sure it's on the grid
-    if loc[0] >= 0 and loc[0] <= @w and loc[1] >= 0 and loc[1] <= @h
+    if x >= 0 and x <= @w and y >= 0 and y <= @h
       return true
     else
       return false

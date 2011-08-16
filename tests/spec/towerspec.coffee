@@ -40,31 +40,32 @@ describe 'Towers towers.js', ->
       expect(res[0].name).toEqual @name
   
   it 'Spawns itself on the map at 5, 4', ->
-    @tower.on 'spawn', (type, loc, callback) =>
-      expect(@tower.loc).toEqual([5, 4])
-    @tower.spawn [5, 4], (callback) ->  
+    @tower.on 'spawn', (type, x, y, callback) =>
+      expect(@tower.x).toEqual(5)
+      expect(@tower.y).toEqual(4)
+    @tower.spawn 5, 4, (callback) ->  
 
   it 'Finds no targets when none are in range', ->
     
     # Spawn the tower    
-    @tower.spawn [5, 4], (callback) ->      
+    @tower.spawn 5, 4, (callback) ->      
     
     # Spawn a fake mob
     fakeMob = new Mob 'warrior'
 
-    fakeMob.spawn [0, 0], (callback) ->
+    fakeMob.spawn 0, 0, (callback) ->
     
     @tower.checkTarget fakeMob, (res) ->
       expect(res).toEqual []
 
   it 'Fires on a target when one is in range', ->
     # Spawn the tower    
-    @tower.spawn [5, 4], (callback) ->      
+    @tower.spawn 5, 4, (callback) ->      
   
     # Spawn a fake mob
     fakeMob = new Mob 'warrior'
 
-    fakeMob.spawn [5, 5], (callback) ->
+    fakeMob.spawn 5, 5, (callback) ->
     
     @tower.checkTarget fakeMob, (res) ->
-      expect(res[0].id).toEqual 'warrior'
+      expect(res.id).toEqual 'warrior'

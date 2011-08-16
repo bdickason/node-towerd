@@ -36,27 +36,28 @@
       }, this));
     });
     it('Spawns itself on the map at 5, 4', function() {
-      this.tower.on('spawn', __bind(function(type, loc, callback) {
-        return expect(this.tower.loc).toEqual([5, 4]);
+      this.tower.on('spawn', __bind(function(type, x, y, callback) {
+        expect(this.tower.x).toEqual(5);
+        return expect(this.tower.y).toEqual(4);
       }, this));
-      return this.tower.spawn([5, 4], function(callback) {});
+      return this.tower.spawn(5, 4, function(callback) {});
     });
     it('Finds no targets when none are in range', function() {
       var fakeMob;
-      this.tower.spawn([5, 4], function(callback) {});
+      this.tower.spawn(5, 4, function(callback) {});
       fakeMob = new Mob('warrior');
-      fakeMob.spawn([0, 0], function(callback) {});
+      fakeMob.spawn(0, 0, function(callback) {});
       return this.tower.checkTarget(fakeMob, function(res) {
         return expect(res).toEqual([]);
       });
     });
     return it('Fires on a target when one is in range', function() {
       var fakeMob;
-      this.tower.spawn([5, 4], function(callback) {});
+      this.tower.spawn(5, 4, function(callback) {});
       fakeMob = new Mob('warrior');
-      fakeMob.spawn([5, 5], function(callback) {});
+      fakeMob.spawn(5, 5, function(callback) {});
       return this.tower.checkTarget(fakeMob, function(res) {
-        return expect(res[0].id).toEqual('warrior');
+        return expect(res.id).toEqual('warrior');
       });
     });
   });

@@ -38,9 +38,10 @@ describe 'Mob mobs.js', ->
       expect(res[0].name).toEqual @name
   
   it 'Spawns itself on the map at 2, 3', ->
-    @mob.on 'spawn', (type, loc, callback) =>
-      expect(@mob.loc).toEqual([2, 3])
-    @mob.spawn [2, 3], (callback) ->
+    @mob.on 'spawn', (type, x, y, callback) =>
+      expect(@mob.x).toEqual(2)
+      expect(@mob.y).toEqual(3)
+    @mob.spawn 2, 3, (callback) ->
   
   it 'Takes damage when hit', ->
     @mob.on 'hit', (callback) =>

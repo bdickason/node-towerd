@@ -35,10 +35,11 @@
       }, this));
     });
     it('Spawns itself on the map at 2, 3', function() {
-      this.mob.on('spawn', __bind(function(type, loc, callback) {
-        return expect(this.mob.loc).toEqual([2, 3]);
+      this.mob.on('spawn', __bind(function(type, x, y, callback) {
+        expect(this.mob.x).toEqual(2);
+        return expect(this.mob.y).toEqual(3);
       }, this));
-      return this.mob.spawn([2, 3], function(callback) {});
+      return this.mob.spawn(2, 3, function(callback) {});
     });
     it('Takes damage when hit', function() {
       this.mob.on('hit', __bind(function(callback) {

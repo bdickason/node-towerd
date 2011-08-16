@@ -71,9 +71,9 @@
           this.loadobj(mob);
         }
       }
-      this.mobs[0].spawn([0, 1], 0, 0);
-      this.mobs[1].spawn([1, 1], 0, 0);
-      return this.towers[0].spawn([4, 4]);
+      this.mobs[0].spawn(0, 1, 0, 0);
+      this.mobs[1].spawn(1, 1, 0, 0);
+      return this.towers[0].spawn(4, 4);
     };
     World.prototype.loadobj = function(obj) {
       this.emit('load', obj);
@@ -81,8 +81,8 @@
       obj.on('spawn', __bind(function() {
         return this.spawnobj(obj);
       }, this));
-      obj.on('move', __bind(function(oldloc) {
-        return this.moveobj(obj, oldloc);
+      obj.on('move', __bind(function(old_x, old_y) {
+        return this.moveobj(obj, old_x, old_y);
       }, this));
       return obj.on('fire', __bind(function(target) {
         return this.fireobj(obj, target);
@@ -92,9 +92,9 @@
     World.prototype.spawnobj = function(obj) {
       return this.emit('spawn', obj);
     };
-    World.prototype.moveobj = function(obj, oldloc) {
-      if (this.maps[0].grid.isInGrid(obj.loc)) {
-        return this.emit('move', obj, oldloc);
+    World.prototype.moveobj = function(obj, old_x, old_y) {
+      if (this.maps[0].grid.isInGrid(obj.x, obj.y)) {
+        return this.emit('move', obj, old_x, old_y);
       }
     };
     World.prototype.fireobj = function(obj, target) {

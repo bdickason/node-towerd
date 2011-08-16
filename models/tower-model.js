@@ -36,10 +36,12 @@
     range: {
       type: Number
     },
-    loc: [Number]
-  });
-  TowerSchema.index({
-    loc: '2d'
+    x: {
+      type: Number
+    },
+    y: {
+      type: Number
+    }
   });
   mongoose.model('Towers', TowerSchema);
   module.exports = db.model('Towers');

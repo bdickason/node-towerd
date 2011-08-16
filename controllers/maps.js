@@ -29,12 +29,12 @@
       /* Event Emitters */
       world.on('spawn', __bind(function(obj) {
         if (obj.type !== 'map') {
-          return this.grid.set(obj.loc, obj.symbol, function(callback) {});
+          return this.grid.set(obj.x, obj.y, obj.symbol, function(callback) {});
         }
       }, this));
-      world.on('move', __bind(function(obj, oldloc) {
-        this.grid.set(oldloc, 0, __bind(function(callback) {}, this));
-        return this.grid.set(obj.loc, obj.symbol, function(callback) {});
+      world.on('move', __bind(function(obj, old_x, old_y) {
+        this.grid.set(old_x, old_y, 0, __bind(function(callback) {}, this));
+        return this.grid.set(obj.x, obj.y, obj.symbol, function(callback) {});
       }, this));
     }
     Map.prototype.save = function(callback) {
