@@ -28,7 +28,7 @@
     redisUrl = url.parse(cfg.REDISTOGO_URL);
     redisAuth = redisUrl.auth.split(':');
     app.set('redisHost', redisUrl.hostname);
-    console.log('redisHost: ' + redusUrl.hostname);
+    console.log('redisHost: ' + redisUrl.hostname);
     app.set('redisPort', redisUrl.port);
     console.log('redisPort: ' + redisUrl.port);
     app.set('redisDb', redisAuth[0]);
