@@ -22,6 +22,15 @@
   });
   app = express.createServer();
   io = (require('socket.io')).listen(app);
+  app.configure('production', function() {
+    var redisAuth, redisUrl;
+    redisUrl = url.parse(cfg.REDISTOGO_URL);
+    redisAuth = redisUrl.auth.split(':');
+    app.set('redisHost', redisUrl.hostname);
+    app.set('redisPort', redisUrl.port);
+    app.set('redisDb', redisAuth[0]);
+    return app.set('redisPass', redisAuth[1]);
+  });
   app.configure(function() {
     app.set('views', __dirname + '/views');
     app.set('view engine', 'jade');
