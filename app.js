@@ -28,13 +28,9 @@
     redisUrl = url.parse(cfg.REDISTOGO_URL);
     redisAuth = redisUrl.auth.split(':');
     app.set('redisHost', redisUrl.hostname);
-    console.log('redisHost: ' + redisUrl.hostname);
     app.set('redisPort', redisUrl.port);
-    console.log('redisPort: ' + redisUrl.port);
     app.set('redisDb', redisAuth[0]);
-    console.log('redisDb: ' + redisAuth[0]);
-    app.set('redisPass', redisAuth[1]);
-    return console.log('redisPass: ' + redisAuth[1]);
+    return app.set('redisPass', redisAuth[1]);
   });
   app.configure(function() {
     app.set('views', __dirname + '/views');
