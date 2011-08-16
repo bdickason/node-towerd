@@ -2,7 +2,7 @@
   /* Mob client-side code */  $(function() {
     return window.Mob = (function() {
       function Mob(data) {
-        this.moveConst = 1.6;
+        this.moveConst = 1.7;
         this.uid = data.uid, this.loc = data.loc, this.dx = data.dx, this.dy = data.dy, this.speed = data.speed, this.maxHP = data.maxHP, this.curHP = data.curHP, this.symbol = data.symbol;
       }
       Mob.prototype.move = function(mobdata) {
