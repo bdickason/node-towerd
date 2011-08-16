@@ -29,6 +29,7 @@ exports.World = class World extends EventEmitter
       @gameLoop()
     , @gameTime
     for mob in @mobs
+      # Hack to start mobs walking
       mob.dx = 1
       mob.dy = 1
   
@@ -60,9 +61,9 @@ exports.World = class World extends EventEmitter
         @loadobj mob
 
     # They exist in memory but need to be spawned
-    @mobs[0].spawn [0, 1], 0, 0
-    @mobs[1].spawn [1, 1], 0, 0
-    @towers[0].spawn [4, 4]
+    @mobs[0].spawn 0, 1, 0, 0
+    @mobs[1].spawn 1, 1, 0, 0
+    @towers[0].spawn 4, 4
 
   loadobj: (obj) ->
     # proxies 'load' events from objects
@@ -71,8 +72,8 @@ exports.World = class World extends EventEmitter
     ### Event Emitters - set them up! ###
     obj.on 'spawn', =>
       @spawnobj obj
-    obj.on 'move', (oldloc) =>
-      @moveobj obj, oldloc
+    obj.on 'move', (old_x, old_y) =>
+      @moveobj obj, old_x, old_y
     obj.on 'fire', (target) =>
       @fireobj obj, target
   
@@ -80,10 +81,10 @@ exports.World = class World extends EventEmitter
   spawnobj: (obj) ->
     @emit 'spawn', obj
     
-  moveobj: (obj, oldloc) ->
+  moveobj: (obj, old_x, old_y) ->
     # Check if mob is visible before sending move
-    if @maps[0].grid.isInGrid obj.loc
-      @emit 'move', obj, oldloc
+    if @maps[0].grid.isInGrid obj.x, obj.y
+      @emit 'move', obj, old_x, old_y
   
   fireobj: (obj, target) ->
     @emit 'fire', obj, target

@@ -19,12 +19,13 @@ describe 'Map map.js', ->
     @active = 1
     @theme = 'Forest'
     @mobs = [ 'warrior', 'warrior' ]
-    @size = 10
+    @size = 15
 
     @fakeMob = new Obj   # Load a fake mob to emit events
     @fakeMob.type = 'mob'
     @fakeMob.symbol = 'm'
-    @fakeMob.loc = [0, 1]
+    @fakeMob.x = 0
+    @fakeMob.y = 1
     
     @map = new Map @id
 
@@ -39,49 +40,56 @@ describe 'Map map.js', ->
   it 'Loads a mob onto the map when world calls a spawn event', ->
     world.emit 'spawn', @fakeMob
 
-    @map.grid.get [0, 1], (res) =>
+    @map.grid.get 0, 1, (res) =>
       expect(res).toEqual(@fakeMob.symbol)
   
   it 'Doesn\'t display mobs that are spawned outside the map', ->
-    @fakeMob.loc = [10, 15]
+    @fakeMob.x = 10
+    @fakeMob.y =  20
     world.emit 'spawn', @fakeMob
     
-    @map.grid.get [10, 15], (res) =>
-      expect(@fakeMob.loc).toEqual([10, 15])
+    @map.grid.get 10, 20, (res) =>
+      expect(@fakeMob.x).toEqual(10)
+      expect(@fakeMob.y).toEqual(20)
       expect(res).toBeUndefined()
 
   it 'Updates a mob\'s position as it moves across the map', ->
     world.emit 'spawn', @fakeMob
 
-    @map.grid.get [0, 1], (res) =>
+    @map.grid.get 0, 1, (res) =>
       expect(res).toEqual(@fakeMob.symbol)
     
-    oldloc = @fakeMob.loc
+    old_x = @fakeMob.x
+    old_y = @fakeMob.y
     
-    @fakeMob.loc = [5, 6]
-    world.emit 'move', @fakeMob, oldloc
+    @fakeMob.x = 5
+    @fakeMob.y = 6
+    world.emit 'move', @fakeMob, old_x, old_y
     
-    @map.grid.get oldloc, (res) =>
+    @map.grid.get old_x, old_y, (res) =>
       expect(res).toEqual(0)
     
-    @map.grid.get [5, 6], (res) =>
+    @map.grid.get 5, 6, (res) =>
       expect(res).toEqual(@fakeMob.symbol)
   
   it 'Ignores mobs that move outside of the map', ->
     world.emit 'spawn', @fakeMob
     
-    @map.grid.get [0, 1], (res) =>
+    @map.grid.get 0, 1, (res) =>
       expect(res).toEqual(@fakeMob.symbol)
   
-    oldloc = @fakeMob.loc
-    @fakeMob.loc = [11, 6]
-    world.emit 'move', @fakeMob, oldloc
+    old_x = @fakeMob.x
+    old_y = @fakeMob.y
+    @fakeMob.x = 25
+    @fakeMob.y = 6
+    world.emit 'move', @fakeMob, old_x, old_y
   
-    @map.grid.get [5, 6], (res) =>
+    @map.grid.get 5, 6, (res) =>
       expect(res).toEqual(0)
     
-    @map.grid.get [11, 6], (res) =>
-      expect(@fakeMob.loc).toEqual([11, 6])
+    @map.grid.get 25, 6, (res) =>
+      expect(@fakeMob.x).toEqual(25)
+      expect(@fakeMob.y).toEqual(6)
       expect(res).toBeUndefined()
 
   it 'Saves itself to the DB once loaded', ->

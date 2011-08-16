@@ -21,9 +21,10 @@
       logger.info('Loading mob: ' + name);
       toLoad = (require('../data/mobs/' + name + '.js')).mob;
       this.uid = Math.floor(Math.random() * 10000000);
-      this.loc = [null, null];
+      this.x = null;
+      this.y = null;
       _ref = 0, this.dx = _ref.dx, this.dy = _ref.dy;
-      this.id = toLoad.id, this.name = toLoad.name, this["class"] = toLoad["class"], this.active = toLoad.active, this.speed = toLoad.speed, this.maxHP = toLoad.maxHP, this.curHP = toLoad.curHP, this.symbol = toLoad.symbol;
+      this.id = toLoad.id, this.x = toLoad.x, this.y = toLoad.y, this.name = toLoad.name, this["class"] = toLoad["class"], this.active = toLoad.active, this.speed = toLoad.speed, this.maxHP = toLoad.maxHP, this.curHP = toLoad.curHP, this.symbol = toLoad.symbol;
       this.emit('load');
       /* Event Emitters */
       world.on('gameLoop', __bind(function() {
@@ -37,14 +38,15 @@
         }
       }, this));
     }
-    Mob.prototype.spawn = function(loc, dx, dy, callback) {
+    Mob.prototype.spawn = function(x, y, dx, dy, callback) {
       var _ref;
       this.curHP = this.maxHP;
       _ref = {
-        loc: loc,
+        x: x,
+        y: y,
         dx: dx,
         dy: dy
-      }, this.loc = _ref.loc, this.dx = _ref.dx, this.dy = _ref.dy;
+      }, this.x = _ref.x, this.y = _ref.y, this.dx = _ref.dx, this.dy = _ref.dy;
       this.emit('spawn');
       logger.info('Spawning mob [' + this.id + '] at (' + this.loc + ') with UID: ' + this.uid);
       return this.save(function() {});
@@ -60,24 +62,28 @@
       }
     };
     Mob.prototype.move = function(dx, dy, speed, callback) {
-      var newloc, oldloc;
-      oldloc = this.loc;
-      this.loc = [(this.loc[0] + dx) * speed, (this.loc[1] + dy) * speed];
-      newloc = this.loc;
-      if (oldloc !== newloc) {
+      var new_x, new_y, old_x, old_y;
+      old_x = this.x;
+      old_y = this.y;
+      this.x = (this.x + dx) * speed;
+      this.y = (this.y + dy) * speed;
+      new_x = this.x;
+      new_y = this.y;
+      if (old_x !== new_x && old_y !== new_y) {
         return mobModel.find({
           uid: this.uid
         }, __bind(function(err, mob) {
           if (err) {
             return logger.error('Error finding mob: {@uid} ' + err);
           } else {
-            mob[0].loc = newloc;
+            mob[0].x = new_x;
+            mob[0].y = new_y;
             return mob[0].save(__bind(function(err) {
               if (err) {
                 return logger.warn('Error saving mob: {@uid} ' + err);
               } else {
-                this.emit('move', oldloc);
-                return logger.info('MOB ' + this.uid + ' [' + this.id + '] moved to (' + this.loc[0] + ',' + this.loc[1] + ')');
+                this.emit('move', old_x, old_y);
+                return logger.info('MOB ' + this.uid + ' [' + this.id + '] moved to (' + this.x + ',' + this.y + ')');
               }
             }, this));
           }
@@ -94,7 +100,8 @@
         speed: this.speed,
         maxHP: this.maxHP,
         curHP: this.curHP,
-        loc: this.loc
+        x: this.x,
+        y: this.y
       });
       return newmob.save(function(err, saved) {
         if (err) {
@@ -104,7 +111,7 @@
     };
     Mob.prototype.showString = function(callback) {
       var output;
-      output = 'MOB ' + this.uid + ' [' + this.id + ']  loc: (' + this.loc[0] + ', ' + this.loc[1] + ')  HP: ' + this.curHP + '/' + this.maxHP;
+      output = 'MOB ' + this.uid + ' [' + this.id + ']  loc: (' + this.x + ', ' + this.y + ')  HP: ' + this.curHP + '/' + this.maxHP;
       return callback(output);
     };
     return Mob;

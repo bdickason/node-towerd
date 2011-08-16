@@ -1,5 +1,5 @@
 (function() {
-  var RedisStore, Users, World, app, cfg, express, http, init, io, load, redis, sys, url, winston;
+  var RedisStore, Users, World, app, cfg, express, filter, http, init, io, load, redis, sys, url, winston;
   http = require('http');
   url = require('url');
   express = require('express');
@@ -86,20 +86,13 @@
     });
     /* World Event Listeners */
     world.on('load', function(obj) {
-      return socket.emit('load ', {
-        obj: obj
-      });
+      return socket.emit('load ', filter(obj));
     });
     world.on('spawn', function(obj) {
-      return socket.emit('spawn', {
-        obj: obj
-      });
+      return socket.emit('spawn', filter(obj));
     });
-    world.on('move', function(obj, oldloc) {
-      return socket.emit('move', {
-        obj: obj,
-        oldloc: oldloc
-      });
+    world.on('move', function(obj) {
+      return socket.emit('move', filter(obj));
     });
     world.on('fire', function(obj, target) {
       return socket.emit('fire', {
@@ -166,6 +159,20 @@
     world = new World(app);
     global.world = world;
     return world.emit('load');
+  };
+  filter = function(obj) {
+    var curHP, damage, dx, dy, maxHP, newobj, size, speed, symbol, type, uid, x, y;
+    switch (obj.type) {
+      case 'mob':
+        newobj = (uid = obj.uid, x = obj.x, y = obj.y, dx = obj.dx, dy = obj.dy, speed = obj.speed, maxHP = obj.maxHP, curHP = obj.curHP, symbol = obj.symbol, obj);
+        break;
+      case 'tower':
+        newobj = (uid = obj.uid, x = obj.x, y = obj.y, symbol = obj.symbol, damage = obj.damage, type = obj.type, obj);
+        break;
+      case 'map':
+        newobj = (uid = obj.uid, size = obj.size, type = obj.type, obj);
+    }
+    return newobj;
   };
   load();
   app.listen(process.env.PORT || 3000);

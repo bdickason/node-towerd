@@ -46,10 +46,12 @@
     curHP: {
       type: Number
     },
-    loc: [Number]
-  });
-  MobSchema.index({
-    loc: '2d'
+    x: {
+      type: Number
+    },
+    y: {
+      type: Number
+    }
   });
   mongoose.model('Mobs', MobSchema);
   module.exports = db.model('Mobs');

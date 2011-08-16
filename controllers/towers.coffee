@@ -15,7 +15,8 @@ exports.Tower = class Tower extends EventEmitter
     
     @uid = Math.floor Math.random()*10000000  # Generate a unique ID for each instance of this tower
     { id: @id, name: @name, active: @active, damage: @damage, range: @range, symbol: @symbol } = toLoad
-    @loc = [null, null]  # Hasn't been spawned yet, so position is null
+    @x = null
+    @y = null  # Hasn't been spawned yet, so position is null
     @model = null
     
     @emit 'load'
@@ -27,32 +28,32 @@ exports.Tower = class Tower extends EventEmitter
           @checkTarget obj, (res) ->
       
   # Activate the tower and place it on the map
-  spawn: (loc, callback) ->
-    @loc = loc
+  spawn: (x, y, callback) ->
+    @x = x
+    @y = y
     @emit 'spawn'
-    logger.info 'Spawning tower [' + @name + '] at (' + @loc + ') with UID: ' + @uid
+    logger.info 'Spawning tower [' + @name + '] at (' + @x + ', ' + @y + ') with UID: ' + @uid
     
     @save ->
 
   
   # Check for anything within range
   checkTarget: (obj, callback) -> 
-    mobModel.find { loc : { $near : @loc , $maxDistance : @range } }, (err, hits) =>
-      if err
-        logger.error 'Error: ' + err
-      else
-        for mob in hits
-          if obj.loc.join('') == mob.loc.join('') # can't compare two objects directly
-            @emit 'fire', mob
-        callback hits
-  
+    # Use a simple box check to see if mob is in range after moving
+
+    if obj.x >= (@x - @range) and obj.x <= (@x + @range) and obj.y >= (@y - @range) and obj.y <= (@y + @range)
+      # Mob is a hit!
+      logger.debug 'Hit! ' + obj.uid
+      @emit 'fire', obj
+      callback obj
+      
   save: (callback) ->
     # Save to DB
-    @model = new towerModel ( { uid: @uid, id: @id, name: @name, damage: @damage, range: @range, type: @type, loc: @loc } )
+    @model = new towerModel ( { uid: @uid, id: @id, name: @name, damage: @damage, range: @range, type: @type, x: @x, y: @y } )
     @model.save (err, saved) ->
       if err
         logger.warn 'Error saving: ' + err
     
   showString: (callback) ->
-    output = 'TOWER ' + @uid + ' [' + @id + ']  loc: (' + @loc[0] + ', ' + @loc[1] + ')  Range: ' + @range
+    output = 'TOWER ' + @uid + ' [' + @id + ']  loc: (' + @x + ', ' + @y + ')  Range: ' + @range
     callback output

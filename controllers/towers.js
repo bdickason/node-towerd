@@ -23,7 +23,8 @@
       toLoad = (require('../data/towers/' + name + '.js')).tower;
       this.uid = Math.floor(Math.random() * 10000000);
       this.id = toLoad.id, this.name = toLoad.name, this.active = toLoad.active, this.damage = toLoad.damage, this.range = toLoad.range, this.symbol = toLoad.symbol;
-      this.loc = [null, null];
+      this.x = null;
+      this.y = null;
       this.model = null;
       this.emit('load');
       /* Events */
@@ -33,32 +34,19 @@
         }
       }, this));
     }
-    Tower.prototype.spawn = function(loc, callback) {
-      this.loc = loc;
+    Tower.prototype.spawn = function(x, y, callback) {
+      this.x = x;
+      this.y = y;
       this.emit('spawn');
-      logger.info('Spawning tower [' + this.name + '] at (' + this.loc + ') with UID: ' + this.uid);
+      logger.info('Spawning tower [' + this.name + '] at (' + this.x + ', ' + this.y + ') with UID: ' + this.uid);
       return this.save(function() {});
     };
     Tower.prototype.checkTarget = function(obj, callback) {
-      return mobModel.find({
-        loc: {
-          $near: this.loc,
-          $maxDistance: this.range
-        }
-      }, __bind(function(err, hits) {
-        var mob, _i, _len;
-        if (err) {
-          return logger.error('Error: ' + err);
-        } else {
-          for (_i = 0, _len = hits.length; _i < _len; _i++) {
-            mob = hits[_i];
-            if (obj.loc.join('') === mob.loc.join('')) {
-              this.emit('fire', mob);
-            }
-          }
-          return callback(hits);
-        }
-      }, this));
+      if (obj.x >= (this.x - this.range) && obj.x <= (this.x + this.range) && obj.y >= (this.y - this.range) && obj.y <= (this.y + this.range)) {
+        logger.debug('Hit! ' + obj.uid);
+        this.emit('fire', obj);
+        return callback(obj);
+      }
     };
     Tower.prototype.save = function(callback) {
       this.model = new towerModel({
@@ -68,7 +56,8 @@
         damage: this.damage,
         range: this.range,
         type: this.type,
-        loc: this.loc
+        x: this.x,
+        y: this.y
       });
       return this.model.save(function(err, saved) {
         if (err) {
@@ -78,7 +67,7 @@
     };
     Tower.prototype.showString = function(callback) {
       var output;
-      output = 'TOWER ' + this.uid + ' [' + this.id + ']  loc: (' + this.loc[0] + ', ' + this.loc[1] + ')  Range: ' + this.range;
+      output = 'TOWER ' + this.uid + ' [' + this.id + ']  loc: (' + this.x + ', ' + this.y + ')  Range: ' + this.range;
       return callback(output);
     };
     return Tower;

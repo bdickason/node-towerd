@@ -37,10 +37,9 @@ $ ->
   # Move an object across the canvas
   socket.on 'move', (data) ->
     console.log 'Move event'
-    mobdata = data.obj
 
     # Only move the mob that sent the event
-    mob.move mobdata for mob in mobs when mob.uid == mobdata.uid
+    mob.move data for mob in mobs when mob.uid == data.uid
 
   socket.on 'fire', (data) ->
     console.log 'Fire event'

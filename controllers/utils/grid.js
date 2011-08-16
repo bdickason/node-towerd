@@ -14,14 +14,14 @@
         this.grid.push(row);
       }
     }
-    Grid.prototype.set = function(loc, value, callback) {
-      if (this.isInGrid(loc)) {
-        return this.grid[loc[0]][loc[1]] = value;
+    Grid.prototype.set = function(x, y, value, callback) {
+      if (this.isInGrid(x, y)) {
+        return this.grid[x][y] = value;
       }
     };
-    Grid.prototype.get = function(loc, callback) {
-      if (this.isInGrid(loc)) {
-        return callback(this.grid[loc[0]][loc[1]]);
+    Grid.prototype.get = function(x, y, callback) {
+      if (this.isInGrid(x, y)) {
+        return callback(this.grid[x][y]);
       }
     };
     Grid.prototype.toString = function(callback) {
@@ -29,8 +29,8 @@
     };
     /* toJSON: (callback) ->
       callback { grid: @grid, w: @w, h: @h } */
-    Grid.prototype.isInGrid = function(loc) {
-      if (loc[0] >= 0 && loc[0] <= this.w && loc[1] >= 0 && loc[1] <= this.h) {
+    Grid.prototype.isInGrid = function(x, y) {
+      if (x >= 0 && x <= this.w && y >= 0 && y <= this.h) {
         return true;
       } else {
         return false;
