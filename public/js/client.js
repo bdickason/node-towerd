@@ -33,14 +33,13 @@
       return console.log('Spawn event');
     });
     socket.on('move', function(data) {
-      var mob, mobdata, _i, _len, _results;
+      var mob, _i, _len, _results;
       console.log('Move event');
-      mobdata = data.obj;
       _results = [];
       for (_i = 0, _len = mobs.length; _i < _len; _i++) {
         mob = mobs[_i];
-        if (mob.uid === mobdata.uid) {
-          _results.push(mob.move(mobdata));
+        if (mob.uid === data.uid) {
+          _results.push(mob.move(data));
         }
       }
       return _results;

@@ -83,15 +83,15 @@ io.sockets.on 'connection', (socket) ->
   
   world.on 'load', (obj) ->
     # Tell the client to load some game data
-    socket.emit 'load ', { obj }
+    socket.emit 'load ', filter obj
   
   world.on 'spawn', (obj) ->
     # Tell the client to spawn an object
-    socket.emit 'spawn', { obj }
+    socket.emit 'spawn', filter obj
 
-  world.on 'move', (obj, oldloc) ->
+  world.on 'move', (obj) ->
     # object is moving from oldloc to obj.loc
-    socket.emit 'move', { obj, oldloc }
+    socket.emit 'move', filter obj
   
   world.on 'fire', (obj, target) ->
     # object fired on target
@@ -158,7 +158,20 @@ load = ->
   world = new World app
   global.world = world  # world needs to be called from anywhere/everywhere
   world.emit 'load'
-    
+
+filter = (obj) ->
+  # Filters out unwanted game data to send to the client
+  # This is to keep packets as small as possible
+  
+  switch obj.type
+    when 'mob'
+      newobj = { uid, loc, dx, dy, speed, maxHP, curHP, symbol   } = obj
+    when 'tower'
+      newobj = { uid, symbol, damage, loc, type } = obj
+    when 'map'
+      newobj = { uid, size, type } = obj
+  return newobj
+      
 load()  # Load basic game info
 
 app.listen process.env.PORT or 3000 
