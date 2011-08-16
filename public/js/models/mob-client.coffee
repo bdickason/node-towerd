@@ -6,6 +6,7 @@
 $ ->
   class window.Mob
     constructor: (data) ->
+      @moveConst = 1.6
       { @uid, @loc, @dx, @dy, @speed, @maxHP, @curHP, @symbol } = data
   
     move: (mobdata) ->
@@ -14,8 +15,8 @@ $ ->
     # Draw a mob on the map
     draw: (context) ->
       # Calculate new trajectory for each redraw
-      @loc[0] = @loc[0] + (@dx*@speed/FPS)
-      @loc[1] = @loc[1] + (@dx*@speed/FPS)
+      @loc[0] = @loc[0] + (@dx*@speed*@moveConst/FPS)
+      @loc[1] = @loc[1] + (@dx*@speed*@moveConst/FPS)
       
       context.fillStyle='#000'
 
