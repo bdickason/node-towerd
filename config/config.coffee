@@ -27,3 +27,11 @@ exports.LOGGLY_INPUTTOKEN = process.env.LOGGLY_INPUTTOKEN || ''
 
 ## DON'T TOUCH
 exports.DB = 'mongodb://' + @MONGO_HOST + '/' + @MONGO_DB
+exports.REDIS = 
+exports.MONGOHQ_URL = process.env.MONGOHQ_URL || null
+exports.REDISTOGO_URL = process.env.REDISTOGO_URL || null
+
+# Fix for heroku
+if MONGOHQ_URL != null
+  DB = MONGOHQ_URL
+  
