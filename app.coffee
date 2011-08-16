@@ -30,7 +30,6 @@ app.configure 'production', ->
   app.set 'redisPort', redisUrl.port 
   app.set 'redisDb', redisAuth[0]
   app.set 'redisPass', redisAuth[1]
-
     
 app.configure ->
   app.set 'views', __dirname + '/views'
