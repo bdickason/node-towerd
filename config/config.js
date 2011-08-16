@@ -1,6 +1,5 @@
 (function() {
-  /* Config.coffee - Configuration of random stuffs */  var DB;
-  exports.GAMETIMER = process.env.GAMETIMER || 600;
+  /* Config.coffee - Configuration of random stuffs */  exports.GAMETIMER = process.env.GAMETIMER || 600;
   exports.TILESIZE = process.env.TILESIZE || 10;
   exports.SESSION_SECRET = process.env.SESSION_SECRET || 'internets';
   exports.SESSION_ID = process.env.SESSION_ID || 'express.sid';
@@ -14,7 +13,7 @@
   exports.DB = 'mongodb://' + this.MONGO_HOST + '/' + this.MONGO_DB;
   exports.MONGOHQ_URL = process.env.MONGOHQ_URL || null;
   exports.REDISTOGO_URL = process.env.REDISTOGO_URL || null;
-  if (MONGOHQ_URL !== null) {
-    DB = MONGOHQ_URL;
+  if (exports.MONGOHQ_URL !== null) {
+    exports.DB = exports.MONGOHQ_URL;
   }
 }).call(this);
