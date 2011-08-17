@@ -10,12 +10,14 @@ $ ->
       bullets.push @
 
     draw: (context) ->
+      context.save()
       context.translate @x, @y
       context.fillStyle = '#fb0'
       context.beginPath()
       context.arc 0, 0, @r, 0, Math.PI * 2, true
       context.closePath()
       context.fill()
+      context.restore()
     
     remove: ->
       bullets.splice bullets.indexOf @, 1

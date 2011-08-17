@@ -31,18 +31,21 @@
         context.beginPath();
         context.moveTo(this.line.x, this.line.y);
         context.lineTo(new_x, new_y);
-        return context.stroke();
+        context.stroke();
+        return this.drawFire(context);
       };
       Tower.prototype.drawFire = function(context) {
-        var bullet, i, random_offset, speed, _i, _j, _len, _len2, _results;
-        bullets.length < 200;
-        for (i = 0; i <= 5; i++) {
-          bullet = new Bullet(this.x, this.y, 2);
-          random_offset = Math.random() * 1 - .5;
-          speed = Math.random() * 15 + 3;
-          bullet.vx = speed * Math.cos(this.line.angle + random_offset);
-          bullet.vy = speed * Math.sin(this.line.angle + random_offset);
+        var bullet, i, random_offset, speed, _i, _len, _results;
+        if (bullets.length < 20) {
+          for (i = 0; i <= 5; i++) {
+            bullet = new Bullet(this.x, this.y, 2);
+            random_offset = Math.random() * 1 - .5;
+            speed = Math.random() * 15 + 3;
+            bullet.vx = speed * Math.cos(this.line.angle + random_offset);
+            bullet.vy = speed * Math.sin(this.line.angle + random_offset);
+          }
         }
+        _results = [];
         for (_i = 0, _len = bullets.length; _i < _len; _i++) {
           bullet = bullets[_i];
           bullet.x += bullet.vx;
@@ -55,14 +58,10 @@
           } else if (bullet.x >= fg_canvas.height) {
             bullet.vy = -Math.abs(bullet.vy);
             bullet.vy *= .7;
-            if (Math.abs(ball.vy < 1 && Math.abs(bullet.vx < 1))) {
-              bullt.remove();
+            if (Math.abs(bullet.vy < 1 && Math.abs(bullet.vx < 1))) {
+              bullet.remove();
             }
           }
-        }
-        _results = [];
-        for (_j = 0, _len2 = bullets.length; _j < _len2; _j++) {
-          bullet = bullets[_j];
           _results.push(bullet.draw(context));
         }
         return _results;

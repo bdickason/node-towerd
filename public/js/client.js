@@ -47,11 +47,7 @@
       return _results;
     });
     socket.on('fire', function(data) {
-      console.log('Fire event');
-      return towers[0].drawFire(fg_ctx);
-      /*    mob = data.target
-      tower = data.obj
-      drawFire mob, tower */
+      return console.log('Fire event');
     });
     /* Define canvas, etc */
     window.fg_canvas = document.getElementById('game_canvas');

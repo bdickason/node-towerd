@@ -46,11 +46,7 @@ $ ->
 
   socket.on 'fire', (data) ->
     console.log 'Fire event'
-    towers[0].drawFire fg_ctx
-
-    ###    mob = data.target
-    tower = data.obj
-    drawFire mob, tower ###
+    # towers[0].drawFire fg_ctx
  
   ### Define canvas, etc ###
   window.fg_canvas = document.getElementById 'game_canvas'
