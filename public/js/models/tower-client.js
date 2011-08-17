@@ -33,13 +33,39 @@
         context.lineTo(new_x, new_y);
         return context.stroke();
       };
-      Tower.prototype.drawFire = function(context, mob) {
-        var _x, _y;
-        _x = this.getLoc(mob.x);
-        _y = this.getLoc(mob.y);
-        context.fillStyle = '#F00';
-        context.font = '20pt Georgia';
-        return context.fillText('-' + this.damage, _x + 5, _y - 20);
+      Tower.prototype.drawFire = function(context) {
+        var bullet, i, random_offset, speed, _i, _j, _len, _len2, _results;
+        bullets.length < 200;
+        for (i = 0; i <= 5; i++) {
+          bullet = new Bullet(this.x, this.y, 2);
+          random_offset = Math.random() * 1 - .5;
+          speed = Math.random() * 15 + 3;
+          bullet.vx = speed * Math.cos(this.line.angle + random_offset);
+          bullet.vy = speed * Math.sin(this.line.angle + random_offset);
+        }
+        for (_i = 0, _len = bullets.length; _i < _len; _i++) {
+          bullet = bullets[_i];
+          bullet.x += bullet.vx;
+          bullet.y += bullet.vy;
+          bullet.vy += .1;
+          bullet.vx *= .999;
+          bullet.vy *= .99;
+          if (bullet.x % fg_canvas.width !== bullet.x) {
+            bullet.remove();
+          } else if (bullet.x >= fg_canvas.height) {
+            bullet.vy = -Math.abs(bullet.vy);
+            bullet.vy *= .7;
+            if (Math.abs(ball.vy < 1 && Math.abs(bullet.vx < 1))) {
+              bullt.remove();
+            }
+          }
+        }
+        _results = [];
+        for (_j = 0, _len2 = bullets.length; _j < _len2; _j++) {
+          bullet = bullets[_j];
+          _results.push(bullet.draw(context));
+        }
+        return _results;
       };
       Tower.prototype.getLoc = function(loc) {
         if (typeof loc === 'number') {

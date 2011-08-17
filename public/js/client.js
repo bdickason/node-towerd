@@ -3,6 +3,8 @@
     /* Config Variables */    var draw, socket;
     window.squarewidth = 50;
     window.FPS = 30;
+    /* Reserved Variables */
+    window.bullets = [];
     socket = io.connect('http://localhost');
     /* Game Events */
     socket.on('init', function(data) {
@@ -46,7 +48,7 @@
     });
     socket.on('fire', function(data) {
       console.log('Fire event');
-      return console.log(data);
+      return towers[0].drawFire(fg_ctx);
       /*    mob = data.target
       tower = data.obj
       drawFire mob, tower */

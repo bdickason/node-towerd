@@ -41,13 +41,32 @@ $ ->
       context.lineTo new_x, new_y
       context.stroke()
       
-    drawFire: (context, mob) ->
-      _x = @getLoc mob.x
-      _y = @getLoc mob.y
-      context.fillStyle = '#F00'
-      context.font = '20pt Georgia'
-      context.fillText '-' + @damage, _x+5, _y-20
-
+    drawFire: (context) ->      
+      bullets.length < 200
+      for i in [0..5] 
+        bullet = new Bullet @x, @y, 2
+        random_offset = Math.random() * 1 - .5
+        speed = Math.random() * 15 + 3
+        bullet.vx = speed * Math.cos(@line.angle + random_offset);
+        bullet.vy = speed * Math.sin(@line.angle + random_offset);
+          
+      for bullet in bullets
+        bullet.x += bullet.vx
+        bullet.y += bullet.vy
+        bullet.vy += .1
+        bullet.vx *= .999
+        bullet.vy *= .99
+        
+        if bullet.x % fg_canvas.width != bullet.x
+          bullet.remove()
+        else if bullet.x >= fg_canvas.height
+          bullet.vy = -Math.abs bullet.vy
+          bullet.vy *= .7
+          if Math.abs ball.vy < 1 && Math.abs bullet.vx < 1
+            bullt.remove()      
+      
+      bullet.draw context for bullet in bullets
+          
     getLoc: (loc) ->
        if typeof loc is 'number'
          return (loc*squarewidth)+0.5
@@ -67,4 +86,4 @@ $ ->
       return num*num
       
         
-        
+    

@@ -2,6 +2,9 @@ $ ->
   ### Config Variables ###
   window.squarewidth = 50  # Size of one square in the grid
   window.FPS = 30          # Frames per second
+  
+  ### Reserved Variables ###
+  window.bullets = []
 
   socket = io.connect 'http://localhost'
   
@@ -43,7 +46,7 @@ $ ->
 
   socket.on 'fire', (data) ->
     console.log 'Fire event'
-    console.log data
+    towers[0].drawFire fg_ctx
 
     ###    mob = data.target
     tower = data.obj
