@@ -3,6 +3,8 @@
     /* Config Variables */    var draw, socket;
     window.squarewidth = 50;
     window.FPS = 30;
+    /* Reserved Variables */
+    window.bullets = [];
     socket = io.connect('http://localhost');
     /* Game Events */
     socket.on('init', function(data) {
@@ -34,7 +36,6 @@
     });
     socket.on('move', function(data) {
       var mob, _i, _len, _results;
-      console.log('Move event');
       _results = [];
       for (_i = 0, _len = mobs.length; _i < _len; _i++) {
         mob = mobs[_i];
@@ -45,11 +46,7 @@
       return _results;
     });
     socket.on('fire', function(data) {
-      console.log('Fire event');
-      return console.log(data);
-      /*    mob = data.target
-      tower = data.obj
-      drawFire mob, tower */
+      return towers[0].fire();
     });
     /* Define canvas, etc */
     window.fg_canvas = document.getElementById('game_canvas');

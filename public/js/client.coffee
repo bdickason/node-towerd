@@ -2,6 +2,9 @@ $ ->
   ### Config Variables ###
   window.squarewidth = 50  # Size of one square in the grid
   window.FPS = 30          # Frames per second
+  
+  ### Reserved Variables ###
+  window.bullets = []
 
   socket = io.connect 'http://localhost'
   
@@ -36,18 +39,11 @@ $ ->
 
   # Move an object across the canvas
   socket.on 'move', (data) ->
-    console.log 'Move event'
-
     # Only move the mob that sent the event
     mob.move data for mob in mobs when mob.uid == data.uid
 
   socket.on 'fire', (data) ->
-    console.log 'Fire event'
-    console.log data
-
-    ###    mob = data.target
-    tower = data.obj
-    drawFire mob, tower ###
+    towers[0].fire()
  
   ### Define canvas, etc ###
   window.fg_canvas = document.getElementById 'game_canvas'
