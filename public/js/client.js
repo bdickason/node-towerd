@@ -69,14 +69,15 @@
         return _results;
       }
     };
-    setInterval(draw, 1000 / FPS);
     /* World Rendering Functions */
     /* on-page actions (clicks, etc) */
     $('#toggle').bind('click', function() {
       if ($(this).attr('class') === 'play') {
+        window.gameLoop = setInterval(draw, 1000 / FPS);
         socket.emit('start', {});
         $(this).html('5').attr('class', 'pause');
       } else {
+        clearInterval(gameLoop);
         socket.emit('pause', {});
         $(this).html('4').attr('class', 'play');
       }

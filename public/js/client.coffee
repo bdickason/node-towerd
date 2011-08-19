@@ -60,8 +60,7 @@ $ ->
       tower.draw fg_ctx for tower in towers
       mob.draw fg_ctx for mob in mobs
       
-  # Start draw loop
-  setInterval draw, 1000 / FPS
+  
 
   ### World Rendering Functions ###
 
@@ -70,9 +69,13 @@ $ ->
   # Play/Pause button
   $('#toggle').bind 'click', ->
     if $(@).attr('class') == 'play'
+      # Start the game loop
+      window.gameLoop = setInterval draw, 1000 / FPS
       socket.emit 'start', { }
       $(@).html('5').attr('class', 'pause')
     else
+      # Pause the game loop
+      clearInterval gameLoop
       socket.emit 'pause', { }
       $(@).html('4').attr('class', 'play')
       
