@@ -36,7 +36,6 @@
     });
     socket.on('move', function(data) {
       var mob, _i, _len, _results;
-      console.log('Move event');
       _results = [];
       for (_i = 0, _len = mobs.length; _i < _len; _i++) {
         mob = mobs[_i];
@@ -47,7 +46,7 @@
       return _results;
     });
     socket.on('fire', function(data) {
-      return console.log('Fire event');
+      return towers[0].fire();
     });
     /* Define canvas, etc */
     window.fg_canvas = document.getElementById('game_canvas');

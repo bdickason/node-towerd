@@ -39,14 +39,11 @@ $ ->
 
   # Move an object across the canvas
   socket.on 'move', (data) ->
-    console.log 'Move event'
-
     # Only move the mob that sent the event
     mob.move data for mob in mobs when mob.uid == data.uid
 
   socket.on 'fire', (data) ->
-    console.log 'Fire event'
-    # towers[0].drawFire fg_ctx
+    towers[0].fire()
  
   ### Define canvas, etc ###
   window.fg_canvas = document.getElementById 'game_canvas'
