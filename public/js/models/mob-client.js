@@ -9,10 +9,8 @@
         return this.x = mobdata.x, this.y = mobdata.y, this.dx = mobdata.dx, this.dy = mobdata.dy, this.speed = mobdata.speed, mobdata;
       };
       Mob.prototype.update = function() {
-        console.log("DX: " + this.dx + " DY: " + this.dy);
         this.x = this.x + (this.dx * this.speed * this.moveConst / FPS);
-        this.y = this.y + (this.dy * this.speed * this.moveConst / FPS);
-        return console.log("X: " + this.x + " Y: " + this.y);
+        return this.y = this.y + (this.dy * this.speed * this.moveConst / FPS);
       };
       Mob.prototype.draw = function(context) {
         var x, y;
@@ -23,6 +21,7 @@
         return context.fillText(this.symbol, x + 2, y - 10);
       };
       Mob.prototype.pause = function() {
+        console.log('paused!');
         this.dx = 0;
         return this.dy = 0;
       };

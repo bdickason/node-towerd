@@ -114,7 +114,7 @@
         socket.emit('pause', {});
         for (_i = 0, _len = mobs.length; _i < _len; _i++) {
           mob = mobs[_i];
-          mob.pause;
+          mob.pause();
         }
         $(this).html('4').attr('class', 'play');
       }

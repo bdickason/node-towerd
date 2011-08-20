@@ -96,7 +96,7 @@ $ ->
       # Pause the game loop
       clearInterval gameLoop
       socket.emit 'pause', { }
-      mob.pause for mob in mobs
+      mob.pause() for mob in mobs
       $(@).html('4').attr('class', 'play')
       
     $('#start').html('Game started').click ->

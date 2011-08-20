@@ -15,11 +15,8 @@ $ ->
     # Update mob info (movement, etc) each frame
     update: ->
       # Calculate new trajectory
-      console.log "DX: #{@dx} DY: #{@dy}"
       @x = @x + (@dx*@speed*@moveConst/FPS)
       @y = @y + (@dy*@speed*@moveConst/FPS)
-      console.log "X: #{@x} Y: #{@y}"
-
       
     # Draw a mob on the map
     draw: (context) ->
@@ -30,6 +27,7 @@ $ ->
       context.fillText @symbol, x+2, y-10
 
     pause: ->
+      console.log 'paused!'
       @dx = 0
       @dy = 0
       
