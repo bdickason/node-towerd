@@ -43,7 +43,6 @@ exports.Tower = class Tower extends EventEmitter
 
     if obj.x >= (@x - @range) and obj.x <= (@x + @range) and obj.y >= (@y - @range) and obj.y <= (@y + @range)
       # Mob is a hit!
-      logger.debug 'Hit! ' + obj.uid
       @emit 'fire', obj
       callback obj
       
