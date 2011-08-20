@@ -99,10 +99,11 @@
       });
     });
     $('#game_canvas').click(function(e) {
+      console.log(e);
       return socket.emit('add', 'tower', reverseLoc(e.clientX) - 1, reverseLoc(e.clientY));
     });
     return reverseLoc = function(loc) {
-      return Math.floor((loc - 0.5) / squarewidth);
+      return Math.floor(loc / squarewidth - 0.5);
     };
   });
 }).call(this);

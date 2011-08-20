@@ -87,8 +87,9 @@ $ ->
       socket.emit 'pause', { }
 
   $('#game_canvas').click (e) ->
+    console.log e
     socket.emit 'add', 'tower', reverseLoc(e.clientX)-1, reverseLoc(e.clientY)
   
   reverseLoc = (loc) ->
-    return Math.floor (loc-0.5)/squarewidth
+    return Math.floor (loc)/squarewidth-0.5
   
