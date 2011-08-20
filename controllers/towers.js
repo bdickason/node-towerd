@@ -43,7 +43,6 @@
     };
     Tower.prototype.checkTarget = function(obj, callback) {
       if (obj.x >= (this.x - this.range) && obj.x <= (this.x + this.range) && obj.y >= (this.y - this.range) && obj.y <= (this.y + this.range)) {
-        logger.debug('Hit! ' + obj.uid);
         this.emit('fire', obj);
         return callback(obj);
       }

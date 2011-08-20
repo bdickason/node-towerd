@@ -37,7 +37,6 @@ exports.World = class World extends EventEmitter
     clearTimeout @game
   
   loadEntities: (json, callback) ->
-    
     ### Load the map ###
     # First level: Hidden Valley
     @maps = []
