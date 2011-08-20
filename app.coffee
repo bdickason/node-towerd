@@ -121,6 +121,9 @@ io.sockets.on 'connection', (socket) ->
   socket.on 'disconnect', ->
     logger.debug 'A socket with the session ID: ' + socket.id + ' disconnected.'
     
+  socket.on 'add', (type, x, y) ->
+    logger.info "Client added a tower: #{type} at #{x} #{y}"
+    world.add type, x, y
     
 ### Will use later ###
 app.get '/register/:id/:name', (req, res) ->
@@ -176,7 +179,7 @@ filter = (obj) ->
   
   switch obj.type
     when 'mob'
-      newobj = { uid, x, y, dx, dy, speed, maxHP, curHP, symbol   } = obj
+      newobj = { uid, x, y, dx, dy, speed, maxHP, curHP, symbol } = obj
     when 'tower'
       newobj = { uid, x, y, symbol, damage, type } = obj
     when 'map'

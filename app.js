@@ -107,8 +107,12 @@
     socket.on('pause', function() {
       return world.pause();
     });
-    return socket.on('disconnect', function() {
+    socket.on('disconnect', function() {
       return logger.debug('A socket with the session ID: ' + socket.id + ' disconnected.');
+    });
+    return socket.on('add', function(type, x, y) {
+      logger.info("Client added a tower: " + type + " at " + x + " " + y);
+      return world.add(type, x, y);
     });
   });
   /* Will use later */

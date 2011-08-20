@@ -65,6 +65,14 @@ exports.World = class World extends EventEmitter
     @mobs[1].spawn 1, 1, 0, 0
     @towers[0].spawn 4, 4
 
+  add: (type, x, y) ->
+    switch type
+      when 'tower'
+        tower = new Tower 'cannon'
+        @towers.push tower
+        @loadobj tower
+        @towers[@towers.length-1].spawn x, y
+  
   loadobj: (obj) ->
     # proxies 'load' events from objects
     @emit 'load', obj

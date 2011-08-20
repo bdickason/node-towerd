@@ -75,6 +75,16 @@
       this.mobs[1].spawn(1, 1, 0, 0);
       return this.towers[0].spawn(4, 4);
     };
+    World.prototype.add = function(type, x, y) {
+      var tower;
+      switch (type) {
+        case 'tower':
+          tower = new Tower('cannon');
+          this.towers.push(tower);
+          this.loadobj(tower);
+          return this.towers[this.towers.length - 1].spawn(x, y);
+      }
+    };
     World.prototype.loadobj = function(obj) {
       this.emit('load', obj);
       /* Event Emitters - set them up! */

@@ -1,6 +1,6 @@
 (function() {
   $(function() {
-    /* Config Variables */    var draw, socket;
+    /* Config Variables */    var draw, reverseLoc, socket;
     window.squarewidth = 50;
     window.FPS = 30;
     /* Reserved Variables */
@@ -32,7 +32,12 @@
       return console.log('Load event');
     });
     socket.on('spawn', function(data) {
-      return console.log('Spawn event');
+      switch (data.type) {
+        case 'tower':
+          console.log('Spawning tower');
+          console.log(data);
+          return towers.push(new Tower(data));
+      }
     });
     socket.on('move', function(data) {
       var mob, _i, _len, _results;
@@ -46,7 +51,14 @@
       return _results;
     });
     socket.on('fire', function(data) {
-      return towers[0].fire();
+      var tower, _i, _len;
+      for (_i = 0, _len = towers.length; _i < _len; _i++) {
+        tower = towers[_i];
+        if (tower.uid === data.obj.uid) {
+          tower.fire();
+        }
+      }
+      return console.log(data);
     });
     /* Define canvas, etc */
     window.fg_canvas = document.getElementById('game_canvas');
@@ -70,6 +82,7 @@
       }
     };
     /* World Rendering Functions */
+    window.gameLoop = setInterval(draw, 1000 / FPS);
     /* on-page actions (clicks, etc) */
     $('#toggle').bind('click', function() {
       if ($(this).attr('class') === 'play') {
@@ -85,8 +98,11 @@
         return socket.emit('pause', {});
       });
     });
-    return $('#tower').click(function() {
-      return console.log('adding tower');
+    $('#game_canvas').click(function(e) {
+      return socket.emit('add', 'tower', reverseLoc(e.clientX) - 1, reverseLoc(e.clientY));
     });
+    return reverseLoc = function(loc) {
+      return Math.floor((loc - 0.5) / squarewidth);
+    };
   });
 }).call(this);

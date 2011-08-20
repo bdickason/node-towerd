@@ -34,8 +34,12 @@ $ ->
 
   # Spawn an object on the canvas
   socket.on 'spawn', (data) ->
-    console.log 'Spawn event'
-    # console.log data
+    switch data.type
+      when 'tower'
+        console.log 'Spawning tower'
+        console.log data
+        
+        towers.push new Tower data
 
   # Move an object across the canvas
   socket.on 'move', (data) ->
@@ -43,7 +47,8 @@ $ ->
     mob.move data for mob in mobs when mob.uid == data.uid
 
   socket.on 'fire', (data) ->
-    towers[0].fire()
+    tower.fire() for tower in towers when tower.uid == data.obj.uid
+    console.log data
  
   ### Define canvas, etc ###
   window.fg_canvas = document.getElementById 'game_canvas'
@@ -59,11 +64,10 @@ $ ->
       fg_ctx.clearRect 0, 0, fg_canvas.width, fg_canvas.height # Clear the canvas
       tower.draw fg_ctx for tower in towers
       mob.draw fg_ctx for mob in mobs
-      
-  
 
   ### World Rendering Functions ###
-
+  window.gameLoop = setInterval draw, 1000 / FPS
+  
   ### on-page actions (clicks, etc) ###
   
   # Play/Pause button
@@ -82,7 +86,9 @@ $ ->
     $('#start').html('Game started').click ->
       socket.emit 'pause', { }
 
-  $('#tower').click ->
-    console.log 'adding tower'
-    
+  $('#game_canvas').click (e) ->
+    socket.emit 'add', 'tower', reverseLoc(e.clientX)-1, reverseLoc(e.clientY)
+  
+  reverseLoc = (loc) ->
+    return Math.floor (loc-0.5)/squarewidth
   
