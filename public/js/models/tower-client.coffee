@@ -55,7 +55,7 @@ $ ->
       if bullets.length > 0
         @drawFire context
       
-    drawFire: (context) ->          
+    drawFire: (context) ->
       for bullet in bullets
         bullet.x += bullet.vx
         bullet.y += bullet.vy
