@@ -90,6 +90,8 @@ exports.Mob = class Mob extends EventEmitter
         # Destination reached, don't do crap!
         @dx = 0
         @dy = 0
+        
+        @emit 'move', old_x, old_y
 
   # Figure out what direction to go next
   getStep: (next, callback) ->

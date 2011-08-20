@@ -100,7 +100,8 @@
           }, this));
         } else {
           this.dx = 0;
-          return this.dy = 0;
+          this.dy = 0;
+          return this.emit('move', old_x, old_y);
         }
       }, this));
     };
