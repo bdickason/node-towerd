@@ -17,7 +17,8 @@ exports.World = class World extends EventEmitter
   constructor: (app) ->
     ### Initial config ###
     @gameTime = cfg.GAMETIMER  # every n ms, the game progresses
-
+    @loaded = false # Clients should wait for 'loading' to be complete before receiving game data
+    
     # For some reason we have to wait to load everything or else 'world' doesn't get defined as a global var
     @load = setTimeout =>
       @loadEntities( { map: 'hiddenvalley' } )
@@ -64,6 +65,7 @@ exports.World = class World extends EventEmitter
     @mobs[0].spawn 0, 1, 0, 0, @maps[0].end_x, @maps[0].end_y
     @mobs[1].spawn 1, 1, 0, 0, @maps[0].end_x, @maps[0].end_y
     @towers[0].spawn 4, 4
+    @loaded = true
 
   # Add a new object to the game (usually done by a client)
   add: (type, x, y) ->

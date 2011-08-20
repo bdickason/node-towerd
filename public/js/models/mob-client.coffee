@@ -6,7 +6,7 @@
 $ ->
   class window.Mob
     constructor: (data) ->
-      @moveConst = 1.7
+      @moveConst = 0.825
       { @uid, @x, @y, @dx, @dy, @speed, @maxHP, @curHP, @symbol } = data
   
     move: (mobdata) ->

@@ -1,5 +1,6 @@
 (function() {
-  var RedisStore, Users, World, app, cfg, express, filter, http, init, io, load, redis, sys, url, winston;
+  var RedisStore, Users, World, app, cfg, express, filter, http, init, io, load, loadWorld, redis, setupWorld, sys, url, winston;
+  var __bind = function(fn, me){ return function(){ return fn.apply(me, arguments); }; };
   http = require('http');
   url = require('url');
   express = require('express');
@@ -79,27 +80,7 @@
   io.sockets.on('connection', function(socket) {
     logger.debug('A socket with ID: ' + socket.id + ' connected');
     /* Load core game data */
-    world.getGameData(function(data) {
-      return socket.emit('init', {
-        data: data
-      });
-    });
-    /* World Event Listeners */
-    world.on('load', function(obj) {
-      return socket.emit('load ', filter(obj));
-    });
-    world.on('spawn', function(obj) {
-      return socket.emit('spawn', filter(obj));
-    });
-    world.on('move', function(obj) {
-      return socket.emit('move', filter(obj));
-    });
-    world.on('fire', function(obj, target) {
-      return socket.emit('fire', {
-        obj: obj,
-        target: target
-      });
-    });
+    loadWorld(socket);
     /* Socket Event Listeners */
     socket.on('start', function() {
       return world.start();
@@ -177,6 +158,39 @@
         newobj = (uid = obj.uid, size = obj.size, type = obj.type, obj);
     }
     return newobj;
+  };
+  loadWorld = function(socket) {
+    var retryLoad;
+    if (world.loaded) {
+      return setupWorld(socket);
+    } else {
+      return retryLoad = setTimeout(__bind(function() {
+        return loadWorld(socket);
+      }, this), 1000);
+    }
+  };
+  setupWorld = function(socket) {
+    world.getGameData(function(data) {
+      return socket.emit('init', {
+        data: data
+      });
+    });
+    /* World Event Listeners */
+    world.on('load', function(obj) {
+      return socket.emit('load ', filter(obj));
+    });
+    world.on('spawn', function(obj) {
+      return socket.emit('spawn', filter(obj));
+    });
+    world.on('move', function(obj) {
+      return socket.emit('move', filter(obj));
+    });
+    return world.on('fire', function(obj, target) {
+      return socket.emit('fire', {
+        obj: obj,
+        target: target
+      });
+    });
   };
   load();
   app.listen(process.env.PORT || 3000);

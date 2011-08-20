@@ -17,6 +17,7 @@
     __extends(World, EventEmitter);
     function World(app) {
       /* Initial config */      this.gameTime = cfg.GAMETIMER;
+      this.loaded = false;
       this.load = setTimeout(__bind(function() {
         return this.loadEntities({
           map: 'hiddenvalley'
@@ -73,7 +74,8 @@
       }
       this.mobs[0].spawn(0, 1, 0, 0, this.maps[0].end_x, this.maps[0].end_y);
       this.mobs[1].spawn(1, 1, 0, 0, this.maps[0].end_x, this.maps[0].end_y);
-      return this.towers[0].spawn(4, 4);
+      this.towers[0].spawn(4, 4);
+      return this.loaded = true;
     };
     World.prototype.add = function(type, x, y) {
       var tower;
