@@ -82,31 +82,8 @@ io.sockets.on 'connection', (socket) ->
   logger.debug 'A socket with ID: ' + socket.id + ' connected'
   
   ### Load core game data ###
-  #
-  # When a client connects, we should dump the current gamestate
-  world.getGameData (data) ->
-    socket.emit 'init', { data: data }
-
-    
-  ### World Event Listeners ###
   # 
-  # These are events coming from the world (so send 'em to the client!)
-  
-  world.on 'load', (obj) ->
-    # Tell the client to load some game data
-    socket.emit 'load ', filter obj
-  
-  world.on 'spawn', (obj) ->
-    # Tell the client to spawn an object
-    socket.emit 'spawn', filter obj
-
-  world.on 'move', (obj) ->
-    # object is moving from oldloc to obj.loc
-    socket.emit 'move', filter obj
-  
-  world.on 'fire', (obj, target) ->
-    # object fired on target
-    socket.emit 'fire', { obj, target }
+  loadWorld(socket)
 
   ### Socket Event Listeners ###
   # 
@@ -185,6 +162,40 @@ filter = (obj) ->
     when 'map'
       newobj = { uid, size, type } = obj
   return newobj
+
+loadWorld = (socket) ->
+  if world.loaded
+    setupWorld socket
+  else
+    # World isn't ready, wait 1000ms and try again!
+    retryLoad = setTimeout =>
+      loadWorld socket
+    , 1000
+
+setupWorld = (socket) ->
+  # When a client connects, we should dump the current gamestate  
+  world.getGameData (data) ->
+    socket.emit 'init', { data: data }
+
+  ### World Event Listeners ###
+  # 
+  # These are events coming from the world (so send 'em to the client!)
+  
+  world.on 'load', (obj) ->
+    # Tell the client to load some game data
+    socket.emit 'load ', filter obj
+  
+  world.on 'spawn', (obj) ->
+    # Tell the client to spawn an object
+    socket.emit 'spawn', filter obj
+
+  world.on 'move', (obj) ->
+    # object is moving from oldloc to obj.loc
+    socket.emit 'move', filter obj
+  
+  world.on 'fire', (obj, target) ->
+    # object fired on target
+    socket.emit 'fire', { obj, target }
       
 load()  # Load basic game info
 

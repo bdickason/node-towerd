@@ -71,7 +71,19 @@
       return draw();
     };
     handleInput = function() {};
-    update = function() {};
+    update = function() {
+      var mob, tower, _i, _j, _len, _len2, _results;
+      for (_i = 0, _len = towers.length; _i < _len; _i++) {
+        tower = towers[_i];
+        tower.update();
+      }
+      _results = [];
+      for (_j = 0, _len2 = mobs.length; _j < _len2; _j++) {
+        mob = mobs[_j];
+        _results.push(mob.update());
+      }
+      return _results;
+    };
     draw = function() {
       var mob, tower, _i, _j, _len, _len2, _results;
       if (fg_canvas.getContext) {
@@ -92,6 +104,7 @@
     window.gameLoop = setInterval(game, 1000 / FPS);
     /* on-page actions (clicks, etc) */
     $('#toggle').bind('click', function() {
+      var mob, _i, _len;
       if ($(this).attr('class') === 'play') {
         window.gameLoop = setInterval(game, 1000 / FPS);
         socket.emit('start', {});
@@ -99,6 +112,10 @@
       } else {
         clearInterval(gameLoop);
         socket.emit('pause', {});
+        for (_i = 0, _len = mobs.length; _i < _len; _i++) {
+          mob = mobs[_i];
+          mob.pause;
+        }
         $(this).html('4').attr('class', 'play');
       }
       return $('#start').html('Game started').click(function() {
