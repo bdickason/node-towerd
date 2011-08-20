@@ -61,8 +61,8 @@ exports.World = class World extends EventEmitter
         @loadobj mob
 
     # They exist in memory but need to be spawned
-    @mobs[0].spawn 0, 1, 0, 0
-    @mobs[1].spawn 1, 1, 0, 0
+    @mobs[0].spawn 0, 1, 0, 0, @maps[0].end_x, @maps[0].end_y
+    @mobs[1].spawn 1, 1, 0, 0, @maps[0].end_x, @maps[0].end_y
     @towers[0].spawn 4, 4
 
   # Add a new object to the game (usually done by a client)
@@ -73,6 +73,8 @@ exports.World = class World extends EventEmitter
         @towers.push tower
         @loadobj tower
         @towers[@towers.length-1].spawn x, y
+        @toString (json) ->
+          console.log json
   
   loadobj: (obj) ->
     # proxies 'load' events from objects

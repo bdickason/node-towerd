@@ -27,19 +27,35 @@
           return _results;
         }
       };
+      Tower.prototype.update = function() {
+        /* Find closest mob and lock on */        var bullet, closest, triangle_x, triangle_y, _i, _len, _results;
+        closest = this.findClosest();
+        if (closest) {
+          triangle_x = (this.getLoc(closest.x)) - this.line.x;
+          triangle_y = (this.getLoc(closest.y)) - this.line.y;
+          this.line.angle = Math.atan2(triangle_y, triangle_x);
+          this.line.end_x = this.line.x + this.line.length * Math.cos(this.line.angle);
+          this.line.end_y = this.line.y + this.line.length * Math.sin(this.line.angle);
+        }
+        _results = [];
+        for (_i = 0, _len = bullets.length; _i < _len; _i++) {
+          bullet = bullets[_i];
+          bullet.x += bullet.vx;
+          bullet.y += bullet.vy;
+          bullet.vy += .1;
+          bullet.vx *= .999;
+          bullet.vy *= .99;
+          _results.push(bullet.x % fg_canvas.width !== bullet.x ? bullet.remove() : bullet.x >= fg_canvas.height ? (bullet.vy = -Math.abs(bullet.vy), bullet.vy *= .7, Math.abs(bullet.vy < 1 && Math.abs(bullet.vx < 1)) ? bullet.remove() : void 0) : void 0);
+        }
+        return _results;
+      };
       Tower.prototype.draw = function(context) {
-        /* Draw a tower on the map */        var closest, triangle_x, triangle_y, _x, _y;
+        /* Draw a tower on the map */        var _x, _y;
         _x = this.getLoc(this.x);
         _y = this.getLoc(this.y);
         context.font = '40pt Pictos';
         context.fillText(this.symbol, _x + 2, _y - 10);
         /* Draw the gun */
-        closest = this.findClosest();
-        triangle_x = (this.getLoc(closest.x)) - this.line.x;
-        triangle_y = (this.getLoc(closest.y)) - this.line.y;
-        this.line.angle = Math.atan2(triangle_y, triangle_x);
-        this.line.end_x = this.line.x + this.line.length * Math.cos(this.line.angle);
-        this.line.end_y = this.line.y + this.line.length * Math.sin(this.line.angle);
         context.strokeStyle = '#f00';
         context.lineWidth = 3;
         context.beginPath();
@@ -55,20 +71,6 @@
         _results = [];
         for (_i = 0, _len = bullets.length; _i < _len; _i++) {
           bullet = bullets[_i];
-          bullet.x += bullet.vx;
-          bullet.y += bullet.vy;
-          bullet.vy += .1;
-          bullet.vx *= .999;
-          bullet.vy *= .99;
-          if (bullet.x % fg_canvas.width !== bullet.x) {
-            bullet.remove();
-          } else if (bullet.x >= fg_canvas.height) {
-            bullet.vy = -Math.abs(bullet.vy);
-            bullet.vy *= .7;
-            if (Math.abs(bullet.vy < 1 && Math.abs(bullet.vx < 1))) {
-              bullet.remove();
-            }
-          }
           _results.push(bullet.draw(context));
         }
         return _results;

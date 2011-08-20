@@ -8,15 +8,23 @@
       Mob.prototype.move = function(mobdata) {
         return this.x = mobdata.x, this.y = mobdata.y, this.dx = mobdata.dx, this.dy = mobdata.dy, this.speed = mobdata.speed, mobdata;
       };
+      Mob.prototype.update = function() {
+        console.log("DX: " + this.dx + " DY: " + this.dy);
+        this.x = this.x + (this.dx * this.speed * this.moveConst / FPS);
+        this.y = this.y + (this.dy * this.speed * this.moveConst / FPS);
+        return console.log("X: " + this.x + " Y: " + this.y);
+      };
       Mob.prototype.draw = function(context) {
         var x, y;
-        this.x = this.x + (this.dx * this.speed * this.moveConst / FPS);
-        this.y = this.y + (this.dx * this.speed * this.moveConst / FPS);
         context.fillStyle = '#000';
         x = this.getLoc(this.x);
         y = this.getLoc(this.y);
         context.font = '40pt Pictos';
         return context.fillText(this.symbol, x + 2, y - 10);
+      };
+      Mob.prototype.pause = function() {
+        this.dx = 0;
+        return this.dy = 0;
       };
       Mob.prototype.getLoc = function(loc) {
         if (typeof loc === 'number') {

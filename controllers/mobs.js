@@ -28,7 +28,7 @@
       this.emit('load');
       /* Event Emitters */
       world.on('gameLoop', __bind(function() {
-        return this.move(this.dx, this.dy, this.speed, function(json) {});
+        return this.move(function(json) {});
       }, this));
       world.on('fire', __bind(function(obj, target) {
         if (obj.type === 'tower') {
@@ -38,15 +38,17 @@
         }
       }, this));
     }
-    Mob.prototype.spawn = function(x, y, dx, dy, callback) {
+    Mob.prototype.spawn = function(x, y, dx, dy, end_x, end_y, callback) {
       var _ref;
       this.curHP = this.maxHP;
       _ref = {
         x: x,
         y: y,
         dx: dx,
-        dy: dy
-      }, this.x = _ref.x, this.y = _ref.y, this.dx = _ref.dx, this.dy = _ref.dy;
+        dy: dy,
+        end_x: end_x,
+        end_y: end_y
+      }, this.x = _ref.x, this.y = _ref.y, this.dx = _ref.dx, this.dy = _ref.dy, this.end_x = _ref.end_x, this.end_y = _ref.end_y;
       this.emit('spawn');
       logger.info('Spawning mob [' + this.id + '] at (' + this.loc + ') with UID: ' + this.uid);
       return this.save(function() {});
@@ -61,33 +63,74 @@
         return this.emit('die');
       }
     };
-    Mob.prototype.move = function(dx, dy, speed, callback) {
-      var new_x, new_y, old_x, old_y;
+    Mob.prototype.move = function(callback) {
+      var old_x, old_y;
       old_x = this.x;
       old_y = this.y;
-      this.x = (this.x + dx) * speed;
-      this.y = (this.y + dy) * speed;
-      new_x = this.x;
-      new_y = this.y;
-      if (old_x !== new_x && old_y !== new_y) {
-        return mobModel.find({
-          uid: this.uid
-        }, __bind(function(err, mob) {
-          if (err) {
-            return logger.error('Error finding mob: {@uid} ' + err);
-          } else {
-            mob[0].x = new_x;
-            mob[0].y = new_y;
-            return mob[0].save(__bind(function(err) {
+      return world.maps[0].getPath(this.x, this.y, this.end_x, this.end_y, __bind(function(path) {
+        var next;
+        next = path[0];
+        if (next) {
+          return this.getStep(next, __bind(function(res) {
+            var new_x, new_y;
+            this.dx = res.x;
+            this.dy = res.y;
+            this.x = (this.x + this.dx) * this.speed;
+            this.y = (this.y + this.dy) * this.speed;
+            new_x = this.x;
+            new_y = this.y;
+            return mobModel.find({
+              uid: this.uid
+            }, __bind(function(err, mob) {
               if (err) {
-                return logger.warn('Error saving mob: {@uid} ' + err);
+                return logger.error('Error finding mob: {@uid} ' + err);
               } else {
-                this.emit('move', old_x, old_y);
-                return logger.info('MOB ' + this.uid + ' [' + this.id + '] moved to (' + this.x + ',' + this.y + ')');
+                mob[0].x = new_x;
+                mob[0].y = new_y;
+                return mob[0].save(__bind(function(err) {
+                  if (err) {
+                    return logger.warn('Error saving mob: {@uid} ' + err);
+                  } else {
+                    this.emit('move', old_x, old_y);
+                    return logger.info('MOB ' + this.uid + ' [' + this.id + '] moved to (' + this.x + ',' + this.y + ')');
+                  }
+                }, this));
               }
             }, this));
-          }
-        }, this));
+          }, this));
+        } else {
+          this.dx = 0;
+          return this.dy = 0;
+        }
+      }, this));
+    };
+    Mob.prototype.getStep = function(next, callback) {
+      console.log("-Now-\nX: " + this.x + " Y: " + this.y + " \n\n-Next- X: " + next.x + " Y: " + next.y);
+      if (next.x > this.x) {
+        return callback({
+          x: 1,
+          y: 0
+        });
+      } else if (next.x < this.x) {
+        return callback({
+          x: -1,
+          y: 0
+        });
+      } else if (next.y > this.y) {
+        return callback({
+          x: 0,
+          y: 1
+        });
+      } else if (next.y < this.y) {
+        return callback({
+          x: 0,
+          y: -1
+        });
+      } else {
+        return callback({
+          x: 0,
+          y: 0
+        });
       }
     };
     Mob.prototype.save = function(callback) {

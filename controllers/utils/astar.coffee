@@ -149,7 +149,7 @@ exports.BinaryHeap = class BinaryHeap
   size: ->
     @content.length
   
-  resocreElement: (node) ->
+  rescoreElement: (node) ->
     @sinkDown @content.indexOf node
   
   sinkDown: (n) ->

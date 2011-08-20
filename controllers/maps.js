@@ -1,5 +1,5 @@
 (function() {
-  var EventEmitter, Graph, Map, cfg, mapModel, redis;
+  var EventEmitter, Graph, Map, astar, cfg, mapModel, redis;
   var __hasProp = Object.prototype.hasOwnProperty, __extends = function(child, parent) {
     for (var key in parent) { if (__hasProp.call(parent, key)) child[key] = parent[key]; }
     function ctor() { this.constructor = child; }
@@ -11,7 +11,8 @@
   cfg = require('../config/config.js');
   redis = require('redis');
   EventEmitter = (require('events')).EventEmitter;
-  Graph = (require('./utils/graph.js')).Graph;
+  Graph = (require('./utils/graph')).Graph;
+  astar = (require('./utils/astar')).astar;
   mapModel = require('../models/map-model.js');
   exports.Map = Map = (function() {
     __extends(Map, EventEmitter);
@@ -22,15 +23,14 @@
       logger.info('Loading map: ' + name);
       toLoad = (require('../data/maps/' + name + '.js')).map;
       this.uid = Math.floor(Math.random() * 10000000);
-      this.id = toLoad.id, this.name = toLoad.name, this.theme = toLoad.theme, this.mobs = toLoad.mobs, this.size = toLoad.size, this.active = toLoad.active;
+      this.id = toLoad.id, this.name = toLoad.name, this.theme = toLoad.theme, this.mobs = toLoad.mobs, this.size = toLoad.size, this.active = toLoad.active, this.end_x = toLoad.end_x, this.end_y = toLoad.end_y;
       this.graph = new Graph(this.size);
-      console.log(this.graph.toString());
       this.save(function() {});
       this.emit('load');
       /* Event Emitters */
       world.on('spawn', __bind(function(obj) {
         if (obj.type !== 'map') {
-          return this.graph.set(obj.x, obj.y, obj.type, function(callbac) {});
+          return this.graph.set(obj.x, obj.y, obj.type, function(callback) {});
         }
       }, this));
       world.on('move', __bind(function(obj, old_x, old_y) {}, this));
@@ -58,6 +58,13 @@
       var output;
       output = 'MAP ' + this.uid + ' [' + this.name + ']  Size: ' + this.size;
       return callback(output);
+    };
+    Map.prototype.getPath = function(x, y, end_x, end_y, callback) {
+      var end, path, start;
+      start = this.graph.nodes[x][y];
+      end = this.graph.nodes[end_x][end_y];
+      path = astar.search(this.graph.nodes, start, end);
+      return callback(path);
     };
     return Map;
   })();

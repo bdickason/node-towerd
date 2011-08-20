@@ -69,6 +69,8 @@ $ ->
     
   # Update Game world (moves, etc)
   update = ->
+    tower.update() for tower in towers
+    mob.update() for mob in mobs
     
   # Draw the game world each frame
   draw = ->
@@ -94,6 +96,7 @@ $ ->
       # Pause the game loop
       clearInterval gameLoop
       socket.emit 'pause', { }
+      mob.pause for mob in mobs
       $(@).html('4').attr('class', 'play')
       
     $('#start').html('Game started').click ->
