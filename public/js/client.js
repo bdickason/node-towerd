@@ -1,6 +1,6 @@
 (function() {
   $(function() {
-    /* Config Variables */    var draw, reverseLoc, socket;
+    /* Config Variables */    var draw, game, handleInput, reverseLoc, socket, update;
     window.squarewidth = 50;
     window.FPS = 30;
     /* Reserved Variables */
@@ -65,6 +65,13 @@
     window.fg_ctx = fg_canvas.getContext('2d');
     window.bg_canvas = document.getElementById('game_background');
     window.bg_ctx = bg_canvas.getContext('2d');
+    game = function() {
+      handleInput();
+      update();
+      return draw();
+    };
+    handleInput = function() {};
+    update = function() {};
     draw = function() {
       var mob, tower, _i, _j, _len, _len2, _results;
       if (fg_canvas.getContext) {
@@ -82,11 +89,11 @@
       }
     };
     /* World Rendering Functions */
-    window.gameLoop = setInterval(draw, 1000 / FPS);
+    window.gameLoop = setInterval(game, 1000 / FPS);
     /* on-page actions (clicks, etc) */
     $('#toggle').bind('click', function() {
       if ($(this).attr('class') === 'play') {
-        window.gameLoop = setInterval(draw, 1000 / FPS);
+        window.gameLoop = setInterval(game, 1000 / FPS);
         socket.emit('start', {});
         $(this).html('5').attr('class', 'pause');
       } else {

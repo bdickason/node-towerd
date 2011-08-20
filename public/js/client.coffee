@@ -57,16 +57,29 @@ $ ->
   window.bg_canvas = document.getElementById 'game_background'
   window.bg_ctx = bg_canvas.getContext '2d'
 
+  # Traditional game loop!
+  game = ->
+    handleInput()
+    update()
+    draw()
 
-  # Loop to draw the game world each frame
+  # Handle player input once per loop
+  handleInput = ->
+    # Respond to a player's click
+    
+  # Update Game world (moves, etc)
+  update = ->
+    
+  # Draw the game world each frame
   draw = ->
     if fg_canvas.getContext
       fg_ctx.clearRect 0, 0, fg_canvas.width, fg_canvas.height # Clear the canvas
       tower.draw fg_ctx for tower in towers
       mob.draw fg_ctx for mob in mobs
+  
 
   ### World Rendering Functions ###
-  window.gameLoop = setInterval draw, 1000 / FPS
+  window.gameLoop = setInterval game, 1000 / FPS
   
   ### on-page actions (clicks, etc) ###
   
@@ -74,7 +87,7 @@ $ ->
   $('#toggle').bind 'click', ->
     if $(@).attr('class') == 'play'
       # Start the game loop
-      window.gameLoop = setInterval draw, 1000 / FPS
+      window.gameLoop = setInterval game, 1000 / FPS
       socket.emit 'start', { }
       $(@).html('5').attr('class', 'pause')
     else
@@ -85,7 +98,7 @@ $ ->
       
     $('#start').html('Game started').click ->
       socket.emit 'pause', { }
-
+  
   $('#game_canvas').click (e) ->
     console.log e
     socket.emit 'add', 'tower', reverseLoc(e.clientX)-1, reverseLoc(e.clientY)
