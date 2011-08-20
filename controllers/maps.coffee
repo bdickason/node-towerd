@@ -17,7 +17,9 @@ exports.Map = class Map extends EventEmitter
     
     @uid = Math.floor Math.random()*10000000  # Generate a unique ID for each instance of this map
     { id: @id, name: @name, theme: @theme, mobs: @mobs, size: @size, active: @active, end_x: @end_x, end_y: @end_y } = toLoad
+
     @graph = new Graph @size
+
     
     @save ->
     

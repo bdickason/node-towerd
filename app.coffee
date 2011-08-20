@@ -160,7 +160,7 @@ filter = (obj) ->
     when 'tower'
       newobj = { uid, x, y, symbol, damage, type } = obj
     when 'map'
-      newobj = { uid, size, type } = obj
+      newobj = { uid, size, end_x, end_y, type } = obj
   return newobj
 
 loadWorld = (socket) ->

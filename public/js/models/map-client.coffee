@@ -5,7 +5,7 @@
 $ -> 
   class window.Map
     constructor: (data) ->
-      { @uid, @size } = data
+      { @uid, @size, @end_x, @end_y } = data
       @draw(bg_ctx)
   
     # Draw a square grid based on size denoted by the server
@@ -19,6 +19,11 @@ $ ->
 
       context.strokeStyle = '#000'
       context.stroke()
+      
+      # Draw the exit
+      context.fillStyle = '#f00'
+      context.fillRect @getLoc(@end_x), @getLoc(@end_y), squarewidth, squarewidth
+      console.log 'Filling rect: ' + @end_x + ' ' + @end_y
 
     getLoc: (loc) ->
        if typeof loc is 'number'

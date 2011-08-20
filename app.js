@@ -146,7 +146,7 @@
     return world.emit('load');
   };
   filter = function(obj) {
-    var curHP, damage, dx, dy, maxHP, newobj, size, speed, symbol, type, uid, x, y;
+    var curHP, damage, dx, dy, end_x, end_y, maxHP, newobj, size, speed, symbol, type, uid, x, y;
     switch (obj.type) {
       case 'mob':
         newobj = (uid = obj.uid, x = obj.x, y = obj.y, dx = obj.dx, dy = obj.dy, speed = obj.speed, maxHP = obj.maxHP, curHP = obj.curHP, symbol = obj.symbol, obj);
@@ -155,7 +155,7 @@
         newobj = (uid = obj.uid, x = obj.x, y = obj.y, symbol = obj.symbol, damage = obj.damage, type = obj.type, obj);
         break;
       case 'map':
-        newobj = (uid = obj.uid, size = obj.size, type = obj.type, obj);
+        newobj = (uid = obj.uid, size = obj.size, end_x = obj.end_x, end_y = obj.end_y, type = obj.type, obj);
     }
     return newobj;
   };
