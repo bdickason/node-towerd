@@ -123,11 +123,10 @@
       });
     });
     $('#game_canvas').click(function(e) {
-      console.log(e);
-      return socket.emit('add', 'tower', reverseLoc(e.clientX) - 1, reverseLoc(e.clientY));
+      return socket.emit('add', 'tower', reverseLoc(e.offsetX), reverseLoc(e.offsetY));
     });
     return reverseLoc = function(loc) {
-      return Math.floor(loc / squarewidth - 0.5);
+      return Math.floor(loc / squarewidth);
     };
   });
 }).call(this);
