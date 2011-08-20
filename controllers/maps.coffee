@@ -1,7 +1,7 @@
 cfg = require '../config/config.js'    # contains API keys, etc.
 redis = require 'redis'
 EventEmitter = (require 'events').EventEmitter
-Grid = (require './utils/grid.js').Grid
+Graph = (require './utils/graph.js').Graph
 
 # Models
 mapModel = require '../models/map-model.js'
@@ -16,7 +16,8 @@ exports.Map = class Map extends EventEmitter
     
     @uid = Math.floor Math.random()*10000000  # Generate a unique ID for each instance of this map
     { id: @id, name: @name, theme: @theme, mobs: @mobs, size: @size, active: @active } = toLoad
-    @grid = new Grid @size
+    @graph = new Graph @size
+    console.log @graph.toString()
     
     @save ->
     
@@ -27,12 +28,17 @@ exports.Map = class Map extends EventEmitter
       # Ignore all map events
       if obj.type != 'map'
           # Place objects on the map when they spawn
-          @grid.set obj.x, obj.y, obj.symbol, (callback) ->
+          # @grid.set obj.x, obj.y, obj.symbol, (callback) ->
+          @graph.set obj.x, obj.y, obj.type, (callbac) ->
     
     world.on 'move', (obj, old_x, old_y) =>
       # Update map when objects move
-      @grid.set old_x, old_y, 0, (callback) =>
-      @grid.set obj.x, obj.y, obj.symbol, (callback) ->
+      # @grid.set old_x, old_y, 0, (callback) =>
+      # @grid.set obj.x, obj.y, obj.symbol, (callback) ->
+      # Graph - don't need to track mob movement atm.
+  
+  get: (x, y, callback) ->
+    callback @graph.nodes[x][y].type
 
   save: (callback) ->
     # Save to DB

@@ -103,7 +103,7 @@
       return this.emit('spawn', obj);
     };
     World.prototype.moveobj = function(obj, old_x, old_y) {
-      if (this.maps[0].grid.isInGrid(obj.x, obj.y)) {
+      if (this.maps[0].graph.isInGraph(obj.x, obj.y)) {
         return this.emit('move', obj, old_x, old_y);
       }
     };
@@ -111,7 +111,10 @@
       return this.emit('fire', obj, target);
     };
     World.prototype.gameLoop = function() {
-      return this.emit('gameLoop');
+      this.emit('gameLoop');
+      return this.toString(function(json) {
+        return console.log(json);
+      });
     };
     World.prototype.getGameData = function(callback) {
       var data;
@@ -132,7 +135,7 @@
       return towers = [];
     };
     World.prototype.toString = function(callback) {
-      return callback(this.maps[0].grid);
+      return callback(this.maps[0].graph.toString());
     };
     return World;
   })();

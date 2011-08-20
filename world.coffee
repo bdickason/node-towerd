@@ -65,6 +65,7 @@ exports.World = class World extends EventEmitter
     @mobs[1].spawn 1, 1, 0, 0
     @towers[0].spawn 4, 4
 
+  # Add a new object to the game (usually done by a client)
   add: (type, x, y) ->
     switch type
       when 'tower'
@@ -91,8 +92,9 @@ exports.World = class World extends EventEmitter
     
   moveobj: (obj, old_x, old_y) ->
     # Check if mob is visible before sending move
-    if @maps[0].grid.isInGrid obj.x, obj.y
+    if @maps[0].graph.isInGraph obj.x, obj.y
       @emit 'move', obj, old_x, old_y
+    
   
   fireobj: (obj, target) ->
     @emit 'fire', obj, target
@@ -102,8 +104,8 @@ exports.World = class World extends EventEmitter
     # Runs every '@gameTime' seconds
     @emit 'gameLoop'  # A bunch of stuff listens to this to know when a 'turn' has finished    
 
-    # @toString (json) ->
-    #   console.log json  # Have to log via console because of this lame array.
+    @toString (json) ->
+      console.log json  # Have to log via console because of this lame array.
 
   getGameData: (callback) ->
     # Returns a snapshot of the current game so client can load everything
@@ -126,5 +128,5 @@ exports.World = class World extends EventEmitter
   
   # Output current game status
   toString: (callback) ->
-    callback @maps[0].grid
+    callback @maps[0].graph.toString()
   

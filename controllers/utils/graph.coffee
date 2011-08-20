@@ -10,13 +10,29 @@ GraphNodeType = { OPEN: 0, WALL: 1, PATH: 8 }
 exports.Graph = class Graph
   constructor: (size) ->
     @nodes = []
+    @size = size
   
-    for x in [0...size]
+    for x in [0...@size]
       @nodes[x] = []
-      for y in [0...size]
+      for y in [0...@size]
         @nodes[x].push new GraphNode x, y, GraphNodeType.OPEN
     
     @nodes
+  
+  # Sets an object on a square of the map
+  set: (x, y, type, callback) ->
+    switch type
+      when 'tower'
+        # Towers cannot be walked through
+        @nodes[x][y].wall()
+    
+  
+  # Checks if the requested location is actually on the grid
+  isInGraph: (x, y) ->
+    if x >= 0 and x <= @size and y >= 0 and y <= @size
+      return true
+    else
+      return false
     
   toString: ->      
     graphString = '\n'

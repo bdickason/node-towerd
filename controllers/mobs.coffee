@@ -68,7 +68,6 @@ exports.Mob = class Mob extends EventEmitter
             if (err)
               logger.warn 'Error saving mob: {@uid} ' + err
             else
-
               @emit 'move', old_x, old_y
               logger.info 'MOB ' + @uid + ' [' + @id + '] moved to (' + @x + ',' + @y + ')'
 
