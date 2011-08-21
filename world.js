@@ -84,6 +84,7 @@
           tower = new Tower('cannon');
           this.towers.push(tower);
           this.loadobj(tower);
+          console.log('spawning tower');
           this.towers[this.towers.length - 1].spawn(x, y);
           return this.toString(function(json) {
             return console.log(json);

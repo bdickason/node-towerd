@@ -28,11 +28,9 @@
       this.emit('load');
       /* Event Emitters */
       world.on('spawn', __bind(function(obj) {
-        if (obj.type !== 'map') {
-          /*   switch type
-              when 'tower'
-                # Towers cannot be walked through */
-          return this.graph.set(obj.x, obj.y, function(callback) {});
+        switch (obj.type) {
+          case 'tower':
+            return this.graph.set(obj.x, obj.y, function(callback) {});
         }
       }, this));
       world.on('move', __bind(function(obj, old_x, old_y) {}, this));

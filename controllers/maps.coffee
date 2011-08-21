@@ -26,13 +26,10 @@ exports.Map = class Map extends EventEmitter
     
     ### Event Emitters ###
     world.on 'spawn', (obj) =>
-      # Ignore all map events
-      if obj.type != 'map'
-        # Need to handle walls here
-        ###   switch type
-            when 'tower'
-              # Towers cannot be walked through ###
-        @graph.set obj.x, obj.y, (callback) ->
+      switch obj.type
+        when 'tower' 
+          # Right now we only care about where the towers are on the map, nothing else blocks.
+          @graph.set obj.x, obj.y, (callback) ->
     
     world.on 'move', (obj, old_x, old_y) =>
       # Update map when objects move

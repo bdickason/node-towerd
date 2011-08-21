@@ -74,6 +74,7 @@ exports.World = class World extends EventEmitter
         tower = new Tower 'cannon'
         @towers.push tower
         @loadobj tower
+        console.log 'spawning tower'
         @towers[@towers.length-1].spawn x, y
         @toString (json) ->
           console.log json
