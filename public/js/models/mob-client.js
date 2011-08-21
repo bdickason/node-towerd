@@ -26,9 +26,7 @@
         return this.dy = 0;
       };
       Mob.prototype.getLoc = function(loc) {
-        if (typeof loc === 'number') {
-          return (loc * squarewidth) + 0.5;
-        }
+        return loc * squarewidth;
       };
       return Mob;
     })();

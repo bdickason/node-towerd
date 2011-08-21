@@ -32,5 +32,4 @@ $ ->
       @dy = 0
       
     getLoc: (loc) ->
-       if typeof loc is 'number'
-         return (loc*squarewidth)+0.5
+      return (loc*squarewidth)

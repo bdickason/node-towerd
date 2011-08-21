@@ -20,9 +20,7 @@
         return console.log('Filling rect: ' + this.end_x + ' ' + this.end_y);
       };
       Map.prototype.getLoc = function(loc) {
-        if (typeof loc === 'number') {
-          return (loc * squarewidth) + 0.5;
-        }
+        return loc * squarewidth;
       };
       return Map;
     })();

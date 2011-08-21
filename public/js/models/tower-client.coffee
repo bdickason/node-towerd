@@ -79,8 +79,7 @@ $ ->
         bullet.draw context
         
     getLoc: (loc) ->
-       if typeof loc is 'number'
-         return (loc*squarewidth)+0.5
+      return (loc*squarewidth)
     
     findClosest: ->
       # Find the closest mob so you can aim at it!

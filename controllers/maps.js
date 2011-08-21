@@ -1,5 +1,5 @@
 (function() {
-  var EventEmitter, Graph, Map, astar, cfg, mapModel, redis;
+  var EventEmitter, Graph, Map, cfg, mapModel, redis;
   var __hasProp = Object.prototype.hasOwnProperty, __extends = function(child, parent) {
     for (var key in parent) { if (__hasProp.call(parent, key)) child[key] = parent[key]; }
     function ctor() { this.constructor = child; }
@@ -11,8 +11,7 @@
   cfg = require('../config/config.js');
   redis = require('redis');
   EventEmitter = (require('events')).EventEmitter;
-  Graph = (require('./utils/graph')).Graph;
-  astar = (require('./utils/astar')).astar;
+  Graph = (require('astar')).Graph;
   mapModel = require('../models/map-model.js');
   exports.Map = Map = (function() {
     __extends(Map, EventEmitter);
@@ -30,7 +29,10 @@
       /* Event Emitters */
       world.on('spawn', __bind(function(obj) {
         if (obj.type !== 'map') {
-          return this.graph.set(obj.x, obj.y, obj.type, function(callback) {});
+          /*   switch type
+              when 'tower'
+                # Towers cannot be walked through */
+          return this.graph.set(obj.x, obj.y, function(callback) {});
         }
       }, this));
       world.on('move', __bind(function(obj, old_x, old_y) {}, this));
@@ -60,11 +62,9 @@
       return callback(output);
     };
     Map.prototype.getPath = function(x, y, end_x, end_y, callback) {
-      var end, path, start;
-      start = this.graph.nodes[x][y];
-      end = this.graph.nodes[end_x][end_y];
-      path = astar.search(this.graph.nodes, start, end);
-      return callback(path);
+      return this.graph.path(x, y, end_x, end_y, function(path) {
+        return callback(path);
+      });
     };
     return Map;
   })();

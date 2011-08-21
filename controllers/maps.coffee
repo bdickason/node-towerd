@@ -1,8 +1,7 @@
 cfg = require '../config/config.js'    # contains API keys, etc.
 redis = require 'redis'
 EventEmitter = (require 'events').EventEmitter
-Graph = (require './utils/graph').Graph
-astar = (require './utils/astar').astar
+Graph = (require 'astar').Graph
 
 # Models
 mapModel = require '../models/map-model.js'
@@ -29,7 +28,11 @@ exports.Map = class Map extends EventEmitter
     world.on 'spawn', (obj) =>
       # Ignore all map events
       if obj.type != 'map'
-        @graph.set obj.x, obj.y, obj.type, (callback) ->
+        # Need to handle walls here
+        ###   switch type
+            when 'tower'
+              # Towers cannot be walked through ###
+        @graph.set obj.x, obj.y, (callback) ->
     
     world.on 'move', (obj, old_x, old_y) =>
       # Update map when objects move
@@ -51,9 +54,6 @@ exports.Map = class Map extends EventEmitter
     output = 'MAP ' + @uid + ' [' + @name + ']  Size: ' + @size
     callback output
   
-  getPath: (x, y, end_x, end_y, callback) ->
-    start = @graph.nodes[x][y]
-    end = @graph.nodes[end_x][end_y]
-    path = astar.search @graph.nodes, start, end
-    callback path
-    
+  getPath: (x, y, end_x, end_y, callback) -> 
+    @graph.path x, y, end_x, end_y, (path) ->
+       callback path

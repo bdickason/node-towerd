@@ -76,9 +76,7 @@
         return _results;
       };
       Tower.prototype.getLoc = function(loc) {
-        if (typeof loc === 'number') {
-          return (loc * squarewidth) + 0.5;
-        }
+        return loc * squarewidth;
       };
       Tower.prototype.findClosest = function() {
         var closest, closest_distance, distance, mob, _i, _len;
