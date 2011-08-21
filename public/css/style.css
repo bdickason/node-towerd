@@ -512,10 +512,12 @@ table {
     text-decoration: underline;
   }
 
-  /* ==================================================
-       Custom Fonts
-     ================================================== */
+/* Game CSS goes here */
   
+  /* Game body (#game) should have a white background */
+  #game {
+    color: white;
+  }
   @font-face {
     font-family:'Pictos';
     src:url("/fonts/pictos-web.ttf");
@@ -542,5 +544,55 @@ table {
     display: block;
   }
 
+/* Debug CSS goes here */
+  /* Debug body (#debug) should have a beige background */
+  #debug {
+    background: #FAF4E5;
+    color: #5B554A;
+    font-size: 16px;
+    width: 960px;
+    align: center;
+    padding: 10px;
+    margin: 0 auto;
+  }
+
+  header {
+  /* Header styles for Debug page */
+    color: white;
+    border-bottom-left-radius: 5px;
+    border-bottom-right-radius: 5px;
+    border-bottom-style: solid;
+    border-bottom-width: 1px;
+    border-left-style: solid;
+    border-left-width: 1px;    
+    border-right-style: solid;
+    border-right-width: 1px;
+    border-top-left-radius: 5px;
+    border-top-right-radius: 5px;
+    border-top-style: solid;
+    border-top-width: 1px;
+    border-bottom-color: #746A54;
+    border-left-color: #9C968A;
+    border-right-color: #746A54;
+    border-top-color: #9C968A;
+  }
+  header h1 {
+    margin: 0;
+    padding: 0 0 0 6px;
+  }
+  .headline {
+    margin-top: 10px;
+    background-color: #8B8372;
+  }
+  
+  .name {
+    margin: 1px 0 0 3px;
+    background-color: #268bd2;
+    display: inline-block;
+    padding: 0 3px 0 3px;
+  }
+  
+
+  
   
 }
