@@ -59,15 +59,15 @@ $ ->
       _x = @getLoc @x
       _y = @getLoc @y
       context.font = '40pt Pictos'
-      context.fillText @symbol, _x+2, _y-10
+      context.fillText @symbol, _x+2, _y+40 # Add 40 because fonts draw from top left
       
 
       ### Draw the gun ###
       context.strokeStyle = '#f00'
       context.lineWidth = 3
       context.beginPath()
-      context.moveTo @line.x, @line.y
-      context.lineTo @line.end_x, @line.end_y
+      context.moveTo @line.x, @line.y+50
+      context.lineTo @line.end_x, @line.end_y+50
       context.stroke()
       
       # Only call drawfire if we have a few bullets!

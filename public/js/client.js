@@ -77,6 +77,8 @@
     /* Define canvas, etc */
     window.fg_canvas = document.getElementById('game_canvas');
     window.fg_ctx = fg_canvas.getContext('2d');
+    console.log(fg_canvas.offsetLeft);
+    console.log(fg_canvas.offsetTop);
     window.bg_canvas = document.getElementById('game_background');
     window.bg_ctx = bg_canvas.getContext('2d');
     game = function() {

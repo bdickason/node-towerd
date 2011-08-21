@@ -54,13 +54,13 @@
         _x = this.getLoc(this.x);
         _y = this.getLoc(this.y);
         context.font = '40pt Pictos';
-        context.fillText(this.symbol, _x + 2, _y - 10);
+        context.fillText(this.symbol, _x + 2, _y + 40);
         /* Draw the gun */
         context.strokeStyle = '#f00';
         context.lineWidth = 3;
         context.beginPath();
-        context.moveTo(this.line.x, this.line.y);
-        context.lineTo(this.line.end_x, this.line.end_y);
+        context.moveTo(this.line.x, this.line.y + 50);
+        context.lineTo(this.line.end_x, this.line.end_y + 50);
         context.stroke();
         if (bullets.length > 0) {
           return this.drawFire(context);

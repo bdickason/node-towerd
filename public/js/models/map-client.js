@@ -16,8 +16,7 @@
         context.strokeStyle = '#000';
         context.stroke();
         context.fillStyle = '#f00';
-        context.fillRect(this.getLoc(this.end_x), this.getLoc(this.end_y), squarewidth, squarewidth);
-        return console.log('Filling rect: ' + this.end_x + ' ' + this.end_y);
+        return context.fillRect(this.getLoc(this.end_x), this.getLoc(this.end_y), squarewidth, squarewidth);
       };
       Map.prototype.getLoc = function(loc) {
         return loc * squarewidth;

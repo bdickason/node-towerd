@@ -23,7 +23,6 @@ $ ->
       # Draw the exit
       context.fillStyle = '#f00'
       context.fillRect @getLoc(@end_x), @getLoc(@end_y), squarewidth, squarewidth
-      console.log 'Filling rect: ' + @end_x + ' ' + @end_y
 
     getLoc: (loc) ->
       return (loc*squarewidth)

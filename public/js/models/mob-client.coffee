@@ -30,10 +30,9 @@ $ ->
       x = @getLoc @x
       y = @getLoc @y
       context.font = '40pt Pictos'
-      context.fillText @symbol, x+2, y-10
+      context.fillText @symbol, x+1, y+40 # Add 40 because fonts draw from top left
 
     pause: ->
-      console.log 'paused!'
       @dx = 0
       @dy = 0
       

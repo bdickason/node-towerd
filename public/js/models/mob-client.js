@@ -25,10 +25,9 @@
         x = this.getLoc(this.x);
         y = this.getLoc(this.y);
         context.font = '40pt Pictos';
-        return context.fillText(this.symbol, x + 2, y - 10);
+        return context.fillText(this.symbol, x + 1, y + 40);
       };
       Mob.prototype.pause = function() {
-        console.log('paused!');
         this.dx = 0;
         return this.dy = 0;
       };
