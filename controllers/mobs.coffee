@@ -41,57 +41,58 @@ exports.Mob = class Mob extends EventEmitter
     @save ->
    
   hit: (damage) ->
-    @curHP = @curHP - damage
-    if @curHP > 0
-      logger.info "MOB #{@uid} [#{@curHP}/#{@maxHP}] was hit for #{damage}"
-      @emit 'hit'
-    else
-      # mob is dead!
-      logger.info "MOB [#{ @uid }] is dead!"
-      @emit 'die'
+    if @curHP > 0 # Make sure mob isn't dead!
+      @curHP = @curHP - damage
+      if @curHP > 0
+        logger.info "MOB #{@uid} [#{@curHP}/#{@maxHP}] was hit for #{damage}"
+        @emit 'hit'
+      else
+        # mob is dead!
+        logger.info "MOB [#{ @uid }] is dead!"
+        @die()
   
   move: (callback) ->
+    if @curHP > 0 # Make sure mob isn't dead!    
+      old_x = @x
+      old_y = @y
 
-    old_x = @x
-    old_y = @y
-
-    # Calculate new path (using astar)
-    world.maps[0].getPath @x, @y, @end_x, @end_y, (path) =>
+      # Calculate new path (using astar)
+      world.maps[0].getPath @x, @y, @end_x, @end_y, (path) =>
       
-      # Get first path step
-      next = path[0]
-      if next
-        # Mob reached its destination
-        @getStep next, (res) =>
+        # Get first path step
+        next = path[0]
+        if next
+          # Mob reached its destination
+          @getStep next, (res) =>
         
-          # set dx, dy towards path step
-          @dx = res.x
-          @dy = res.y
+            # set dx, dy towards path step
+            @dx = res.x
+            @dy = res.y
     
-          # increment x and y
-          @x = (@x + @dx) * @speed
-          @y = (@y + @dy) * @speed
-          new_x = @x
-          new_y = @y
+            # increment x and y
+            @x = (@x + @dx) * @speed
+            @y = (@y + @dy) * @speed
+            new_x = @x
+            new_y = @y
     
-          mobModel.find { uid: @uid }, (err, mob) =>
-            if(err)
-              logger.error 'Error finding mob: {@uid} ' + err
-            else 
-              mob[0].x = new_x
-              mob[0].y = new_y
-              mob[0].save (err) =>
-                if (err)
-                  logger.warn 'Error saving mob: {@uid} ' + err
-                else
-                  @emit 'move', old_x, old_y
-                  logger.info 'MOB ' + @uid + ' [' + @id + '] moved to (' + @x + ',' + @y + ')'
-      else
-        # Destination reached, don't do crap!
-        @dx = 0
-        @dy = 0
+            mobModel.find { uid: @uid }, (err, mob) =>
+              if(err)
+                logger.error 'Error finding mob: {@uid} ' + err
+              else 
+                mob[0].x = new_x
+                mob[0].y = new_y
+                mob[0].save (err) =>
+                  if (err)
+                    logger.warn 'Error saving mob: {@uid} ' + err
+                  else
+                    @emit 'move', old_x, old_y
+                    logger.info 'MOB ' + @uid + ' [' + @id + '] moved to (' + @x + ',' + @y + ')'
+        else
+          # Destination reached, don't do crap!
+          @dx = 0
+          @dy = 0
         
-        @emit 'move', old_x, old_y
+          @emit 'move', old_x, old_y
 
   # Figure out what direction to go next
   getStep: (next, callback) ->
@@ -105,6 +106,12 @@ exports.Mob = class Mob extends EventEmitter
       callback { x: 0, y: -1 }
     else  # Mob didn't move, wtf?!
       callback { x: 0, y: 0 }
+  
+  # Mob is dead :x
+  die: ->
+    @dx = 0
+    @dy = 0
+    @emit 'die'
     
   save: (callback) ->
     # Save to DB

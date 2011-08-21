@@ -210,13 +210,16 @@
     world.on('move', function(obj) {
       return socket.emit('move', filter(obj));
     });
-    return world.on('fire', function(obj, target) {
+    world.on('fire', function(obj, target) {
       obj = filter(obj);
       target = filter(target);
       return socket.emit('fire', {
         obj: obj,
         target: target
       });
+    });
+    return world.on('die', function(obj) {
+      return socket.emit('die', filter(obj));
     });
   };
   load();

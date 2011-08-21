@@ -90,6 +90,8 @@ exports.World = class World extends EventEmitter
       @moveobj obj, old_x, old_y
     obj.on 'fire', (target) =>
       @fireobj obj, target
+    obj.on 'die', =>
+      @killobj obj
   
   ### Event functions ###
   spawnobj: (obj) ->
@@ -99,10 +101,12 @@ exports.World = class World extends EventEmitter
     # Check if mob is visible before sending move
     if @maps[0].graph.isInGraph obj.x, obj.y
       @emit 'move', obj, old_x, old_y
-    
   
   fireobj: (obj, target) ->
     @emit 'fire', obj, target
+  
+  killobj: (obj) ->
+    @emit 'die', obj
            
   gameLoop: ->
     # One iteration of a game loop

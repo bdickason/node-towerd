@@ -52,6 +52,9 @@ $ ->
   socket.on 'fire', (data) ->
     tower.fire() for tower in towers when tower.uid == data.obj.uid
     console.log data
+  
+  socket.on 'die', (data) ->
+    mob.die data for mob in mobs when mob.uid == data.uid
  
   ### Define canvas, etc ###
   window.fg_canvas = document.getElementById 'game_canvas'

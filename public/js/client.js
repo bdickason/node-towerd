@@ -63,6 +63,17 @@
       }
       return console.log(data);
     });
+    socket.on('die', function(data) {
+      var mob, _i, _len, _results;
+      _results = [];
+      for (_i = 0, _len = mobs.length; _i < _len; _i++) {
+        mob = mobs[_i];
+        if (mob.uid === data.uid) {
+          _results.push(mob.die(data));
+        }
+      }
+      return _results;
+    });
     /* Define canvas, etc */
     window.fg_canvas = document.getElementById('game_canvas');
     window.fg_ctx = fg_canvas.getContext('2d');

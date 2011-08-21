@@ -54,56 +54,60 @@
       return this.save(function() {});
     };
     Mob.prototype.hit = function(damage) {
-      this.curHP = this.curHP - damage;
       if (this.curHP > 0) {
-        logger.info("MOB " + this.uid + " [" + this.curHP + "/" + this.maxHP + "] was hit for " + damage);
-        return this.emit('hit');
-      } else {
-        logger.info("MOB [" + this.uid + "] is dead!");
-        return this.emit('die');
+        this.curHP = this.curHP - damage;
+        if (this.curHP > 0) {
+          logger.info("MOB " + this.uid + " [" + this.curHP + "/" + this.maxHP + "] was hit for " + damage);
+          return this.emit('hit');
+        } else {
+          logger.info("MOB [" + this.uid + "] is dead!");
+          return this.die();
+        }
       }
     };
     Mob.prototype.move = function(callback) {
       var old_x, old_y;
-      old_x = this.x;
-      old_y = this.y;
-      return world.maps[0].getPath(this.x, this.y, this.end_x, this.end_y, __bind(function(path) {
-        var next;
-        next = path[0];
-        if (next) {
-          return this.getStep(next, __bind(function(res) {
-            var new_x, new_y;
-            this.dx = res.x;
-            this.dy = res.y;
-            this.x = (this.x + this.dx) * this.speed;
-            this.y = (this.y + this.dy) * this.speed;
-            new_x = this.x;
-            new_y = this.y;
-            return mobModel.find({
-              uid: this.uid
-            }, __bind(function(err, mob) {
-              if (err) {
-                return logger.error('Error finding mob: {@uid} ' + err);
-              } else {
-                mob[0].x = new_x;
-                mob[0].y = new_y;
-                return mob[0].save(__bind(function(err) {
-                  if (err) {
-                    return logger.warn('Error saving mob: {@uid} ' + err);
-                  } else {
-                    this.emit('move', old_x, old_y);
-                    return logger.info('MOB ' + this.uid + ' [' + this.id + '] moved to (' + this.x + ',' + this.y + ')');
-                  }
-                }, this));
-              }
+      if (this.curHP > 0) {
+        old_x = this.x;
+        old_y = this.y;
+        return world.maps[0].getPath(this.x, this.y, this.end_x, this.end_y, __bind(function(path) {
+          var next;
+          next = path[0];
+          if (next) {
+            return this.getStep(next, __bind(function(res) {
+              var new_x, new_y;
+              this.dx = res.x;
+              this.dy = res.y;
+              this.x = (this.x + this.dx) * this.speed;
+              this.y = (this.y + this.dy) * this.speed;
+              new_x = this.x;
+              new_y = this.y;
+              return mobModel.find({
+                uid: this.uid
+              }, __bind(function(err, mob) {
+                if (err) {
+                  return logger.error('Error finding mob: {@uid} ' + err);
+                } else {
+                  mob[0].x = new_x;
+                  mob[0].y = new_y;
+                  return mob[0].save(__bind(function(err) {
+                    if (err) {
+                      return logger.warn('Error saving mob: {@uid} ' + err);
+                    } else {
+                      this.emit('move', old_x, old_y);
+                      return logger.info('MOB ' + this.uid + ' [' + this.id + '] moved to (' + this.x + ',' + this.y + ')');
+                    }
+                  }, this));
+                }
+              }, this));
             }, this));
-          }, this));
-        } else {
-          this.dx = 0;
-          this.dy = 0;
-          return this.emit('move', old_x, old_y);
-        }
-      }, this));
+          } else {
+            this.dx = 0;
+            this.dy = 0;
+            return this.emit('move', old_x, old_y);
+          }
+        }, this));
+      }
     };
     Mob.prototype.getStep = function(next, callback) {
       if (next.x > this.x) {
@@ -132,6 +136,11 @@
           y: 0
         });
       }
+    };
+    Mob.prototype.die = function() {
+      this.dx = 0;
+      this.dy = 0;
+      return this.emit('die');
     };
     Mob.prototype.save = function(callback) {
       var newmob;

@@ -201,6 +201,10 @@ setupWorld = (socket) ->
     obj = filter obj
     target = filter target
     socket.emit 'fire', { obj, target }
+  
+  world.on 'die', (obj) ->
+    # someone died ;(
+    socket.emit 'die', filter obj
       
 load()  # Load basic game info
 

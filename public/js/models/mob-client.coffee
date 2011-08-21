@@ -9,7 +9,12 @@ $ ->
       { @uid, @x, @y, @dx, @dy, @speed, @maxHP, @curHP, @symbol } = data
   
     move: (mobdata) ->
-      { @x, @y, @dx, @dy, @speed } = mobdata
+      if @curHP > 0 # Don't move when the mob is dead
+        { @x, @y, @dx, @dy, @speed } = mobdata
+    
+    die: (mobdata) ->
+      { @x, @y, @dx, @dy, @curHP, @maxHP } = mobdata
+      @symbol = '*'
 
     # Update mob info (movement, etc) each frame
     update: (lastUpdate) ->

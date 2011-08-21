@@ -100,8 +100,11 @@
       obj.on('move', __bind(function(old_x, old_y) {
         return this.moveobj(obj, old_x, old_y);
       }, this));
-      return obj.on('fire', __bind(function(target) {
+      obj.on('fire', __bind(function(target) {
         return this.fireobj(obj, target);
+      }, this));
+      return obj.on('die', __bind(function() {
+        return this.killobj(obj);
       }, this));
     };
     /* Event functions */
@@ -115,6 +118,9 @@
     };
     World.prototype.fireobj = function(obj, target) {
       return this.emit('fire', obj, target);
+    };
+    World.prototype.killobj = function(obj) {
+      return this.emit('die', obj);
     };
     World.prototype.gameLoop = function() {
       this.emit('gameLoop');
