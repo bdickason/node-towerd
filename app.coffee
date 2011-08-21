@@ -67,7 +67,17 @@ app.get '/', (req, res) ->
   else
     res.send "You are not logged in. <A HREF='/login'>Click here</A> to login"
   ###
-  
+
+# Debug mode!
+app.get '/debug', (req, res) ->
+  # Simple admin dashboard to monitor the current runtime of the server
+  if typeof world == 'undefined'
+    res.redirect '/'
+  else
+    # game is loaded
+    world.getGameData (data) =>
+      res.render 'debug', { }
+    
 app.get '/end', (req, res) ->
   world.destroy()
 
@@ -76,7 +86,7 @@ app.get '/end', (req, res) ->
 # Note, may need authentication later: https://github.com/dvv/socket.io/commit/ff1bcf0fb2721324a20f9d7516ff32fbe893a693#L0R111
 
 io.enable 'browser client minification'
-# io.set 'log level', 1
+io.set 'log level', 2
 
 io.sockets.on 'connection', (socket) ->
   logger.debug 'A socket with ID: ' + socket.id + ' connected'
@@ -101,47 +111,14 @@ io.sockets.on 'connection', (socket) ->
   socket.on 'add', (type, x, y) ->
     logger.info "Client added a tower: #{type} at #{x} #{y}"
     world.add type, x, y
-    
-### Will use later ###
-app.get '/register/:id/:name', (req, res) ->
-  # Allow a user to register
-  console.log 'TODO - Render registration page and ask for username'
-  user = new Users
-  user.addUser req.params.id, req.params.name, (json) ->
-    console.log 'Adding user: ' + req.params.id, req.params.name
-
-# List All Users
-app.get '/users', (req, res) ->
-  user = new Users
-  user.get null, (json) ->
-    res.send json
-    # res.render 'users', { json: json }
-
-# Single User Profile
-app.get '/users/:id', (req, res) ->
-  callback = ''
-  user = new Users
-  user.get req.params.id, (json) ->
-    res.send json
-    # res.render 'users/singleUser', { json: json }
-
-app.get '/login', (req, res) ->
-  if req.session.auth == 1
-    # User is already auth'd
-    res.redirect '/'
-  else
-    logger.info 'User logged in.'
-    req.session.id = 0
-    req.session.name = 'verb'
-    req.session.auth = 1
-    res.redirect '/'
-    logger.warning 'TODO - Render Login page and ask for username'
   
-app.get '/logout', (req, res) ->
-  logger.info '--- LOGOUT ---'
-  logger.info req.session
-  req.session.destroy()
-  res.redirect '/'
+  socket.on 'debug', ->
+    world.getGameData (data) =>
+      # Trim the graph out of the initial client data dump
+      data.map.type = 'map'
+      data.map = filter data.map
+    
+      socket.volatile.emit 'debug', data
   
 load = ->
   ### Spawn the world!! ###
@@ -159,7 +136,7 @@ filter = (obj) ->
     when 'tower'
       newobj = { uid: obj.uid, x: obj.x, y: obj.y, symbol: obj.symbol, damage: obj.damage, type: obj.type }
     when 'map'
-      newobj = { uid: obj.uid, size: obj.size, end_x: obj.end_x, end_y: obj.end_y, type: obj.type }
+      newobj = { name: obj.name, uid: obj.uid, size: obj.size, end_x: obj.end_x, end_y: obj.end_y, type: obj.type }
   return newobj
 
 loadWorld = (socket) ->

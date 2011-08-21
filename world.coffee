@@ -138,4 +138,3 @@ exports.World = class World extends EventEmitter
   # Output current game status
   toString: (callback) ->
     callback @maps[0].graph.toString()
-  

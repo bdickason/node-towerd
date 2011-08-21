@@ -119,8 +119,9 @@ $ ->
   
   $('#game_canvas').click (e) ->
     socket.emit 'add', 'tower', reverseLoc(e.offsetX), reverseLoc(e.offsetY)
-
+  
   reverseLoc = (loc) ->
+    # Calculate which square in the grid the user clicked
     return Math.floor (loc)/squarewidth
 
   

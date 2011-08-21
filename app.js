@@ -72,11 +72,21 @@
       res.send "You are not logged in. <A HREF='/login'>Click here</A> to login"
     */
   });
+  app.get('/debug', function(req, res) {
+    if (typeof world === 'undefined') {
+      return res.redirect('/');
+    } else {
+      return world.getGameData(__bind(function(data) {
+        return res.render('debug', {});
+      }, this));
+    }
+  });
   app.get('/end', function(req, res) {
     return world.destroy();
   });
   /* Socket.io Stuff */
   io.enable('browser client minification');
+  io.set('log level', 2);
   io.sockets.on('connection', function(socket) {
     logger.debug('A socket with ID: ' + socket.id + ' connected');
     /* Load core game data */
@@ -91,52 +101,17 @@
     socket.on('disconnect', function() {
       return logger.debug('A socket with the session ID: ' + socket.id + ' disconnected.');
     });
-    return socket.on('add', function(type, x, y) {
+    socket.on('add', function(type, x, y) {
       logger.info("Client added a tower: " + type + " at " + x + " " + y);
       return world.add(type, x, y);
     });
-  });
-  /* Will use later */
-  app.get('/register/:id/:name', function(req, res) {
-    var user;
-    console.log('TODO - Render registration page and ask for username');
-    user = new Users;
-    return user.addUser(req.params.id, req.params.name, function(json) {
-      return console.log('Adding user: ' + req.params.id, req.params.name);
+    return socket.on('debug', function() {
+      return world.getGameData(__bind(function(data) {
+        data.map.type = 'map';
+        data.map = filter(data.map);
+        return socket.volatile.emit('debug', data);
+      }, this));
     });
-  });
-  app.get('/users', function(req, res) {
-    var user;
-    user = new Users;
-    return user.get(null, function(json) {
-      return res.send(json);
-    });
-  });
-  app.get('/users/:id', function(req, res) {
-    var callback, user;
-    callback = '';
-    user = new Users;
-    return user.get(req.params.id, function(json) {
-      return res.send(json);
-    });
-  });
-  app.get('/login', function(req, res) {
-    if (req.session.auth === 1) {
-      return res.redirect('/');
-    } else {
-      logger.info('User logged in.');
-      req.session.id = 0;
-      req.session.name = 'verb';
-      req.session.auth = 1;
-      res.redirect('/');
-      return logger.warning('TODO - Render Login page and ask for username');
-    }
-  });
-  app.get('/logout', function(req, res) {
-    logger.info('--- LOGOUT ---');
-    logger.info(req.session);
-    req.session.destroy();
-    return res.redirect('/');
   });
   load = function() {
     /* Spawn the world!! */    var world;
@@ -173,6 +148,7 @@
         break;
       case 'map':
         newobj = {
+          name: obj.name,
           uid: obj.uid,
           size: obj.size,
           end_x: obj.end_x,
