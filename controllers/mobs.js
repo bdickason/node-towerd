@@ -106,7 +106,6 @@
       }, this));
     };
     Mob.prototype.getStep = function(next, callback) {
-      console.log("-Now-\nX: " + this.x + " Y: " + this.y + " \n\n-Next- X: " + next.x + " Y: " + next.y);
       if (next.x > this.x) {
         return callback({
           x: 1,

@@ -95,7 +95,6 @@ exports.Mob = class Mob extends EventEmitter
 
   # Figure out what direction to go next
   getStep: (next, callback) ->
-    console.log "-Now-\nX: #{@x} Y: #{@y} \n\n-Next- X: #{next.x} Y: #{next.y}"
     if next.x > @x
       callback { x: 1, y: 0 }
     else if next.x < @x

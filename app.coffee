@@ -153,17 +153,17 @@ load = ->
 filter = (obj) ->
   # Filters out unwanted game data to send to the client
   # This is to keep packets as small as possible
-  
   switch obj.type
     when 'mob'
-      newobj = { uid, x, y, dx, dy, speed, maxHP, curHP, symbol } = obj
+      newobj = { uid: obj.uid, x: obj.x, y: obj.y, dx: obj.dx, dy: obj.dy, speed: obj.speed, maxHP: obj.maxHP, curHP: obj.curHP, symbol: obj.symbol }
     when 'tower'
-      newobj = { uid, x, y, symbol, damage, type } = obj
+      newobj = { uid: obj.uid, x: obj.x, y: obj.y, symbol: obj.symbol, damage: obj.damage, type: obj.type }
     when 'map'
-      newobj = { uid, size, end_x, end_y, type } = obj
+      newobj = { uid: obj.uid, size: obj.size, end_x: obj.end_x, end_y: obj.end_y, type: obj.type }
   return newobj
 
 loadWorld = (socket) ->
+  # Fix - Clients connecting the moment the server was started would crash it
   if world.loaded
     setupWorld socket
   else
@@ -175,6 +175,9 @@ loadWorld = (socket) ->
 setupWorld = (socket) ->
   # When a client connects, we should dump the current gamestate  
   world.getGameData (data) ->
+    # Trim the graph out of the initial client data dump
+    data.map.type = 'map'
+    data.map = filter data.map
     socket.emit 'init', { data: data }
 
   ### World Event Listeners ###
@@ -195,6 +198,8 @@ setupWorld = (socket) ->
   
   world.on 'fire', (obj, target) ->
     # object fired on target
+    obj = filter obj
+    target = filter target
     socket.emit 'fire', { obj, target }
       
 load()  # Load basic game info

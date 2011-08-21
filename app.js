@@ -146,16 +146,39 @@
     return world.emit('load');
   };
   filter = function(obj) {
-    var curHP, damage, dx, dy, end_x, end_y, maxHP, newobj, size, speed, symbol, type, uid, x, y;
+    var newobj;
     switch (obj.type) {
       case 'mob':
-        newobj = (uid = obj.uid, x = obj.x, y = obj.y, dx = obj.dx, dy = obj.dy, speed = obj.speed, maxHP = obj.maxHP, curHP = obj.curHP, symbol = obj.symbol, obj);
+        newobj = {
+          uid: obj.uid,
+          x: obj.x,
+          y: obj.y,
+          dx: obj.dx,
+          dy: obj.dy,
+          speed: obj.speed,
+          maxHP: obj.maxHP,
+          curHP: obj.curHP,
+          symbol: obj.symbol
+        };
         break;
       case 'tower':
-        newobj = (uid = obj.uid, x = obj.x, y = obj.y, symbol = obj.symbol, damage = obj.damage, type = obj.type, obj);
+        newobj = {
+          uid: obj.uid,
+          x: obj.x,
+          y: obj.y,
+          symbol: obj.symbol,
+          damage: obj.damage,
+          type: obj.type
+        };
         break;
       case 'map':
-        newobj = (uid = obj.uid, size = obj.size, end_x = obj.end_x, end_y = obj.end_y, type = obj.type, obj);
+        newobj = {
+          uid: obj.uid,
+          size: obj.size,
+          end_x: obj.end_x,
+          end_y: obj.end_y,
+          type: obj.type
+        };
     }
     return newobj;
   };
@@ -171,6 +194,8 @@
   };
   setupWorld = function(socket) {
     world.getGameData(function(data) {
+      data.map.type = 'map';
+      data.map = filter(data.map);
       return socket.emit('init', {
         data: data
       });
@@ -186,6 +211,8 @@
       return socket.emit('move', filter(obj));
     });
     return world.on('fire', function(obj, target) {
+      obj = filter(obj);
+      target = filter(target);
       return socket.emit('fire', {
         obj: obj,
         target: target
