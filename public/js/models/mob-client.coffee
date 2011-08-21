@@ -10,15 +10,15 @@ $ ->
   
     move: (mobdata) ->
       if @curHP > 0 # Don't move when the mob is dead
-        { @x, @y, @dx, @dy, @speed } = mobdata
+        {@dx, @dy, @speed } = mobdata
     
     die: (mobdata) ->
       { @x, @y, @dx, @dy, @curHP, @maxHP } = mobdata
       @symbol = '*'
 
     # Update mob info (movement, etc) each frame
-    update: (lastUpdate) ->
-      distance = (@speed / 1000) * elapsed
+    update: (elapsed) ->
+      distance = (@speed / 1000) * elapsed * 1.71
       
       # Calculate new trajectory
       @x = @x + (@dx*distance)

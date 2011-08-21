@@ -19,8 +19,7 @@ $ ->
     map = data.map
     if $(".maps ##{map.uid}").length <= 0
       # Doesn't exist, gotta append it!
-      $('.maps').append("<div id=#{map.uid}>")
-      $("##{map.uid}").append("<div class='name'></div><div class='uid'></div><div class='size'></div>")       # For some reason I couldn't get this one to chain naturally to the previous
+      $('.maps').append($("<div id=#{map.uid}>").append("<div class='name'></div><div class='uid'></div><div class='size'></div>"))
     
     $("##{map.uid} .name").html("name: #{map.name}")
     $("##{map.uid} .uid").html("uid: #{map.uid}")
@@ -28,11 +27,9 @@ $ ->
 
     # Towers
     for tower in data.towers
-      console.log tower
       if $(".towers ##{tower.uid}").length <= 0
         # Doesn't exist, gotta append it!
-        $('.towers').append("<div id=#{tower.uid}>")
-        $("##{tower.uid}").append("<div class='name'></div><div class='uid'></div><div class='damage'></div>")
+        $('.towers').append($("<div id=#{tower.uid}>").append("<div class='name'></div><div class='uid'></div><div class='damage'></div>"))
 
       $("##{tower.uid} .name").html("name: #{tower.name}")
       $("##{tower.uid} .uid").html("uid: #{tower.uid}")
@@ -43,12 +40,8 @@ $ ->
       console.log mob
       if $(".mobs ##{mob.uid}").length <= 0
         # Doesn't exist, gotta append it!
-        $('.mobs').append("<div id=#{mob.uid}>")
-        $("##{mob.uid}").append("<div class='name'></div><div class='uid'></div><div class='HP'></div>")
+        $('.mobs').append($("<div id=#{mob.uid}>").append("<div class='name'></div><div class='uid'></div><div class='HP'></div>"))
 
       $("##{mob.uid} .name").html("name: #{mob.name}")
       $("##{mob.uid} .uid").html("uid: #{mob.uid}")
       $("##{mob.uid} .HP").html("HP: [#{mob.curHP}/#{mob.maxHP}]")
-        
-    
-    # Mobs

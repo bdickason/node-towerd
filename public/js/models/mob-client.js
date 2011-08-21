@@ -6,16 +6,16 @@
       }
       Mob.prototype.move = function(mobdata) {
         if (this.curHP > 0) {
-          return this.x = mobdata.x, this.y = mobdata.y, this.dx = mobdata.dx, this.dy = mobdata.dy, this.speed = mobdata.speed, mobdata;
+          return this.dx = mobdata.dx, this.dy = mobdata.dy, this.speed = mobdata.speed, mobdata;
         }
       };
       Mob.prototype.die = function(mobdata) {
         this.x = mobdata.x, this.y = mobdata.y, this.dx = mobdata.dx, this.dy = mobdata.dy, this.curHP = mobdata.curHP, this.maxHP = mobdata.maxHP;
         return this.symbol = '*';
       };
-      Mob.prototype.update = function(lastUpdate) {
+      Mob.prototype.update = function(elapsed) {
         var distance;
-        distance = (this.speed / 1000) * elapsed;
+        distance = (this.speed / 1000) * elapsed * 1.71;
         this.x = this.x + (this.dx * distance);
         return this.y = this.y + (this.dy * distance);
       };

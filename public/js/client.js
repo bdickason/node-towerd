@@ -54,14 +54,15 @@
       return _results;
     });
     socket.on('fire', function(data) {
-      var tower, _i, _len;
+      var tower, _i, _len, _results;
+      _results = [];
       for (_i = 0, _len = towers.length; _i < _len; _i++) {
         tower = towers[_i];
         if (tower.uid === data.obj.uid) {
-          tower.fire();
+          _results.push(tower.fire());
         }
       }
-      return console.log(data);
+      return _results;
     });
     socket.on('die', function(data) {
       var mob, _i, _len, _results;
