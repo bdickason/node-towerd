@@ -11,7 +11,7 @@
     socket = io.connect('http://localhost');
     /* Game Events */
     socket.on('init', function(data) {
-      var mob, tower, _i, _j, _len, _len2, _map, _mobs, _results, _towers;
+      var mob, tower, _i, _j, _len, _len2, _map, _mobs, _towers;
       console.log('Init event');
       window.mapChanged = 1;
       _map = data.data.map;
@@ -24,12 +24,11 @@
         mob = _mobs[_i];
         mobs.push(new Mob(mob));
       }
-      _results = [];
       for (_j = 0, _len2 = _towers.length; _j < _len2; _j++) {
         tower = _towers[_j];
-        _results.push(towers.push(new Tower(tower)));
+        towers.push(new Tower(tower));
       }
-      return _results;
+      return r.draw(map);
     });
     socket.on('load', function(data) {
       return console.log('Load event');
@@ -78,10 +77,9 @@
     /* Define canvas, etc */
     window.fg_canvas = document.getElementById('game_canvas');
     window.fg_ctx = fg_canvas.getContext('2d');
-    console.log(fg_canvas.offsetLeft);
-    console.log(fg_canvas.offsetTop);
     window.bg_canvas = document.getElementById('game_background');
     window.bg_ctx = bg_canvas.getContext('2d');
+    window.r = new Render(bg_ctx, fg_ctx);
     game = function() {
       handleInput();
       update();
@@ -110,12 +108,12 @@
         fg_ctx.clearRect(0, 0, fg_canvas.width, fg_canvas.height);
         for (_i = 0, _len = towers.length; _i < _len; _i++) {
           tower = towers[_i];
-          tower.draw(fg_ctx);
+          r.draw(tower);
         }
         _results = [];
         for (_j = 0, _len2 = mobs.length; _j < _len2; _j++) {
           mob = mobs[_j];
-          _results.push(mob.draw(fg_ctx));
+          _results.push(r.draw(mob));
         }
         return _results;
       }

@@ -7,14 +7,15 @@ $ ->
   class window.Tower
     constructor: (data) ->
       { @uid, @type, @symbol, @damage, @x, @y} = data
+      @layer = 'fg' # Towers should render to the foreground layer
       x = (@getLoc data.x)+(squarewidth/2)
       y = (@getLoc data.y)-(squarewidth/2)
       @line = {
-            x: x,
-            y: y,
-            length: 32,
-            angle: 0
-          }
+        x: x,
+        y: y,
+        length: 32,
+        angle: 0
+      }
     
     fire: ->
       if bullets.length < 20
@@ -53,30 +54,6 @@ $ ->
           bullet.vy *= .7
           if Math.abs bullet.vy < 1 && Math.abs bullet.vx < 1
             bullet.remove()     
-    
-    draw: (context) ->
-      ### Draw a tower on the map ###
-      _x = @getLoc @x
-      _y = @getLoc @y
-      context.font = '40pt Pictos'
-      context.fillText @symbol, _x+2, _y+40 # Add 40 because fonts draw from top left
-      
-
-      ### Draw the gun ###
-      context.strokeStyle = '#f00'
-      context.lineWidth = 3
-      context.beginPath()
-      context.moveTo @line.x, @line.y+50
-      context.lineTo @line.end_x, @line.end_y+50
-      context.stroke()
-      
-      # Only call drawfire if we have a few bullets!
-      if bullets.length > 0
-        @drawFire context
-      
-    drawFire: (context) ->
-      for bullet in bullets
-        bullet.draw context
         
     getLoc: (loc) ->
       return (loc*squarewidth)

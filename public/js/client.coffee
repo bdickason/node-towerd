@@ -29,6 +29,7 @@ $ ->
     window.map = new Map _map
     mobs.push new Mob mob for mob in _mobs
     towers.push new Tower tower for tower in _towers
+    r.draw map
     
   # Load an object's resources into memory
   socket.on 'load', (data) ->
@@ -59,11 +60,11 @@ $ ->
   window.fg_canvas = document.getElementById 'game_canvas'
   window.fg_ctx = fg_canvas.getContext '2d'
   
-  console.log fg_canvas.offsetLeft
-  console.log fg_canvas.offsetTop
-  
   window.bg_canvas = document.getElementById 'game_background'
   window.bg_ctx = bg_canvas.getContext '2d'
+  
+  window.r = new Render bg_ctx, fg_ctx   # r is our rendererererer
+  
 
   # Traditional game loop!
   game = ->
@@ -90,8 +91,8 @@ $ ->
   draw = ->
     if fg_canvas.getContext
       fg_ctx.clearRect 0, 0, fg_canvas.width, fg_canvas.height # Clear the canvas
-      tower.draw fg_ctx for tower in towers
-      mob.draw fg_ctx for mob in mobs
+      r.draw tower for tower in towers
+      r.draw mob for mob in mobs
   
 
   ### World Rendering Functions ###

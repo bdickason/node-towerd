@@ -3,6 +3,8 @@
     return window.Mob = (function() {
       function Mob(data) {
         this.uid = data.uid, this.x = data.x, this.y = data.y, this.dx = data.dx, this.dy = data.dy, this.speed = data.speed, this.maxHP = data.maxHP, this.curHP = data.curHP, this.symbol = data.symbol;
+        this.type = 'mob';
+        this.layer = 'fg';
       }
       Mob.prototype.move = function(mobdata) {
         if (this.curHP > 0) {
@@ -18,14 +20,6 @@
         distance = (this.speed / 1000) * elapsed * 1.71;
         this.x = this.x + (this.dx * distance);
         return this.y = this.y + (this.dy * distance);
-      };
-      Mob.prototype.draw = function(context) {
-        var x, y;
-        context.fillStyle = '#000';
-        x = this.getLoc(this.x);
-        y = this.getLoc(this.y);
-        context.font = '40pt Pictos';
-        return context.fillText(this.symbol, x + 1, y + 40);
       };
       Mob.prototype.pause = function() {
         this.dx = 0;

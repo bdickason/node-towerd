@@ -7,6 +7,8 @@ $ ->
   class window.Mob
     constructor: (data) ->
       { @uid, @x, @y, @dx, @dy, @speed, @maxHP, @curHP, @symbol } = data
+      @type = 'mob'
+      @layer = 'fg' # Mobs should render to the foreground layer
   
     move: (mobdata) ->
       if @curHP > 0 # Don't move when the mob is dead
@@ -23,14 +25,6 @@ $ ->
       # Calculate new trajectory
       @x = @x + (@dx*distance)
       @y = @y + (@dy*distance)
-      
-    # Draw a mob on the map
-    draw: (context) ->
-      context.fillStyle='#000'
-      x = @getLoc @x
-      y = @getLoc @y
-      context.font = '40pt Pictos'
-      context.fillText @symbol, x+1, y+40 # Add 40 because fonts draw from top left
 
     pause: ->
       @dx = 0

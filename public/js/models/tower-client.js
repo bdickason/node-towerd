@@ -4,6 +4,7 @@
       function Tower(data) {
         var x, y;
         this.uid = data.uid, this.type = data.type, this.symbol = data.symbol, this.damage = data.damage, this.x = data.x, this.y = data.y;
+        this.layer = 'fg';
         x = (this.getLoc(data.x)) + (squarewidth / 2);
         y = (this.getLoc(data.y)) - (squarewidth / 2);
         this.line = {
@@ -46,32 +47,6 @@
           bullet.vx *= .999;
           bullet.vy *= .99;
           _results.push(bullet.x % fg_canvas.width !== bullet.x ? bullet.remove() : bullet.x >= fg_canvas.height ? (bullet.vy = -Math.abs(bullet.vy), bullet.vy *= .7, Math.abs(bullet.vy < 1 && Math.abs(bullet.vx < 1)) ? bullet.remove() : void 0) : void 0);
-        }
-        return _results;
-      };
-      Tower.prototype.draw = function(context) {
-        /* Draw a tower on the map */        var _x, _y;
-        _x = this.getLoc(this.x);
-        _y = this.getLoc(this.y);
-        context.font = '40pt Pictos';
-        context.fillText(this.symbol, _x + 2, _y + 40);
-        /* Draw the gun */
-        context.strokeStyle = '#f00';
-        context.lineWidth = 3;
-        context.beginPath();
-        context.moveTo(this.line.x, this.line.y + 50);
-        context.lineTo(this.line.end_x, this.line.end_y + 50);
-        context.stroke();
-        if (bullets.length > 0) {
-          return this.drawFire(context);
-        }
-      };
-      Tower.prototype.drawFire = function(context) {
-        var bullet, _i, _len, _results;
-        _results = [];
-        for (_i = 0, _len = bullets.length; _i < _len; _i++) {
-          bullet = bullets[_i];
-          _results.push(bullet.draw(context));
         }
         return _results;
       };
