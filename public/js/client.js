@@ -1,10 +1,13 @@
 (function() {
   $(function() {
-    /* Config Variables */    var draw, game, handleInput, reverseLoc, socket, update;
+    /* Config Variables */    var draw, game, handleInput, lastUpdate, reverseLoc, socket, update;
     window.squarewidth = 50;
     window.FPS = 30;
     /* Reserved Variables */
     window.bullets = [];
+    window.startTime = Date.now();
+    window.elapsed = 0;
+    lastUpdate = startTime;
     socket = io.connect('http://localhost');
     /* Game Events */
     socket.on('init', function(data) {
@@ -72,7 +75,10 @@
     };
     handleInput = function() {};
     update = function() {
-      var mob, tower, _i, _j, _len, _len2, _results;
+      var elapsed, mob, now, tower, _i, _j, _len, _len2, _results;
+      now = Date.now();
+      elapsed = now - lastUpdate;
+      lastUpdate = now;
       for (_i = 0, _len = towers.length; _i < _len; _i++) {
         tower = towers[_i];
         tower.update();
@@ -80,7 +86,7 @@
       _results = [];
       for (_j = 0, _len2 = mobs.length; _j < _len2; _j++) {
         mob = mobs[_j];
-        _results.push(mob.update());
+        _results.push(mob.update(elapsed));
       }
       return _results;
     };

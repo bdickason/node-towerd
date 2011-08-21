@@ -5,6 +5,9 @@ $ ->
   
   ### Reserved Variables ###
   window.bullets = []
+  window.startTime = Date.now()
+  window.elapsed = 0
+  lastUpdate = startTime
 
   socket = io.connect 'http://localhost'
   
@@ -69,8 +72,14 @@ $ ->
     
   # Update Game world (moves, etc)
   update = ->
+    # Calculate time from last frame to current for a game 'tick'
+    # For more info: http://www.html5rocks.com/en/tutorials/casestudies/onslaught.html#toc-the-game-loop
+    now = Date.now()
+    elapsed = now - lastUpdate
+    lastUpdate = now
+    
     tower.update() for tower in towers
-    mob.update() for mob in mobs
+    mob.update(elapsed) for mob in mobs
     
   # Draw the game world each frame
   draw = ->
@@ -107,4 +116,5 @@ $ ->
 
   reverseLoc = (loc) ->
     return Math.floor (loc)/squarewidth
+
   

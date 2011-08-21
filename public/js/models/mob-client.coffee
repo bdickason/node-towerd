@@ -6,17 +6,18 @@
 $ ->
   class window.Mob
     constructor: (data) ->
-      @moveConst = 0.825
       { @uid, @x, @y, @dx, @dy, @speed, @maxHP, @curHP, @symbol } = data
   
     move: (mobdata) ->
       { @x, @y, @dx, @dy, @speed } = mobdata
 
     # Update mob info (movement, etc) each frame
-    update: ->
+    update: (lastUpdate) ->
+      distance = (@speed / 1000) * elapsed
+      
       # Calculate new trajectory
-      @x = @x + (@dx*@speed*@moveConst/FPS)
-      @y = @y + (@dy*@speed*@moveConst/FPS)
+      @x = @x + (@dx*distance)
+      @y = @y + (@dy*distance)
       
     # Draw a mob on the map
     draw: (context) ->

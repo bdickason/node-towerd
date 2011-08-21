@@ -25,7 +25,7 @@ $ ->
           bullet.vx = speed * Math.cos(@line.angle + random_offset);
           bullet.vy = speed * Math.sin(@line.angle + random_offset);
     
-    update: ->
+    update: () ->
       ### Find closest mob and lock on ###
       closest = @findClosest()
 
