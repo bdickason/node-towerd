@@ -5,7 +5,7 @@
     type: 'Cannon',
     symbol: 'H',
     active: 1,
-    damage: 10,
+    damage: 1,
     range: 2
   };
 }).call(this);

@@ -6,25 +6,29 @@
 $ ->
   class window.Mob
     constructor: (data) ->
-      @moveConst = 1.7
       { @uid, @x, @y, @dx, @dy, @speed, @maxHP, @curHP, @symbol } = data
+      @type = 'mob'
+      @layer = 'fg' # Mobs should render to the foreground layer
   
     move: (mobdata) ->
-      { @x, @y, @dx, @dy, @speed } = mobdata
-
-    # Draw a mob on the map
-    draw: (context) ->
-      # Calculate new trajectory for each redraw
-      @x = @x + (@dx*@speed*@moveConst/FPS)
-      @y = @y + (@dx*@speed*@moveConst/FPS)
-      
-      context.fillStyle='#000'
-
-      x = @getLoc @x
-      y = @getLoc @y
-      context.font = '40pt Pictos'
-      context.fillText @symbol, x+2, y-10
+      if @curHP > 0 # Don't move when the mob is dead
+        {@dx, @dy, @speed } = mobdata
     
+    die: (mobdata) ->
+      { @x, @y, @dx, @dy, @curHP, @maxHP } = mobdata
+      @symbol = '*'
+
+    # Update mob info (movement, etc) each frame
+    update: (elapsed) ->
+      distance = (@speed / 1000) * elapsed * 1.71
+      
+      # Calculate new trajectory
+      @x = @x + (@dx*distance)
+      @y = @y + (@dy*distance)
+
+    pause: ->
+      @dx = 0
+      @dy = 0
+      
     getLoc: (loc) ->
-       if typeof loc is 'number'
-         return (loc*squarewidth)+0.5
+      return (loc*squarewidth)

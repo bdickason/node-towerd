@@ -1,5 +1,6 @@
 (function() {
-  var RedisStore, Users, World, app, cfg, express, filter, http, init, io, load, redis, sys, url, winston;
+  var RedisStore, Users, World, app, cfg, express, filter, http, init, io, load, loadWorld, redis, setupWorld, sys, url, winston;
+  var __bind = function(fn, me){ return function(){ return fn.apply(me, arguments); }; };
   http = require('http');
   url = require('url');
   express = require('express');
@@ -71,15 +72,106 @@
       res.send "You are not logged in. <A HREF='/login'>Click here</A> to login"
     */
   });
+  app.get('/debug', function(req, res) {
+    if (typeof world === 'undefined') {
+      return res.redirect('/');
+    } else {
+      return world.getGameData(__bind(function(data) {
+        return res.render('debug', {});
+      }, this));
+    }
+  });
   app.get('/end', function(req, res) {
     return world.destroy();
   });
   /* Socket.io Stuff */
   io.enable('browser client minification');
+  io.set('log level', 2);
   io.sockets.on('connection', function(socket) {
     logger.debug('A socket with ID: ' + socket.id + ' connected');
     /* Load core game data */
+    loadWorld(socket);
+    /* Socket Event Listeners */
+    socket.on('start', function() {
+      return world.start();
+    });
+    socket.on('pause', function() {
+      return world.pause();
+    });
+    socket.on('disconnect', function() {
+      return logger.debug('A socket with the session ID: ' + socket.id + ' disconnected.');
+    });
+    socket.on('add', function(type, x, y) {
+      logger.info("Client added a tower: " + type + " at " + x + " " + y);
+      return world.add(type, x, y);
+    });
+    return socket.on('debug', function() {
+      return world.getGameData(__bind(function(data) {
+        data.map.type = 'map';
+        data.map = filter(data.map);
+        return socket.volatile.emit('debug', data);
+      }, this));
+    });
+  });
+  load = function() {
+    /* Spawn the world!! */    var world;
+    logger.info('Spawning New Game');
+    world = new World(app);
+    global.world = world;
+    return world.emit('load');
+  };
+  filter = function(obj) {
+    var newobj;
+    switch (obj.type) {
+      case 'mob':
+        newobj = {
+          uid: obj.uid,
+          x: obj.x,
+          y: obj.y,
+          dx: obj.dx,
+          dy: obj.dy,
+          speed: obj.speed,
+          maxHP: obj.maxHP,
+          curHP: obj.curHP,
+          symbol: obj.symbol
+        };
+        break;
+      case 'tower':
+        newobj = {
+          uid: obj.uid,
+          x: obj.x,
+          y: obj.y,
+          symbol: obj.symbol,
+          damage: obj.damage,
+          type: obj.type
+        };
+        break;
+      case 'map':
+        newobj = {
+          name: obj.name,
+          uid: obj.uid,
+          size: obj.size,
+          end_x: obj.end_x,
+          end_y: obj.end_y,
+          type: obj.type
+        };
+    }
+    return newobj;
+  };
+  loadWorld = function(socket) {
+    var retryLoad;
+    if (world.loaded) {
+      return setupWorld(socket);
+    } else {
+      return retryLoad = setTimeout(__bind(function() {
+        return loadWorld(socket);
+      }, this), 1000);
+    }
+  };
+  setupWorld = function(socket) {
     world.getGameData(function(data) {
+      data.map.type = 'map';
+      data.map = filter(data.map);
       return socket.emit('init', {
         data: data
       });
@@ -95,88 +187,16 @@
       return socket.emit('move', filter(obj));
     });
     world.on('fire', function(obj, target) {
+      obj = filter(obj);
+      target = filter(target);
       return socket.emit('fire', {
         obj: obj,
         target: target
       });
     });
-    /* Socket Event Listeners */
-    socket.on('start', function() {
-      return world.start();
+    return world.on('die', function(obj) {
+      return socket.emit('die', filter(obj));
     });
-    socket.on('pause', function() {
-      return world.pause();
-    });
-    socket.on('disconnect', function() {
-      return logger.debug('A socket with the session ID: ' + socket.id + ' disconnected.');
-    });
-    return socket.on('add', function(type, x, y) {
-      logger.info("Client added a tower: " + type + " at " + x + " " + y);
-      return world.add(type, x, y);
-    });
-  });
-  /* Will use later */
-  app.get('/register/:id/:name', function(req, res) {
-    var user;
-    console.log('TODO - Render registration page and ask for username');
-    user = new Users;
-    return user.addUser(req.params.id, req.params.name, function(json) {
-      return console.log('Adding user: ' + req.params.id, req.params.name);
-    });
-  });
-  app.get('/users', function(req, res) {
-    var user;
-    user = new Users;
-    return user.get(null, function(json) {
-      return res.send(json);
-    });
-  });
-  app.get('/users/:id', function(req, res) {
-    var callback, user;
-    callback = '';
-    user = new Users;
-    return user.get(req.params.id, function(json) {
-      return res.send(json);
-    });
-  });
-  app.get('/login', function(req, res) {
-    if (req.session.auth === 1) {
-      return res.redirect('/');
-    } else {
-      logger.info('User logged in.');
-      req.session.id = 0;
-      req.session.name = 'verb';
-      req.session.auth = 1;
-      res.redirect('/');
-      return logger.warning('TODO - Render Login page and ask for username');
-    }
-  });
-  app.get('/logout', function(req, res) {
-    logger.info('--- LOGOUT ---');
-    logger.info(req.session);
-    req.session.destroy();
-    return res.redirect('/');
-  });
-  load = function() {
-    /* Spawn the world!! */    var world;
-    logger.info('Spawning New Game');
-    world = new World(app);
-    global.world = world;
-    return world.emit('load');
-  };
-  filter = function(obj) {
-    var curHP, damage, dx, dy, maxHP, newobj, size, speed, symbol, type, uid, x, y;
-    switch (obj.type) {
-      case 'mob':
-        newobj = (uid = obj.uid, x = obj.x, y = obj.y, dx = obj.dx, dy = obj.dy, speed = obj.speed, maxHP = obj.maxHP, curHP = obj.curHP, symbol = obj.symbol, obj);
-        break;
-      case 'tower':
-        newobj = (uid = obj.uid, x = obj.x, y = obj.y, symbol = obj.symbol, damage = obj.damage, type = obj.type, obj);
-        break;
-      case 'map':
-        newobj = (uid = obj.uid, size = obj.size, type = obj.type, obj);
-    }
-    return newobj;
   };
   load();
   app.listen(process.env.PORT || 3000);

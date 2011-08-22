@@ -22,7 +22,13 @@
       type: String,
       "default": 'Water'
     },
-    mobs: [String]
+    mobs: [String],
+    end_x: {
+      type: Number
+    },
+    end_y: {
+      type: Number
+    }
   });
   mongoose.model('Maps', MapSchema);
   module.exports = db.model('Maps');

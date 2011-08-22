@@ -5,6 +5,8 @@
     active: 1,
     theme: 'Forest',
     mobs: ['warrior', 'warrior'],
-    size: 15
+    size: 15,
+    end_x: 10,
+    end_y: 10
   };
 }).call(this);

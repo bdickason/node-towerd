@@ -17,7 +17,8 @@ exports.World = class World extends EventEmitter
   constructor: (app) ->
     ### Initial config ###
     @gameTime = cfg.GAMETIMER  # every n ms, the game progresses
-
+    @loaded = false # Clients should wait for 'loading' to be complete before receiving game data
+    
     # For some reason we have to wait to load everything or else 'world' doesn't get defined as a global var
     @load = setTimeout =>
       @loadEntities( { map: 'hiddenvalley' } )
@@ -60,17 +61,22 @@ exports.World = class World extends EventEmitter
         @loadobj mob
 
     # They exist in memory but need to be spawned
-    @mobs[0].spawn 0, 1, 0, 0
-    @mobs[1].spawn 1, 1, 0, 0
+    @mobs[0].spawn 0, 0, 0, 0, @maps[0].end_x, @maps[0].end_y
+    @mobs[1].spawn 1, 0, 0, 0, @maps[0].end_x, @maps[0].end_y
     @towers[0].spawn 4, 4
+    @loaded = true
 
+  # Add a new object to the game (usually done by a client)
   add: (type, x, y) ->
     switch type
       when 'tower'
         tower = new Tower 'cannon'
         @towers.push tower
         @loadobj tower
+        console.log 'spawning tower'
         @towers[@towers.length-1].spawn x, y
+        @toString (json) ->
+          console.log json
   
   loadobj: (obj) ->
     # proxies 'load' events from objects
@@ -83,6 +89,8 @@ exports.World = class World extends EventEmitter
       @moveobj obj, old_x, old_y
     obj.on 'fire', (target) =>
       @fireobj obj, target
+    obj.on 'die', =>
+      @killobj obj
   
   ### Event functions ###
   spawnobj: (obj) ->
@@ -90,19 +98,22 @@ exports.World = class World extends EventEmitter
     
   moveobj: (obj, old_x, old_y) ->
     # Check if mob is visible before sending move
-    if @maps[0].grid.isInGrid obj.x, obj.y
+    if @maps[0].graph.isInGraph obj.x, obj.y
       @emit 'move', obj, old_x, old_y
   
   fireobj: (obj, target) ->
     @emit 'fire', obj, target
+  
+  killobj: (obj) ->
+    @emit 'die', obj
            
   gameLoop: ->
     # One iteration of a game loop
     # Runs every '@gameTime' seconds
     @emit 'gameLoop'  # A bunch of stuff listens to this to know when a 'turn' has finished    
 
-    # @toString (json) ->
-    #   console.log json  # Have to log via console because of this lame array.
+    @toString (json) ->
+      console.log json  # Have to log via console because of this lame array.
 
   getGameData: (callback) ->
     # Returns a snapshot of the current game so client can load everything
@@ -125,5 +136,4 @@ exports.World = class World extends EventEmitter
   
   # Output current game status
   toString: (callback) ->
-    callback @maps[0].grid
-  
+    callback @maps[0].graph.toString()

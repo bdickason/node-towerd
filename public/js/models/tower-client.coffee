@@ -7,14 +7,15 @@ $ ->
   class window.Tower
     constructor: (data) ->
       { @uid, @type, @symbol, @damage, @x, @y} = data
+      @layer = 'fg' # Towers should render to the foreground layer
       x = (@getLoc data.x)+(squarewidth/2)
       y = (@getLoc data.y)-(squarewidth/2)
       @line = {
-            x: x,
-            y: y,
-            length: 32,
-            angle: 0
-          }
+        x: x,
+        y: y,
+        length: 32,
+        angle: 0
+      }
     
     fire: ->
       if bullets.length < 20
@@ -24,38 +25,21 @@ $ ->
           speed = Math.random() * 15 + 3
           bullet.vx = speed * Math.cos(@line.angle + random_offset);
           bullet.vy = speed * Math.sin(@line.angle + random_offset);
-      
     
-    draw: (context) ->
-      ### Draw a tower on the map ###
-      _x = @getLoc @x
-      _y = @getLoc @y
-      context.font = '40pt Pictos'
-      context.fillText @symbol, _x+2, _y-10
-      
-      ### Draw the gun ###
+    update: () ->
+      ### Find closest mob and lock on ###
       closest = @findClosest()
 
-      # Find angle to closest mob - thanks @hunterloftis for the formula
-      triangle_x = (@getLoc closest.x) - @line.x
-      triangle_y = (@getLoc closest.y) - @line.y
-      @line.angle = Math.atan2 triangle_y, triangle_x
+      if closest
+        # Find angle to closest mob - thanks @hunterloftis for the formula
+        triangle_x = (@getLoc closest.x) - @line.x
+        triangle_y = (@getLoc closest.y) - @line.y
+        @line.angle = Math.atan2 triangle_y, triangle_x
       
-      @line.end_x = @line.x + @line.length * Math.cos @line.angle 
-      @line.end_y = @line.y + @line.length * Math.sin @line.angle
+        @line.end_x = @line.x + @line.length * Math.cos @line.angle 
+        @line.end_y = @line.y + @line.length * Math.sin @line.angle
       
-      context.strokeStyle = '#f00'
-      context.lineWidth = 3
-      context.beginPath()
-      context.moveTo @line.x, @line.y
-      context.lineTo @line.end_x, @line.end_y
-      context.stroke()
-      
-      # Only call drawfire if we have a few bullets!
-      if bullets.length > 0
-        @drawFire context
-      
-    drawFire: (context) ->          
+      # Update bullet movement
       for bullet in bullets
         bullet.x += bullet.vx
         bullet.y += bullet.vy
@@ -69,13 +53,10 @@ $ ->
           bullet.vy = -Math.abs bullet.vy
           bullet.vy *= .7
           if Math.abs bullet.vy < 1 && Math.abs bullet.vx < 1
-            bullet.remove()      
-    
-        bullet.draw context
+            bullet.remove()     
         
     getLoc: (loc) ->
-       if typeof loc is 'number'
-         return (loc*squarewidth)+0.5
+      return (loc*squarewidth)
     
     findClosest: ->
       # Find the closest mob so you can aim at it!

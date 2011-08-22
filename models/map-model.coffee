@@ -10,6 +10,8 @@ MapSchema = new Schema {
   active: { type: Number, default: 1 },
   theme: { type: String, default: 'Water' },
   mobs: [ String ],  # A map can have many mobs
+  end_x: { type: Number },
+  end_y: { type: Number }
 }
 
 mongoose.model 'Maps', MapSchema

@@ -5,6 +5,9 @@ $ ->
   
   ### Reserved Variables ###
   window.bullets = []
+  window.startTime = Date.now()
+  window.elapsed = 0
+  lastUpdate = startTime
 
   socket = io.connect 'http://localhost'
   
@@ -26,6 +29,7 @@ $ ->
     window.map = new Map _map
     mobs.push new Mob mob for mob in _mobs
     towers.push new Tower tower for tower in _towers
+    r.draw map
     
   # Load an object's resources into memory
   socket.on 'load', (data) ->
@@ -48,7 +52,9 @@ $ ->
 
   socket.on 'fire', (data) ->
     tower.fire() for tower in towers when tower.uid == data.obj.uid
-    console.log data
+  
+  socket.on 'die', (data) ->
+    mob.die data for mob in mobs when mob.uid == data.uid
  
   ### Define canvas, etc ###
   window.fg_canvas = document.getElementById 'game_canvas'
@@ -56,17 +62,41 @@ $ ->
   
   window.bg_canvas = document.getElementById 'game_background'
   window.bg_ctx = bg_canvas.getContext '2d'
+  
+  window.r = new Render bg_ctx, fg_ctx   # r is our rendererererer
+  
 
+  # Traditional game loop!
+  game = ->
+    handleInput()
+    update()
+    draw()
 
-  # Loop to draw the game world each frame
+  # Handle player input once per loop
+  handleInput = ->
+    # Respond to a player's click
+    
+  # Update Game world (moves, etc)
+  update = ->
+    # Calculate time from last frame to current for a game 'tick'
+    # For more info: http://www.html5rocks.com/en/tutorials/casestudies/onslaught.html#toc-the-game-loop
+    now = Date.now()
+    elapsed = now - lastUpdate
+    lastUpdate = now
+    
+    tower.update() for tower in towers
+    mob.update(elapsed) for mob in mobs
+    
+  # Draw the game world each frame
   draw = ->
     if fg_canvas.getContext
       fg_ctx.clearRect 0, 0, fg_canvas.width, fg_canvas.height # Clear the canvas
-      tower.draw fg_ctx for tower in towers
-      mob.draw fg_ctx for mob in mobs
+      r.draw tower for tower in towers
+      r.draw mob for mob in mobs
+  
 
   ### World Rendering Functions ###
-  window.gameLoop = setInterval draw, 1000 / FPS
+  window.gameLoop = setInterval game, 1000 / FPS
   
   ### on-page actions (clicks, etc) ###
   
@@ -74,21 +104,24 @@ $ ->
   $('#toggle').bind 'click', ->
     if $(@).attr('class') == 'play'
       # Start the game loop
-      window.gameLoop = setInterval draw, 1000 / FPS
+      window.gameLoop = setInterval game, 1000 / FPS
       socket.emit 'start', { }
       $(@).html('5').attr('class', 'pause')
     else
       # Pause the game loop
       clearInterval gameLoop
       socket.emit 'pause', { }
+      mob.pause() for mob in mobs
       $(@).html('4').attr('class', 'play')
       
     $('#start').html('Game started').click ->
       socket.emit 'pause', { }
-
+  
   $('#game_canvas').click (e) ->
-    socket.emit 'add', 'tower', reverseLoc(e.clientX)-1, reverseLoc(e.clientY)
+    socket.emit 'add', 'tower', reverseLoc(e.offsetX), reverseLoc(e.offsetY)
   
   reverseLoc = (loc) ->
-    return Math.floor (loc-0.5)/squarewidth
+    # Calculate which square in the grid the user clicked
+    return Math.floor (loc)/squarewidth
+
   

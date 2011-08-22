@@ -17,6 +17,7 @@
     __extends(World, EventEmitter);
     function World(app) {
       /* Initial config */      this.gameTime = cfg.GAMETIMER;
+      this.loaded = false;
       this.load = setTimeout(__bind(function() {
         return this.loadEntities({
           map: 'hiddenvalley'
@@ -71,9 +72,10 @@
           this.loadobj(mob);
         }
       }
-      this.mobs[0].spawn(0, 1, 0, 0);
-      this.mobs[1].spawn(1, 1, 0, 0);
-      return this.towers[0].spawn(4, 4);
+      this.mobs[0].spawn(0, 0, 0, 0, this.maps[0].end_x, this.maps[0].end_y);
+      this.mobs[1].spawn(1, 0, 0, 0, this.maps[0].end_x, this.maps[0].end_y);
+      this.towers[0].spawn(4, 4);
+      return this.loaded = true;
     };
     World.prototype.add = function(type, x, y) {
       var tower;
@@ -82,7 +84,11 @@
           tower = new Tower('cannon');
           this.towers.push(tower);
           this.loadobj(tower);
-          return this.towers[this.towers.length - 1].spawn(x, y);
+          console.log('spawning tower');
+          this.towers[this.towers.length - 1].spawn(x, y);
+          return this.toString(function(json) {
+            return console.log(json);
+          });
       }
     };
     World.prototype.loadobj = function(obj) {
@@ -94,8 +100,11 @@
       obj.on('move', __bind(function(old_x, old_y) {
         return this.moveobj(obj, old_x, old_y);
       }, this));
-      return obj.on('fire', __bind(function(target) {
+      obj.on('fire', __bind(function(target) {
         return this.fireobj(obj, target);
+      }, this));
+      return obj.on('die', __bind(function() {
+        return this.killobj(obj);
       }, this));
     };
     /* Event functions */
@@ -103,15 +112,21 @@
       return this.emit('spawn', obj);
     };
     World.prototype.moveobj = function(obj, old_x, old_y) {
-      if (this.maps[0].grid.isInGrid(obj.x, obj.y)) {
+      if (this.maps[0].graph.isInGraph(obj.x, obj.y)) {
         return this.emit('move', obj, old_x, old_y);
       }
     };
     World.prototype.fireobj = function(obj, target) {
       return this.emit('fire', obj, target);
     };
+    World.prototype.killobj = function(obj) {
+      return this.emit('die', obj);
+    };
     World.prototype.gameLoop = function() {
-      return this.emit('gameLoop');
+      this.emit('gameLoop');
+      return this.toString(function(json) {
+        return console.log(json);
+      });
     };
     World.prototype.getGameData = function(callback) {
       var data;
@@ -132,7 +147,7 @@
       return towers = [];
     };
     World.prototype.toString = function(callback) {
-      return callback(this.maps[0].grid);
+      return callback(this.maps[0].graph.toString());
     };
     return World;
   })();
