@@ -12,7 +12,7 @@ $ ->
   
     move: (mobdata) ->
       if @curHP > 0 # Don't move when the mob is dead
-        {@dx, @dy, @speed } = mobdata
+        {@dx, @dy, @speed, @curHP, @maxHP } = mobdata
     
     die: (mobdata) ->
       { @x, @y, @dx, @dy, @curHP, @maxHP } = mobdata
