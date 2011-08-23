@@ -72,8 +72,8 @@
           this.loadobj(mob);
         }
       }
-      this.mobs[0].spawn(0, 0, 0, 0, this.maps[0].end_x, this.maps[0].end_y);
-      this.mobs[1].spawn(1, 0, 0, 0, this.maps[0].end_x, this.maps[0].end_y);
+      this.mobs[0].spawn(this.maps[0].start_x, this.maps[0].start_y, 0, 0, this.maps[0].end_x, this.maps[0].end_y);
+      this.mobs[1].spawn(this.maps[0].start_x, this.maps[0].start_y + 1, 0, 0, this.maps[0].end_x, this.maps[0].end_y);
       this.towers[0].spawn(4, 4);
       return this.loaded = true;
     };

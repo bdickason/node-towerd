@@ -8,5 +8,7 @@ exports.map =
   theme: 'Forest',
   mobs: [ 'warrior', 'warrior' ],
   size: 12  # 12 x 12 grid
+  start_x: 0  # X loc of start
+  start_y: 0  # Y loc of start
   end_x: 11 # X loc of endpoint
-  end_y: 5  # Y loc of endpoint
+  end_y: 11  # Y loc of endpoint

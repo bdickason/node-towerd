@@ -22,7 +22,7 @@
       logger.info('Loading map: ' + name);
       toLoad = (require('../data/maps/' + name + '.js')).map;
       this.uid = Math.floor(Math.random() * 10000000);
-      this.id = toLoad.id, this.name = toLoad.name, this.theme = toLoad.theme, this.mobs = toLoad.mobs, this.size = toLoad.size, this.active = toLoad.active, this.end_x = toLoad.end_x, this.end_y = toLoad.end_y;
+      this.id = toLoad.id, this.name = toLoad.name, this.theme = toLoad.theme, this.mobs = toLoad.mobs, this.size = toLoad.size, this.active = toLoad.active, this.start_x = toLoad.start_x, this.start_y = toLoad.start_y, this.end_x = toLoad.end_x, this.end_y = toLoad.end_y;
       this.graph = new Graph(this.size);
       this.save(function() {});
       this.emit('load');
