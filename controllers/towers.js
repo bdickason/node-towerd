@@ -15,7 +15,7 @@
   mobModel = require('../models/mob-model.js');
   exports.Tower = Tower = (function() {
     __extends(Tower, EventEmitter);
-    function Tower(name) {
+    function Tower(name, world) {
       var toLoad;
       this.type = 'tower';
       name = name.toLowerCase();

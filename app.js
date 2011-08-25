@@ -1,10 +1,10 @@
 (function() {
-  var RedisStore, Users, World, app, cfg, express, filter, http, init, io, load, loadWorld, redis, setupWorld, sys, url, winston;
+  var Redis, RedisStore, Users, World, app, cfg, express, filter, http, init, io, load, redis, setupWorld, sys, url, winston, worlds;
   var __bind = function(fn, me){ return function(){ return fn.apply(me, arguments); }; };
   http = require('http');
   url = require('url');
   express = require('express');
-  redis = require('redis');
+  Redis = require('redis');
   RedisStore = (require('connect-redis'))(express);
   sys = require('sys');
   cfg = require('./config/config.js');
@@ -24,14 +24,9 @@
   });
   app = express.createServer();
   io = (require('socket.io')).listen(app);
-  app.configure('production', function() {
-    var redisAuth, redisUrl;
-    redisUrl = url.parse(cfg.REDISTOGO_URL);
-    redisAuth = redisUrl.auth.split(':');
-    app.set('redisHost', redisUrl.hostname);
-    app.set('redisPort', redisUrl.port);
-    app.set('redisDb', redisAuth[0]);
-    return app.set('redisPass', redisAuth[1]);
+  redis = Redis.createClient(cfg.REDIS_PORT, cfg.REDIS_HOSTNAME);
+  redis.on('error', function(err) {
+    return console.log('REDIS Error:' + err);
   });
   app.configure(function() {
     app.set('views', __dirname + '/views');
@@ -58,19 +53,15 @@
   Users = (require('./controllers/user.js')).Users;
   World = (require('./world.js')).World;
   /* Start Route Handling */
+  worlds = [];
   app.get('/', function(req, res) {
-    if (typeof world === 'undefined') {
-      return res.redirect('/');
-    } else {
-      return res.render('game', {});
-    }
-    /* Handle logins
-    if req.session.auth == 1
-      # User is authenticated
-      res.send 'done'
-    else
-      res.send "You are not logged in. <A HREF='/login'>Click here</A> to login"
-    */
+    return load(function(world) {
+      /*if typeof world == 'undefined'
+        res.redirect '/'
+      else
+        # Game is loaded
+        console.log req.sessionID */      return res.render('game', {});
+    });
   });
   app.get('/debug', function(req, res) {
     if (typeof world === 'undefined') {
@@ -89,36 +80,51 @@
   io.set('log level', 2);
   io.sockets.on('connection', function(socket) {
     logger.debug('A socket with ID: ' + socket.id + ' connected');
-    /* Load core game data */
-    loadWorld(socket);
-    /* Socket Event Listeners */
-    socket.on('start', function() {
-      return world.start();
-    });
-    socket.on('pause', function() {
-      return world.pause();
-    });
-    socket.on('disconnect', function() {
-      return logger.debug('A socket with the session ID: ' + socket.id + ' disconnected.');
-    });
-    socket.on('add', function(type, x, y) {
-      logger.info("Client added a tower: " + type + " at " + x + " " + y);
-      return world.add(type, x, y);
-    });
-    return socket.on('debug', function() {
-      return world.getGameData(__bind(function(data) {
-        data.map.type = 'map';
-        data.map = filter(data.map);
-        return socket.volatile.emit('debug', data);
-      }, this));
+    return redis.get('world', function(err, worldId) {
+      var uid, world, _i, _len, _results, _world;
+      uid = Number(worldId);
+      _results = [];
+      for (_i = 0, _len = worlds.length; _i < _len; _i++) {
+        _world = worlds[_i];
+        _results.push((function() {
+          if (_world.uid === uid) {
+            world = _world;
+            setupWorld(socket, world);
+            /* Socket Event Listeners */
+            socket.on('start', function() {
+              return world.start();
+            });
+            socket.on('pause', function() {
+              return world.pause();
+            });
+            socket.on('disconnect', function() {
+              return logger.debug('A socket with the session ID: ' + socket.id + ' disconnected.');
+            });
+            socket.on('add', function(type, x, y) {
+              logger.info("Client added a tower: " + type + " at " + x + " " + y);
+              return world.add(type, x, y);
+            });
+            return socket.on('debug', function() {
+              return world.getGameData(__bind(function(data) {
+                data.map.type = 'map';
+                data.map = filter(data.map);
+                return socket.volatile.emit('debug', data);
+              }, this));
+            });
+          }
+        })());
+      }
+      return _results;
     });
   });
-  load = function() {
+  load = function(callback) {
     /* Spawn the world!! */    var world;
     logger.info('Spawning New Game');
-    world = new World(app);
-    global.world = world;
-    return world.emit('load');
+    world = new World;
+    worlds.push(world);
+    redis.set('world', world.uid);
+    world.emit('load');
+    return callback(world);
   };
   filter = function(obj) {
     var newobj;
@@ -158,17 +164,7 @@
     }
     return newobj;
   };
-  loadWorld = function(socket) {
-    var retryLoad;
-    if (world.loaded) {
-      return setupWorld(socket);
-    } else {
-      return retryLoad = setTimeout(__bind(function() {
-        return loadWorld(socket);
-      }, this), 1000);
-    }
-  };
-  setupWorld = function(socket) {
+  setupWorld = function(socket, world) {
     world.getGameData(function(data) {
       data.map.type = 'map';
       data.map = filter(data.map);
@@ -183,6 +179,7 @@
     world.on('spawn', function(obj) {
       return socket.emit('spawn', filter(obj));
     });
+    world.on('gameLoop', function() {});
     world.on('move', function(obj) {
       return socket.emit('move', filter(obj));
     });
@@ -198,6 +195,5 @@
       return socket.emit('die', filter(obj));
     });
   };
-  load();
   app.listen(process.env.PORT || 3000);
 }).call(this);

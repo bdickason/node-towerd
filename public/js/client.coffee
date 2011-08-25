@@ -118,10 +118,11 @@ $ ->
       socket.emit 'pause', { }
   
   $('#game_canvas').click (e) ->
-    socket.emit 'add', 'tower', reverseLoc(e.offsetX), reverseLoc(e.offsetY)
+    # Check that click is in bounds of map
+    if e.offsetX >= 0 and (e.offsetX <= window.squarewidth * map.size) and e.offsetY >= 0 and (e.offsetY <= window.squarewidth * map.size)
+      console.log 'test'
+      socket.emit 'add', 'tower', reverseLoc(e.offsetX), reverseLoc(e.offsetY)
   
   reverseLoc = (loc) ->
     # Calculate which square in the grid the user clicked
     return Math.floor (loc)/squarewidth
-
-  

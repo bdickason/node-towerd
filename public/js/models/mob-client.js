@@ -8,7 +8,7 @@
       }
       Mob.prototype.move = function(mobdata) {
         if (this.curHP > 0) {
-          return this.dx = mobdata.dx, this.dy = mobdata.dy, this.speed = mobdata.speed, mobdata;
+          return this.dx = mobdata.dx, this.dy = mobdata.dy, this.speed = mobdata.speed, this.curHP = mobdata.curHP, this.maxHP = mobdata.maxHP, mobdata;
         }
       };
       Mob.prototype.die = function(mobdata) {

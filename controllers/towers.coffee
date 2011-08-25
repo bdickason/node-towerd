@@ -7,7 +7,7 @@ towerModel = require '../models/tower-model.js'
 mobModel = require '../models/mob-model.js'
 
 exports.Tower = class Tower extends EventEmitter
-  constructor: (name) ->
+  constructor: (name, world) ->
     @type = 'tower' # So other objects know I'm a tower    
     name = name.toLowerCase() # In case someone throws in some weird name
     logger.info 'Loading tower: ' + name

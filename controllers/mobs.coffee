@@ -6,7 +6,8 @@ EventEmitter = (require 'events').EventEmitter
 mobModel = require '../models/mob-model.js'
 
 exports.Mob = class Mob extends EventEmitter
-  constructor: (name) ->
+  constructor: (name, world) ->
+    world  # Temporary hack so mobs can get positions from the maps in the given world
     @type = 'mob' # So other objects know I'm a mob
     name = name.toLowerCase()   # In case someone throws in some weird name
     logger.info 'Loading mob: ' + name
@@ -24,7 +25,7 @@ exports.Mob = class Mob extends EventEmitter
     
     ### Event Emitters ###
     world.on 'gameLoop', =>
-      @move (json) ->
+      @move world, (json) ->
       
     world.on 'fire', (obj, target) =>
       if obj.type == 'tower'
@@ -51,7 +52,7 @@ exports.Mob = class Mob extends EventEmitter
         logger.info "MOB [#{ @uid }] is dead!"
         @die()
   
-  move: (callback) ->
+  move: (world, callback) ->
     if @curHP > 0 # Make sure mob isn't dead!    
       old_x = @x
       old_y = @y
