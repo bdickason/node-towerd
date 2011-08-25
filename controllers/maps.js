@@ -15,7 +15,7 @@
   mapModel = require('../models/map-model.js');
   exports.Map = Map = (function() {
     __extends(Map, EventEmitter);
-    function Map(name) {
+    function Map(name, world) {
       var toLoad;
       this.type = 'map';
       name = name.toLowerCase();

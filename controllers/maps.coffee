@@ -7,7 +7,7 @@ Graph = (require 'astar').Graph
 mapModel = require '../models/map-model.js'
 
 exports.Map = class Map extends EventEmitter
-  constructor: (name) ->
+  constructor: (name, world) ->
     @type = 'map' # So other objects know I'm a map
     
     name = name.toLowerCase() # In case someone throws in some weird name

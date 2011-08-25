@@ -14,8 +14,8 @@
   mobModel = require('../models/mob-model.js');
   exports.Mob = Mob = (function() {
     __extends(Mob, EventEmitter);
-    function Mob(name) {
-      var toLoad, _ref;
+    function Mob(name, world) {
+      world;      var toLoad, _ref;
       this.type = 'mob';
       name = name.toLowerCase();
       logger.info('Loading mob: ' + name);
@@ -28,7 +28,7 @@
       this.emit('load');
       /* Event Emitters */
       world.on('gameLoop', __bind(function() {
-        return this.move(function(json) {});
+        return this.move(world, function(json) {});
       }, this));
       world.on('fire', __bind(function(obj, target) {
         if (obj.type === 'tower') {
@@ -65,7 +65,7 @@
         }
       }
     };
-    Mob.prototype.move = function(callback) {
+    Mob.prototype.move = function(world, callback) {
       var old_x, old_y;
       if (this.curHP > 0) {
         old_x = this.x;

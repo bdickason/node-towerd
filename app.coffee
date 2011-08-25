@@ -1,7 +1,7 @@
 http = require 'http'
 url = require 'url'
 express = require 'express'
-redis = require 'redis'
+Redis = require 'redis'
 RedisStore = (require 'connect-redis')(express)
 sys = require 'sys'
 cfg = require './config/config.js'    # contains API keys, etc.
@@ -21,16 +21,11 @@ global.logger = new (winston.Logger)( {
 app = express.createServer()
 io = (require 'socket.io').listen app
 
+# Start up redis to cache stuff
+redis = Redis.createClient cfg.REDIS_PORT, cfg.REDIS_HOSTNAME
+redis.on 'error', (err) ->
+  console.log 'REDIS Error:' + err
 
-app.configure 'production', ->
-  # Configure redistogo for heroku (production)
-  redisUrl = url.parse cfg.REDISTOGO_URL
-  redisAuth = redisUrl.auth.split ':'
-  app.set 'redisHost', redisUrl.hostname
-  app.set 'redisPort', redisUrl.port 
-  app.set 'redisDb', redisAuth[0]
-  app.set 'redisPass', redisAuth[1]
-    
 app.configure ->
   app.set 'views', __dirname + '/views'
   app.set 'view engine', 'jade'
@@ -52,21 +47,17 @@ Users = (require './controllers/user.js').Users
 World = (require './world.js').World
 ### Start Route Handling ###
 
+worlds = []
+
 # Home Page
 app.get '/', (req, res) ->
-  if typeof world == 'undefined'
-    res.redirect '/'
-  else
-    # Game is loaded
+  load (world) ->
+    ###if typeof world == 'undefined'
+      res.redirect '/'
+    else
+      # Game is loaded
+      console.log req.sessionID ###
     res.render 'game', { }
-
-  ### Handle logins
-  if req.session.auth == 1
-    # User is authenticated
-    res.send 'done'
-  else
-    res.send "You are not logged in. <A HREF='/login'>Click here</A> to login"
-  ###
 
 # Debug mode!
 app.get '/debug', (req, res) ->
@@ -91,41 +82,48 @@ io.set 'log level', 2
 io.sockets.on 'connection', (socket) ->
   logger.debug 'A socket with ID: ' + socket.id + ' connected'
   
-  ### Load core game data ###
-  # 
-  loadWorld(socket)
+  # Stick the client in a game - right now we only have one
+  redis.get 'world', (err, worldId) ->    
+    uid = Number worldId
+    for _world in worlds
+      if _world.uid == uid
+        world = _world
+        setupWorld socket, world
+        
+        ### Socket Event Listeners ###
+        # 
+        # These are events coming from the client
 
-  ### Socket Event Listeners ###
-  # 
-  # These are events coming from the client
+        socket.on 'start', ->
+          world.start()
+
+        socket.on 'pause', ->
+          world.pause()
+
+        socket.on 'disconnect', ->
+          logger.debug 'A socket with the session ID: ' + socket.id + ' disconnected.'
+
+        socket.on 'add', (type, x, y) ->
+          logger.info "Client added a tower: #{type} at #{x} #{y}"
+          world.add type, x, y
+
+        socket.on 'debug', ->
+          world.getGameData (data) =>
+            # Trim the graph out of the initial client data dump
+            data.map.type = 'map'
+            data.map = filter data.map
+
+            socket.volatile.emit 'debug', data
   
-  socket.on 'start', ->
-    world.start()
-  
-  socket.on 'pause', ->
-    world.pause()
-  
-  socket.on 'disconnect', ->
-    logger.debug 'A socket with the session ID: ' + socket.id + ' disconnected.'
-    
-  socket.on 'add', (type, x, y) ->
-    logger.info "Client added a tower: #{type} at #{x} #{y}"
-    world.add type, x, y
-  
-  socket.on 'debug', ->
-    world.getGameData (data) =>
-      # Trim the graph out of the initial client data dump
-      data.map.type = 'map'
-      data.map = filter data.map
-    
-      socket.volatile.emit 'debug', data
-  
-load = ->
+load = (callback) ->
   ### Spawn the world!! ###
   logger.info 'Spawning New Game'  
-  world = new World app
-  global.world = world  # world needs to be called from anywhere/everywhere
+  world = new World
+  worlds.push world
+  redis.set 'world', world.uid
+  # global.world = world  # world needs to be called from anywhere/everywhere
   world.emit 'load'
+  callback world
 
 filter = (obj) ->
   # Filters out unwanted game data to send to the client
@@ -139,17 +137,7 @@ filter = (obj) ->
       newobj = { name: obj.name, uid: obj.uid, size: obj.size, end_x: obj.end_x, end_y: obj.end_y, type: obj.type }
   return newobj
 
-loadWorld = (socket) ->
-  # Fix - Clients connecting the moment the server was started would crash it
-  if world.loaded
-    setupWorld socket
-  else
-    # World isn't ready, wait 1000ms and try again!
-    retryLoad = setTimeout =>
-      loadWorld socket
-    , 1000
-
-setupWorld = (socket) ->
+setupWorld = (socket, world) ->
   # When a client connects, we should dump the current gamestate  
   world.getGameData (data) ->
     # Trim the graph out of the initial client data dump
@@ -168,6 +156,8 @@ setupWorld = (socket) ->
   world.on 'spawn', (obj) ->
     # Tell the client to spawn an object
     socket.emit 'spawn', filter obj
+  
+  world.on 'gameLoop', ->
 
   world.on 'move', (obj) ->
     # object is moving from oldloc to obj.loc
@@ -183,6 +173,6 @@ setupWorld = (socket) ->
     # someone died ;(
     socket.emit 'die', filter obj
       
-load()  # Load basic game info
+# load()  # Load basic game info
 
 app.listen process.env.PORT or 3000 

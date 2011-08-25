@@ -126,5 +126,3 @@ $ ->
   reverseLoc = (loc) ->
     # Calculate which square in the grid the user clicked
     return Math.floor (loc)/squarewidth
-
-  

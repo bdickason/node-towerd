@@ -14,15 +14,15 @@ Tower = (require './controllers/towers').Tower  # Tower functions like attack, e
 
 exports.World = class World extends EventEmitter
 
-  constructor: (app) ->
+  constructor: ->
     ### Initial config ###
+    @maxPlayers = 2
+    @uid = Math.floor Math.random()*10000000  # Generate a unique ID for each instance of this game
     @gameTime = cfg.GAMETIMER  # every n ms, the game progresses
     @loaded = false # Clients should wait for 'loading' to be complete before receiving game data
     
-    # For some reason we have to wait to load everything or else 'world' doesn't get defined as a global var
-    @load = setTimeout =>
-      @loadEntities( { map: 'hiddenvalley' } )
-    , 1000
+    # Load the first map!
+    @loadEntities( { map: 'hiddenvalley' } )
 
   ### Start the game!! ###
   start: ->
@@ -42,14 +42,14 @@ exports.World = class World extends EventEmitter
     ### Load the map ###
     # First level: Hidden Valley
     @maps = []
-    @maps.push new Map json.map
+    @maps.push new Map json.map, @
     for map in @maps
       @loadobj map 
 
     ### Load and spawn the towers ###
     # First map has one tower: Cannon
     @towers = []
-    @towers.push new Tower 'cannon'
+    @towers.push new Tower 'cannon', @
     @loadobj tower for tower in @towers
         
     ### Load the mobs ###
@@ -57,7 +57,7 @@ exports.World = class World extends EventEmitter
     @mobs = []
     for map in @maps
       for mobId in map.mobs
-        mob = new Mob mobId
+        mob = new Mob mobId, @
         @mobs.push mob
         @loadobj mob
 
@@ -71,7 +71,7 @@ exports.World = class World extends EventEmitter
   add: (type, x, y) ->
     switch type
       when 'tower'
-        tower = new Tower 'cannon'
+        tower = new Tower 'cannon', @
         @towers.push tower
         @loadobj tower
         console.log 'spawning tower'

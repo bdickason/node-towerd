@@ -15,14 +15,14 @@
   Tower = (require('./controllers/towers')).Tower;
   exports.World = World = (function() {
     __extends(World, EventEmitter);
-    function World(app) {
-      /* Initial config */      this.gameTime = cfg.GAMETIMER;
+    function World() {
+      /* Initial config */      this.maxPlayers = 2;
+      this.uid = Math.floor(Math.random() * 10000000);
+      this.gameTime = cfg.GAMETIMER;
       this.loaded = false;
-      this.load = setTimeout(__bind(function() {
-        return this.loadEntities({
-          map: 'hiddenvalley'
-        });
-      }, this), 1000);
+      this.loadEntities({
+        map: 'hiddenvalley'
+      });
     }
     /* Start the game!! */
     World.prototype.start = function() {
@@ -45,7 +45,7 @@
     World.prototype.loadEntities = function(json, callback) {
       /* Load the map */      var map, mob, mobId, tower, _i, _j, _k, _l, _len, _len2, _len3, _len4, _ref, _ref2, _ref3, _ref4;
       this.maps = [];
-      this.maps.push(new Map(json.map));
+      this.maps.push(new Map(json.map, this));
       _ref = this.maps;
       for (_i = 0, _len = _ref.length; _i < _len; _i++) {
         map = _ref[_i];
@@ -53,7 +53,7 @@
       }
       /* Load and spawn the towers */
       this.towers = [];
-      this.towers.push(new Tower('cannon'));
+      this.towers.push(new Tower('cannon', this));
       _ref2 = this.towers;
       for (_j = 0, _len2 = _ref2.length; _j < _len2; _j++) {
         tower = _ref2[_j];
@@ -67,7 +67,7 @@
         _ref4 = map.mobs;
         for (_l = 0, _len4 = _ref4.length; _l < _len4; _l++) {
           mobId = _ref4[_l];
-          mob = new Mob(mobId);
+          mob = new Mob(mobId, this);
           this.mobs.push(mob);
           this.loadobj(mob);
         }
@@ -81,7 +81,7 @@
       var tower;
       switch (type) {
         case 'tower':
-          tower = new Tower('cannon');
+          tower = new Tower('cannon', this);
           this.towers.push(tower);
           this.loadobj(tower);
           console.log('spawning tower');
