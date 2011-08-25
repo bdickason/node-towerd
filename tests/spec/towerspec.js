@@ -10,16 +10,17 @@
   Obj = (require(basedir + 'controllers/utils/object.js')).Obj;
   describe('Towers towers.js', function() {
     beforeEach(function() {
-      global.world = new Obj;
+      var world;
+      world = new Obj;
       this.name = 'Cannon Tower';
       this.id = 'cannon';
       this.active = 1;
       this.symbol = 'C';
-      this.damage = 10;
+      this.damage = 1;
       this.range = 2;
       this.fakeMob = new Obj;
       this.fakeMob.symbol = 'm';
-      return this.tower = new Tower(this.id);
+      return this.tower = new Tower(this.id, world);
     });
     it('Loads a new tower called Cannon Tower', function() {
       expect(this.tower.id).toEqual(this.id);
@@ -43,18 +44,20 @@
       return this.tower.spawn(5, 4, function(callback) {});
     });
     it('Finds no targets when none are in range', function() {
-      var fakeMob;
+      var fakeMob, fakeWorld;
+      fakeWorld = new Obj;
       this.tower.spawn(5, 4, function(callback) {});
-      fakeMob = new Mob('warrior');
+      fakeMob = new Mob('warrior', fakeWorld);
       fakeMob.spawn(0, 0, function(callback) {});
       return this.tower.checkTarget(fakeMob, function(res) {
         return expect(res).toEqual([]);
       });
     });
     return it('Fires on a target when one is in range', function() {
-      var fakeMob;
+      var fakeMob, fakeWorld;
+      fakeWorld = new Obj;
       this.tower.spawn(5, 4, function(callback) {});
-      fakeMob = new Mob('warrior');
+      fakeMob = new Mob('warrior', fakeWorld);
       fakeMob.spawn(5, 5, function(callback) {});
       return this.tower.checkTarget(fakeMob, function(res) {
         return expect(res.id).toEqual('warrior');

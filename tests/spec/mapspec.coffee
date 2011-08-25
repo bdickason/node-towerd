@@ -11,7 +11,7 @@ Obj = (require basedir + 'controllers/utils/object.js').Obj
 # Unit Tests
 describe 'Map map.js', ->
   beforeEach ->
-    global.world = new Obj # Required because maps relies on 'world' for some events
+    world = new Obj # Required because maps relies on 'world' for some events
     
     # Stub data
     @name = 'Hidden Valley'
@@ -19,7 +19,7 @@ describe 'Map map.js', ->
     @active = 1
     @theme = 'Forest'
     @mobs = [ 'warrior', 'warrior' ]
-    @size = 15
+    @size = 12
 
     @fakeMob = new Obj   # Load a fake mob to emit events
     @fakeMob.type = 'mob'
@@ -27,7 +27,7 @@ describe 'Map map.js', ->
     @fakeMob.x = 0
     @fakeMob.y = 1
     
-    @map = new Map @id
+    @map = new Map @id, world
 
   it 'Loads a new map called hiddenvalley', ->
     expect(@map.id).toEqual(@id)

@@ -8,19 +8,20 @@
   Obj = (require(basedir + 'controllers/utils/object.js')).Obj;
   describe('Map map.js', function() {
     beforeEach(function() {
-      global.world = new Obj;
+      var world;
+      world = new Obj;
       this.name = 'Hidden Valley';
       this.id = 'hiddenvalley';
       this.active = 1;
       this.theme = 'Forest';
       this.mobs = ['warrior', 'warrior'];
-      this.size = 15;
+      this.size = 12;
       this.fakeMob = new Obj;
       this.fakeMob.type = 'mob';
       this.fakeMob.symbol = 'm';
       this.fakeMob.x = 0;
       this.fakeMob.y = 1;
-      return this.map = new Map(this.id);
+      return this.map = new Map(this.id, world);
     });
     it('Loads a new map called hiddenvalley', function() {
       expect(this.map.id).toEqual(this.id);

@@ -13,20 +13,20 @@ Obj = (require basedir + 'controllers/utils/object.js').Obj
 # Unit Tests
 describe 'Towers towers.js', ->
   beforeEach ->
-    global.world = new Obj # Required because maps relies on 'world' for some events
+    world = new Obj # Required because maps relies on 'world' for some events
     
     # Stub data
     @name = 'Cannon Tower'
     @id = 'cannon'
     @active = 1
     @symbol = 'C'
-    @damage = 10
+    @damage = 1
     @range = 2
 
     @fakeMob = new Obj   # Load a fake mob to emit events
     @fakeMob.symbol = 'm'
     
-    @tower = new Tower @id
+    @tower = new Tower @id, world
 
   it 'Loads a new tower called Cannon Tower', ->
     expect(@tower.id).toEqual(@id)
@@ -47,11 +47,13 @@ describe 'Towers towers.js', ->
 
   it 'Finds no targets when none are in range', ->
     
+    fakeWorld = new Obj
+    
     # Spawn the tower    
     @tower.spawn 5, 4, (callback) ->      
     
     # Spawn a fake mob
-    fakeMob = new Mob 'warrior'
+    fakeMob = new Mob 'warrior', fakeWorld
 
     fakeMob.spawn 0, 0, (callback) ->
     
@@ -59,11 +61,13 @@ describe 'Towers towers.js', ->
       expect(res).toEqual []
 
   it 'Fires on a target when one is in range', ->
+    fakeWorld = new Obj
+
     # Spawn the tower    
     @tower.spawn 5, 4, (callback) ->      
   
     # Spawn a fake mob
-    fakeMob = new Mob 'warrior'
+    fakeMob = new Mob 'warrior', fakeWorld
 
     fakeMob.spawn 5, 5, (callback) ->
     
