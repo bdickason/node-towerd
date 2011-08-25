@@ -103,8 +103,11 @@
       obj.on('fire', __bind(function(target) {
         return this.fireobj(obj, target);
       }, this));
-      return obj.on('die', __bind(function() {
+      obj.on('die', __bind(function() {
         return this.killobj(obj);
+      }, this));
+      return obj.on('hit', __bind(function() {
+        return this.hitobj(obj);
       }, this));
     };
     /* Event functions */
@@ -121,6 +124,9 @@
     };
     World.prototype.killobj = function(obj) {
       return this.emit('die', obj);
+    };
+    World.prototype.hitobj = function(obj) {
+      return this.emit('hit', obj);
     };
     World.prototype.gameLoop = function() {
       this.emit('gameLoop');

@@ -53,6 +53,13 @@ $ ->
   socket.on 'fire', (data) ->
     tower.fire() for tower in towers when tower.uid == data.obj.uid
   
+  socket.on 'hit', (data) ->
+    for mob in mobs
+      console.log "hit! data: #{data.uid} mob: #{mob.uid}"
+      if mob.id == data.uid
+        console.log 'Kaboom!'
+        r.drawMobHit mob, fg_ctx
+  
   socket.on 'die', (data) ->
     mob.die data for mob in mobs when mob.uid == data.uid
  
@@ -64,7 +71,6 @@ $ ->
   window.bg_ctx = bg_canvas.getContext '2d'
   
   window.r = new Render bg_ctx, fg_ctx   # r is our rendererererer
-  
 
   # Traditional game loop!
   game = ->

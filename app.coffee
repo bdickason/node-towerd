@@ -169,6 +169,9 @@ setupWorld = (socket, world) ->
     target = filter target
     socket.emit 'fire', { obj, target }
   
+  world.on 'hit', (obj) ->
+    socket.emit 'hit', filter obj
+  
   world.on 'die', (obj) ->
     # someone died ;(
     socket.emit 'die', filter obj

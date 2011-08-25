@@ -91,6 +91,8 @@ exports.World = class World extends EventEmitter
       @fireobj obj, target
     obj.on 'die', =>
       @killobj obj
+    obj.on 'hit', =>
+      @hitobj obj
   
   ### Event functions ###
   spawnobj: (obj) ->
@@ -106,6 +108,9 @@ exports.World = class World extends EventEmitter
   
   killobj: (obj) ->
     @emit 'die', obj
+    
+  hitobj: (obj) ->
+    @emit 'hit', obj
            
   gameLoop: ->
     # One iteration of a game loop

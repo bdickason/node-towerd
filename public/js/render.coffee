@@ -54,6 +54,18 @@ $ ->
       
       context.fillRect x+13, y-1, 24*pct, 6
 
+    # Animate a mob when it gets hit
+    drawMobHit: (obj, context) ->
+      # Get coordinates
+      x = obj.getLoc obj.x
+      y = obj.getLoc obj.y
+      
+      console.log 'drawing mob hit!'
+      context.save()
+      context.globalCompositeOperation = 'source-in'
+      context.fillStyle = 'rgba(186, 51, 35, 0.6)'  # Fill with red!
+      context.fillRect x, y, 40, 40
+      context.restore()
       
 
     # Draw a tower on the map

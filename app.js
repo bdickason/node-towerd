@@ -191,6 +191,9 @@
         target: target
       });
     });
+    world.on('hit', function(obj) {
+      return socket.emit('hit', filter(obj));
+    });
     return world.on('die', function(obj) {
       return socket.emit('die', filter(obj));
     });
