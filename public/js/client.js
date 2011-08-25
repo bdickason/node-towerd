@@ -141,7 +141,10 @@
       });
     });
     $('#game_canvas').click(function(e) {
-      return socket.emit('add', 'tower', reverseLoc(e.offsetX), reverseLoc(e.offsetY));
+      if (e.offsetX >= 0 && (e.offsetX <= window.squarewidth * map.size) && e.offsetY >= 0 && (e.offsetY <= window.squarewidth * map.size)) {
+        console.log('test');
+        return socket.emit('add', 'tower', reverseLoc(e.offsetX), reverseLoc(e.offsetY));
+      }
     });
     return reverseLoc = function(loc) {
       return Math.floor(loc / squarewidth);
