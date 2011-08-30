@@ -15,6 +15,8 @@ $ ->
       @dy = 0
       @symbol = 'U'
       @speed = 5
+      @curHP = 50
+      @maxHP = 50
       ### End Hack! ###
       
       @type = 'player'

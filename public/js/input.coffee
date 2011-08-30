@@ -12,6 +12,7 @@ $ ->
       window.addEventListener 'keydown', (e) =>
         # Keypress means the player wants to do... something!
         # Don't do anything but let the program know for the next game loop.
+        e.preventDefault()  # Stop browser from scrolling, etc when moving
         @keys[e.keyCode] = true
       , false
       

@@ -33,28 +33,7 @@ $ ->
       y = obj.getLoc obj.y
       context.font = '40pt Pictos'
       context.fillText obj.symbol, x+1, y+40 # Add 40 because fonts draw from top left
-      @drawMobHP obj, context
-      
-    # Draw mob's HP
-    drawMobHP: (obj, context) ->
-      # Get coordinates
-      x = obj.getLoc obj.x
-      y = obj.getLoc obj.y
-      
-      # Draw HP box outline
-      context.strokeStyle = '#000'
-      context.lineWidth = 1
-      context.strokeRect x+10, y-3, 30, 10
-      
-      # Draw HP bar
-      context.fillStyle = '#0F0'
-      pct = obj.curHP / obj.maxHP
-      
-      if pct <= .2
-        # Show red health bar when HP is < 20%
-        context.fillStyle = '#f00'
-      
-      context.fillRect x+13, y-1, 24*pct, 6
+      @drawHP obj, context
 
     # Animate a mob when it gets hit
     drawMobHit: (obj, context) ->
@@ -118,3 +97,25 @@ $ ->
        y = obj.getLoc obj.y
        context.font = '40pt Pictos'
        context.fillText obj.symbol, x+1, y+40 # Add 40 because fonts draw from top left
+       @drawHP obj, context
+    
+     # Draw Health Bars
+     drawHP: (obj, context) ->
+       # Get coordinates
+       x = obj.getLoc obj.x
+       y = obj.getLoc obj.y
+
+       # Draw HP box outline
+       context.strokeStyle = '#000'
+       context.lineWidth = 1
+       context.strokeRect x+10, y-3, 30, 10
+
+       # Draw HP bar
+       context.fillStyle = '#0F0'
+       pct = obj.curHP / obj.maxHP
+
+       if pct <= .2
+         # Show red health bar when HP is < 20%
+         context.fillStyle = '#f00'
+
+       context.fillRect x+13, y-1, 24*pct, 6
