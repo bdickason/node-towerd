@@ -51,7 +51,7 @@ worlds = []
 
 # Home Page
 app.get '/', (req, res) ->
-  load (world) ->
+  load req.sessionID, (world) ->
     ###if typeof world == 'undefined'
       res.redirect '/'
     else
@@ -115,10 +115,12 @@ io.sockets.on 'connection', (socket) ->
 
             socket.volatile.emit 'debug', data
   
-load = (callback) ->
+load = (sessionID, callback) ->
   ### Spawn the world!! ###
   logger.info 'Spawning New Game'  
-  world = new World
+  world = new World 
+  console.log sessionID
+  world.add 'player', sessionID
   worlds.push world
   redis.set 'world', world.uid
   # global.world = world  # world needs to be called from anywhere/everywhere
@@ -175,7 +177,6 @@ setupWorld = (socket, world) ->
   world.on 'die', (obj) ->
     # someone died ;(
     socket.emit 'die', filter obj
-      
-# load()  # Load basic game info
+    
 
 app.listen process.env.PORT or 3000 

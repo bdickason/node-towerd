@@ -1,6 +1,6 @@
 (function() {
   $(function() {
-    /* Config Variables */    var draw, game, handleInput, lastUpdate, reverseLoc, socket, update;
+    /* Config Variables */    var draw, game, lastUpdate, reverseLoc, socket, update;
     window.squarewidth = 50;
     window.FPS = 30;
     /* Reserved Variables */
@@ -43,14 +43,24 @@
     });
     socket.on('move', function(data) {
       var mob, _i, _len, _results;
-      _results = [];
-      for (_i = 0, _len = mobs.length; _i < _len; _i++) {
-        mob = mobs[_i];
-        if (mob.uid === data.uid) {
-          _results.push(mob.move(data));
-        }
+      switch (data.type) {
+        case 'mob':
+          _results = [];
+          for (_i = 0, _len = mobs.length; _i < _len; _i++) {
+            mob = mobs[_i];
+            if (mob.uid === data.uid) {
+              _results.push(mob.move(data));
+            }
+          }
+          return _results;
+          break;
+        case 'player':
+          if (data.uid === player.uid) {
+            ;
+          } else {
+            ;
+          }
       }
-      return _results;
     });
     socket.on('fire', function(data) {
       var tower, _i, _len, _results;
@@ -90,17 +100,19 @@
     window.bg_canvas = document.getElementById('game_background');
     window.bg_ctx = bg_canvas.getContext('2d');
     window.r = new Render(bg_ctx, fg_ctx);
+    window.input = new Input;
+    window.player = new Player;
     game = function() {
-      handleInput();
+      input.handle();
       update();
       return draw();
     };
-    handleInput = function() {};
     update = function() {
       var elapsed, mob, now, tower, _i, _j, _len, _len2, _results;
       now = Date.now();
       elapsed = now - lastUpdate;
       lastUpdate = now;
+      player.update(elapsed);
       for (_i = 0, _len = towers.length; _i < _len; _i++) {
         tower = towers[_i];
         tower.update();
@@ -113,19 +125,18 @@
       return _results;
     };
     draw = function() {
-      var mob, tower, _i, _j, _len, _len2, _results;
+      var mob, tower, _i, _j, _len, _len2;
       if (fg_canvas.getContext) {
         fg_ctx.clearRect(0, 0, fg_canvas.width, fg_canvas.height);
         for (_i = 0, _len = towers.length; _i < _len; _i++) {
           tower = towers[_i];
           r.draw(tower);
         }
-        _results = [];
         for (_j = 0, _len2 = mobs.length; _j < _len2; _j++) {
           mob = mobs[_j];
-          _results.push(r.draw(mob));
+          r.draw(mob);
         }
-        return _results;
+        return r.draw(player);
       }
     };
     /* World Rendering Functions */
@@ -152,7 +163,6 @@
     });
     $('#game_canvas').click(function(e) {
       if (e.offsetX >= 0 && (e.offsetX <= window.squarewidth * map.size) && e.offsetY >= 0 && (e.offsetY <= window.squarewidth * map.size)) {
-        console.log('test');
         return socket.emit('add', 'tower', reverseLoc(e.offsetX), reverseLoc(e.offsetY));
       }
     });

@@ -78,8 +78,8 @@
               var new_x, new_y;
               this.dx = res.x;
               this.dy = res.y;
-              this.x = (this.x + this.dx) * this.speed;
-              this.y = (this.y + this.dy) * this.speed;
+              this.x += this.dx * this.speed;
+              this.y += this.dy * this.speed;
               new_x = this.x;
               new_y = this.y;
               return mobModel.find({

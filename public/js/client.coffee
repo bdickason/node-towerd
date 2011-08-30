@@ -47,8 +47,15 @@ $ ->
 
   # Move an object across the canvas
   socket.on 'move', (data) ->
-    # Only move the mob that sent the event
-    mob.move data for mob in mobs when mob.uid == data.uid
+    switch data.type
+      when 'mob'
+        # Only move the mob that sent the event
+        mob.move data for mob in mobs when mob.uid == data.uid
+      when 'player'
+        if data.uid == player.uid
+          # It's me! Move me!
+        else
+          # Process movement for another player. Boooring.
 
   socket.on 'fire', (data) ->
     tower.fire() for tower in towers when tower.uid == data.obj.uid
@@ -70,17 +77,16 @@ $ ->
   window.bg_canvas = document.getElementById 'game_background'
   window.bg_ctx = bg_canvas.getContext '2d'
   
-  window.r = new Render bg_ctx, fg_ctx   # r is our rendererererer
+  # Define game loop objcts
+  window.r = new Render bg_ctx, fg_ctx    # r is our rendererererer
+  window.input = new Input                # input is our player input class
+  window.player = new Player              # Player is our player!
 
   # Traditional game loop!
   game = ->
-    handleInput()
+    input.handle()
     update()
     draw()
-
-  # Handle player input once per loop
-  handleInput = ->
-    # Respond to a player's click
     
   # Update Game world (moves, etc)
   update = ->
@@ -90,6 +96,7 @@ $ ->
     elapsed = now - lastUpdate
     lastUpdate = now
     
+    player.update(elapsed)
     tower.update() for tower in towers
     mob.update(elapsed) for mob in mobs
     
@@ -99,6 +106,7 @@ $ ->
       fg_ctx.clearRect 0, 0, fg_canvas.width, fg_canvas.height # Clear the canvas
       r.draw tower for tower in towers
       r.draw mob for mob in mobs
+      r.draw player
   
 
   ### World Rendering Functions ###
@@ -126,7 +134,6 @@ $ ->
   $('#game_canvas').click (e) ->
     # Check that click is in bounds of map
     if e.offsetX >= 0 and (e.offsetX <= window.squarewidth * map.size) and e.offsetY >= 0 and (e.offsetY <= window.squarewidth * map.size)
-      console.log 'test'
       socket.emit 'add', 'tower', reverseLoc(e.offsetX), reverseLoc(e.offsetY)
   
   reverseLoc = (loc) ->
