@@ -101,13 +101,18 @@ $ ->
     mob.update(elapsed) for mob in mobs
     
   # Draw the game world each frame
-  draw = ->
+  draw = ->        
     if fg_canvas.getContext
+      bg_ctx.clearRect 0, 0, bg_canvas.width, bg_canvas.height  # Clear the canvas
+      # if player.movingRight or player.movingLeft or player.movingUp or player.movingDown
+        # Only redraw bg if player is moving
+      console.log 'redrawing'
+      r.draw map       
+
       fg_ctx.clearRect 0, 0, fg_canvas.width, fg_canvas.height # Clear the canvas
       r.draw tower for tower in towers
       r.draw mob for mob in mobs
-      r.draw player
-  
+      r.draw player  
 
   ### World Rendering Functions ###
   window.gameLoop = setInterval game, 1000 / FPS

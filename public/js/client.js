@@ -127,6 +127,9 @@
     draw = function() {
       var mob, tower, _i, _j, _len, _len2;
       if (fg_canvas.getContext) {
+        bg_ctx.clearRect(0, 0, bg_canvas.width, bg_canvas.height);
+        console.log('redrawing');
+        r.draw(map);
         fg_ctx.clearRect(0, 0, fg_canvas.width, fg_canvas.height);
         for (_i = 0, _len = towers.length; _i < _len; _i++) {
           tower = towers[_i];

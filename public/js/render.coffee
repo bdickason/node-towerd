@@ -75,13 +75,20 @@ $ ->
         bullet.draw context
 
     # Draw a square grid based on size denoted by the server
-     drawMap: (obj, context) ->
+    drawMap: (obj, context) ->
+       
+       
+       # Get player's coords - map moves with him
+       offsetX = obj.getLoc player.x
+       offsetY = obj.getLoc player.y
+       context.beginPath()
+       
        # Draw the map    
-       for x in [0..obj.size] by 1
-         context.moveTo obj.getLoc(x), obj.getLoc(0)
-         context.lineTo obj.getLoc(x), obj.getLoc(obj.size)
-         context.moveTo obj.getLoc(0), obj.getLoc(x)
-         context.lineTo obj.getLoc(obj.size), obj.getLoc(x)
+       for x in [-10..obj.size+10] by 1
+         context.moveTo obj.getLoc(x)+offsetX, obj.getLoc(-10)+offsetY
+         context.lineTo obj.getLoc(x)+offsetX, obj.getLoc(obj.size+10)+offsetY
+         context.moveTo obj.getLoc(-10)+offsetX, obj.getLoc(x)+offsetY
+         context.lineTo obj.getLoc(obj.size+10)+offsetX, obj.getLoc(x)+offsetY
 
        context.strokeStyle = '#000'
        context.stroke()
@@ -92,30 +99,37 @@ $ ->
 
      # Draw a player on the map
      drawPlayer: (obj, context) ->
+       
+       # Current player gets drawn fixed in the middle       
        context.fillStyle = '#000'
-       x = obj.getLoc obj.x
-       y = obj.getLoc obj.y
        context.font = '40pt Pictos'
-       context.fillText obj.symbol, x+1, y+40 # Add 40 because fonts draw from top left
+
+       # We always draw the player in the middle
+       context.fillText obj.symbol, obj.getLoc(5), obj.getLoc(5)+40 # Add 40 because fonts draw from top left
        @drawHP obj, context
     
-     # Draw Health Bars
-     drawHP: (obj, context) ->
-       # Get coordinates
-       x = obj.getLoc obj.x
-       y = obj.getLoc obj.y
+    # Draw Health Bars
+    drawHP: (obj, context) ->
+       
+      if obj.type is 'player'
+        x = obj.getLoc(5)
+        y = obj.getLoc(5)
+      else
+        # Get coordinates
+        x = obj.getLoc obj.x
+        y = obj.getLoc obj.y
 
-       # Draw HP box outline
-       context.strokeStyle = '#000'
-       context.lineWidth = 1
-       context.strokeRect x+10, y-3, 30, 10
+      # Draw HP box outline
+      context.strokeStyle = '#000'
+      context.lineWidth = 1
+      context.strokeRect x+10, y-3, 30, 10
 
-       # Draw HP bar
-       context.fillStyle = '#0F0'
-       pct = obj.curHP / obj.maxHP
+      # Draw HP bar
+      context.fillStyle = '#0F0'
+      pct = obj.curHP / obj.maxHP
 
-       if pct <= .2
-         # Show red health bar when HP is < 20%
-         context.fillStyle = '#f00'
+      if pct <= .2
+       # Show red health bar when HP is < 20%
+       context.fillStyle = '#f00'
 
-       context.fillRect x+13, y-1, 24*pct, 6
+      context.fillRect x+13, y-1, 24*pct, 6
