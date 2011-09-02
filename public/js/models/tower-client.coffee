@@ -41,19 +41,20 @@ $ ->
       
       # Update bullet movement
       for bullet in bullets
-        bullet.x += bullet.vx
-        bullet.y += bullet.vy
-        bullet.vy += .1
-        bullet.vx *= .999
-        bullet.vy *= .99
+        if bullet # Fix for weird bug where bullet is undefined
+          bullet.x += bullet.vx
+          bullet.y += bullet.vy
+          bullet.vy += .1
+          bullet.vx *= .999
+          bullet.vy *= .99
     
-        if bullet.x % fg_canvas.width != bullet.x
-          bullet.remove()
-        else if bullet.x >= fg_canvas.height
-          bullet.vy = -Math.abs bullet.vy
-          bullet.vy *= .7
-          if Math.abs bullet.vy < 1 && Math.abs bullet.vx < 1
-            bullet.remove()     
+          if bullet.x % fg_canvas.width != bullet.x
+            bullet.remove()
+          else if bullet.x >= fg_canvas.height
+            bullet.vy = -Math.abs bullet.vy
+            bullet.vy *= .7
+            if Math.abs bullet.vy < 1 && Math.abs bullet.vx < 1
+              bullet.remove()     
         
     getLoc: (loc) ->
       return (loc*squarewidth)

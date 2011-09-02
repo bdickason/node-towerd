@@ -141,7 +141,8 @@
           speed: obj.speed,
           maxHP: obj.maxHP,
           curHP: obj.curHP,
-          symbol: obj.symbol
+          symbol: obj.symbol,
+          type: obj.type
         };
         break;
       case 'tower':

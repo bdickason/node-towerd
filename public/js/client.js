@@ -53,13 +53,6 @@
             }
           }
           return _results;
-          break;
-        case 'player':
-          if (data.uid === player.uid) {
-            ;
-          } else {
-            ;
-          }
       }
     });
     socket.on('fire', function(data) {
@@ -78,7 +71,6 @@
       _results = [];
       for (_i = 0, _len = mobs.length; _i < _len; _i++) {
         mob = mobs[_i];
-        console.log("hit! data: " + data.uid + " mob: " + mob.uid);
         _results.push(mob.id === data.uid ? (console.log('Kaboom!'), r.drawMobHit(mob, fg_ctx)) : void 0);
       }
       return _results;
@@ -112,7 +104,6 @@
       now = Date.now();
       elapsed = now - lastUpdate;
       lastUpdate = now;
-      player.update(elapsed);
       for (_i = 0, _len = towers.length; _i < _len; _i++) {
         tower = towers[_i];
         tower.update();
@@ -125,18 +116,19 @@
       return _results;
     };
     draw = function() {
-      var mob, tower, _i, _j, _len, _len2;
+      var mob, tower, _i, _j, _len, _len2, _results;
       if (fg_canvas.getContext) {
         fg_ctx.clearRect(0, 0, fg_canvas.width, fg_canvas.height);
         for (_i = 0, _len = towers.length; _i < _len; _i++) {
           tower = towers[_i];
           r.draw(tower);
         }
+        _results = [];
         for (_j = 0, _len2 = mobs.length; _j < _len2; _j++) {
           mob = mobs[_j];
-          r.draw(mob);
+          _results.push(r.draw(mob));
         }
-        return r.draw(player);
+        return _results;
       }
     };
     /* World Rendering Functions */
