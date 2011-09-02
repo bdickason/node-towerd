@@ -51,11 +51,6 @@ $ ->
       when 'mob'
         # Only move the mob that sent the event
         mob.move data for mob in mobs when mob.uid == data.uid
-      when 'player'
-        if data.uid == player.uid
-          # It's me! Move me!
-        else
-          # Process movement for another player. Boooring.
 
   socket.on 'fire', (data) ->
     tower.fire() for tower in towers when tower.uid == data.obj.uid
@@ -95,7 +90,6 @@ $ ->
     elapsed = now - lastUpdate
     lastUpdate = now
     
-    player.update(elapsed)
     tower.update() for tower in towers
     mob.update(elapsed) for mob in mobs
     
@@ -105,8 +99,6 @@ $ ->
       fg_ctx.clearRect 0, 0, fg_canvas.width, fg_canvas.height # Clear the canvas
       r.draw tower for tower in towers
       r.draw mob for mob in mobs
-      r.draw player
-  
 
   ### World Rendering Functions ###
   window.gameLoop = setInterval game, 1000 / FPS

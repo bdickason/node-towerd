@@ -23,8 +23,6 @@ $ ->
           @drawTower obj, context
         when 'map'
           @drawMap obj, context
-        when 'player'
-          @drawPlayer obj, context
 
     # Draw a mob on the map
     drawMob: (obj, context) ->
@@ -110,11 +108,3 @@ $ ->
        # Draw the exit
        context.fillStyle = '#f00'
        context.fillRect obj.getLoc(obj.end_x), obj.getLoc(obj.end_y), squarewidth, squarewidth
-
-     # Draw a player on the map
-     drawPlayer: (obj, context) ->
-       context.fillStyle = '#000'
-       x = obj.getLoc obj.x
-       y = obj.getLoc obj.y
-       context.font = '40pt Pictos'
-       context.fillText obj.symbol, x+1, y+40 # Add 40 because fonts draw from top left
