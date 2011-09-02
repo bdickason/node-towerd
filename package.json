@@ -9,7 +9,6 @@
 		"redis": "0.6.4",
 		"hiredis": "0.1.12",
 		"jasmine-node": "1.0.6",
-		"gzippo": "0.0.4",
 		"mongoose": "1.8.0",
 		"winston": "0.3.4",		
 		"socket.io": "0.7.7",
