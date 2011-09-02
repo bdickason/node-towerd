@@ -41,12 +41,7 @@
         _results = [];
         for (_i = 0, _len = bullets.length; _i < _len; _i++) {
           bullet = bullets[_i];
-          bullet.x += bullet.vx;
-          bullet.y += bullet.vy;
-          bullet.vy += .1;
-          bullet.vx *= .999;
-          bullet.vy *= .99;
-          _results.push(bullet.x % fg_canvas.width !== bullet.x ? bullet.remove() : bullet.x >= fg_canvas.height ? (bullet.vy = -Math.abs(bullet.vy), bullet.vy *= .7, Math.abs(bullet.vy < 1 && Math.abs(bullet.vx < 1)) ? bullet.remove() : void 0) : void 0);
+          _results.push(bullet ? (bullet.x += bullet.vx, bullet.y += bullet.vy, bullet.vy += .1, bullet.vx *= .999, bullet.vy *= .99, bullet.x % fg_canvas.width !== bullet.x ? bullet.remove() : bullet.x >= fg_canvas.height ? (bullet.vy = -Math.abs(bullet.vy), bullet.vy *= .7, Math.abs(bullet.vy < 1 && Math.abs(bullet.vx < 1)) ? bullet.remove() : void 0) : void 0) : void 0);
         }
         return _results;
       };

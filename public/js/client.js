@@ -78,7 +78,6 @@
       _results = [];
       for (_i = 0, _len = mobs.length; _i < _len; _i++) {
         mob = mobs[_i];
-        console.log("hit! data: " + data.uid + " mob: " + mob.uid);
         _results.push(mob.id === data.uid ? (console.log('Kaboom!'), r.drawMobHit(mob, fg_ctx)) : void 0);
       }
       return _results;

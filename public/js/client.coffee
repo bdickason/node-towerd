@@ -62,7 +62,6 @@ $ ->
   
   socket.on 'hit', (data) ->
     for mob in mobs
-      console.log "hit! data: #{data.uid} mob: #{mob.uid}"
       if mob.id == data.uid
         console.log 'Kaboom!'
         r.drawMobHit mob, fg_ctx
