@@ -8,7 +8,7 @@
   Obj = (require(basedir + 'controllers/utils/object.js')).Obj;
   describe('Mob mobs.js', function() {
     beforeEach(function() {
-      global.world = new Obj;
+      this.world = new Obj;
       this.name = 'Warrior';
       this.id = 'warrior';
       this.active = 1;
@@ -16,7 +16,7 @@
       this.symbol = '%';
       this.speed = 1;
       this.maxHP = 50;
-      return this.mob = new Mob(this.id);
+      return this.mob = new Mob(this.id, this.world);
     });
     it('Loads a new mob called Warrior', function() {
       expect(this.mob.id).toEqual(this.id);
@@ -49,16 +49,16 @@
     });
     it('Takes damage when a tower fires', function() {
       this.mob.on('hit', __bind(function(callback) {
-        return expect(this.mob.curHP).toEqual(40);
+        return expect(this.mob.curHP).toEqual(49);
       }, this));
       this.fakeTower = {
         type: 'tower',
-        damage: 10
+        damage: 1
       };
       this.fakeTarget = {
         uid: this.mob.uid
       };
-      return world.emit('fire', this.fakeTower, this.fakeTarget);
+      return this.world.emit('fire', this.fakeTower, this.fakeTarget);
     });
     it('Dies when its HP drops to 0', function() {
       this.mob.on('die', __bind(function(curHP, callback) {

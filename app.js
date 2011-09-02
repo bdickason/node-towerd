@@ -55,7 +55,7 @@
   /* Start Route Handling */
   worlds = [];
   app.get('/', function(req, res) {
-    return load(function(world) {
+    return load(req.sessionID, function(world) {
       /*if typeof world == 'undefined'
         res.redirect '/'
       else
@@ -117,10 +117,12 @@
       return _results;
     });
   });
-  load = function(callback) {
+  load = function(sessionID, callback) {
     /* Spawn the world!! */    var world;
     logger.info('Spawning New Game');
     world = new World;
+    console.log(sessionID);
+    world.add('player', sessionID);
     worlds.push(world);
     redis.set('world', world.uid);
     world.emit('load');
@@ -190,6 +192,9 @@
         obj: obj,
         target: target
       });
+    });
+    world.on('hit', function(obj) {
+      return socket.emit('hit', filter(obj));
     });
     return world.on('die', function(obj) {
       return socket.emit('die', filter(obj));

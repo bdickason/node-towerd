@@ -71,8 +71,8 @@ exports.Mob = class Mob extends EventEmitter
             @dy = res.y
     
             # increment x and y
-            @x = (@x + @dx) * @speed
-            @y = (@y + @dy) * @speed
+            @x += @dx * @speed
+            @y += @dy * @speed
             new_x = @x
             new_y = @y
     

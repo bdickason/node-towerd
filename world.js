@@ -1,5 +1,5 @@
 (function() {
-  /* World - Runs the game world like a pro! */  var EventEmitter, Map, Mob, Tower, World, cfg;
+  /* World - Runs the game world like a pro! */  var EventEmitter, Map, Mob, Player, Tower, World, cfg;
   var __hasProp = Object.prototype.hasOwnProperty, __extends = function(child, parent) {
     for (var key in parent) { if (__hasProp.call(parent, key)) child[key] = parent[key]; }
     function ctor() { this.constructor = child; }
@@ -7,16 +7,18 @@
     child.prototype = new ctor;
     child.__super__ = parent.prototype;
     return child;
-  }, __bind = function(fn, me){ return function(){ return fn.apply(me, arguments); }; };
+  }, __bind = function(fn, me){ return function(){ return fn.apply(me, arguments); }; }, __slice = Array.prototype.slice;
   EventEmitter = (require('events')).EventEmitter;
   cfg = require('./config/config.js');
   Map = (require('./controllers/maps')).Map;
   Mob = (require('./controllers/mobs')).Mob;
   Tower = (require('./controllers/towers')).Tower;
+  Player = (require('./controllers/player')).Player;
   exports.World = World = (function() {
     __extends(World, EventEmitter);
     function World() {
       /* Initial config */      this.maxPlayers = 2;
+      this.players = [];
       this.uid = Math.floor(Math.random() * 10000000);
       this.gameTime = cfg.GAMETIMER;
       this.loaded = false;
@@ -77,18 +79,21 @@
       this.towers[0].spawn(4, 4);
       return this.loaded = true;
     };
-    World.prototype.add = function(type, x, y) {
-      var tower;
+    World.prototype.add = function() {
+      var params, tower, type;
+      type = arguments[0], params = 2 <= arguments.length ? __slice.call(arguments, 1) : [];
       switch (type) {
         case 'tower':
           tower = new Tower('cannon', this);
           this.towers.push(tower);
           this.loadobj(tower);
           console.log('spawning tower');
-          this.towers[this.towers.length - 1].spawn(x, y);
+          this.towers[this.towers.length - 1].spawn(params[0], params[1]);
           return this.toString(function(json) {
             return console.log(json);
           });
+        case 'player':
+          return this.players.push(new Player(params[0], this));
       }
     };
     World.prototype.loadobj = function(obj) {
@@ -103,8 +108,11 @@
       obj.on('fire', __bind(function(target) {
         return this.fireobj(obj, target);
       }, this));
-      return obj.on('die', __bind(function() {
+      obj.on('die', __bind(function() {
         return this.killobj(obj);
+      }, this));
+      return obj.on('hit', __bind(function() {
+        return this.hitobj(obj);
       }, this));
     };
     /* Event functions */
@@ -121,6 +129,9 @@
     };
     World.prototype.killobj = function(obj) {
       return this.emit('die', obj);
+    };
+    World.prototype.hitobj = function(obj) {
+      return this.emit('hit', obj);
     };
     World.prototype.gameLoop = function() {
       this.emit('gameLoop');

@@ -18,4 +18,3 @@ describe 'World world.js', ->
 
   it 'Loads some stuff', ->
     expect(@world).toBeDefined()
-    

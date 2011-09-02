@@ -8,6 +8,7 @@ cfg = require './config/config.js'    # contains API keys, etc.
 Map = (require './controllers/maps').Map  # Map functions like render, etc.
 Mob = (require './controllers/mobs').Mob  # Mob functions like move, etc.
 Tower = (require './controllers/towers').Tower  # Tower functions like attack, etc.
+Player = (require './controllers/player').Player  # A person like you or me
 
 # Initialize a new game
 # Called when the player first starts or elects to restart
@@ -17,6 +18,8 @@ exports.World = class World extends EventEmitter
   constructor: ->
     ### Initial config ###
     @maxPlayers = 2
+    @players = []   # Game initially spawns empty
+    
     @uid = Math.floor Math.random()*10000000  # Generate a unique ID for each instance of this game
     @gameTime = cfg.GAMETIMER  # every n ms, the game progresses
     @loaded = false # Clients should wait for 'loading' to be complete before receiving game data
@@ -38,7 +41,6 @@ exports.World = class World extends EventEmitter
     clearTimeout @game
   
   loadEntities: (json, callback) ->
-    
     ### Load the map ###
     # First level: Hidden Valley
     @maps = []
@@ -68,16 +70,21 @@ exports.World = class World extends EventEmitter
     @loaded = true
 
   # Add a new object to the game (usually done by a client)
-  add: (type, x, y) ->
+  add: (type, params...) ->
     switch type
       when 'tower'
+        # Params = x, y
         tower = new Tower 'cannon', @
         @towers.push tower
         @loadobj tower
         console.log 'spawning tower'
-        @towers[@towers.length-1].spawn x, y
+        @towers[@towers.length-1].spawn params[0], params[1]
         @toString (json) ->
           console.log json
+      when 'player'
+        # Params = player ID
+        # Add a player! Woohoo :)
+        @players.push new Player params[0], @
   
   loadobj: (obj) ->
     # proxies 'load' events from objects
@@ -92,6 +99,8 @@ exports.World = class World extends EventEmitter
       @fireobj obj, target
     obj.on 'die', =>
       @killobj obj
+    obj.on 'hit', =>
+      @hitobj obj
   
   ### Event functions ###
   spawnobj: (obj) ->
@@ -107,6 +116,9 @@ exports.World = class World extends EventEmitter
   
   killobj: (obj) ->
     @emit 'die', obj
+    
+  hitobj: (obj) ->
+    @emit 'hit', obj
            
   gameLoop: ->
     # One iteration of a game loop

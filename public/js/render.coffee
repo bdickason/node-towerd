@@ -23,6 +23,8 @@ $ ->
           @drawTower obj, context
         when 'map'
           @drawMap obj, context
+        when 'player'
+          @drawPlayer obj, context
 
     # Draw a mob on the map
     drawMob: (obj, context) ->
@@ -54,6 +56,18 @@ $ ->
       
       context.fillRect x+13, y-1, 24*pct, 6
 
+    # Animate a mob when it gets hit
+    drawMobHit: (obj, context) ->
+      # Get coordinates
+      x = obj.getLoc obj.x
+      y = obj.getLoc obj.y
+      
+      console.log 'drawing mob hit!'
+      context.save()
+      context.globalCompositeOperation = 'source-in'
+      context.fillStyle = 'rgba(186, 51, 35, 0.6)'  # Fill with red!
+      context.fillRect x, y, 40, 40
+      context.restore()
       
 
     # Draw a tower on the map
@@ -96,3 +110,11 @@ $ ->
        # Draw the exit
        context.fillStyle = '#f00'
        context.fillRect obj.getLoc(obj.end_x), obj.getLoc(obj.end_y), squarewidth, squarewidth
+
+     # Draw a player on the map
+     drawPlayer: (obj, context) ->
+       context.fillStyle = '#000'
+       x = obj.getLoc obj.x
+       y = obj.getLoc obj.y
+       context.font = '40pt Pictos'
+       context.fillText obj.symbol, x+1, y+40 # Add 40 because fonts draw from top left

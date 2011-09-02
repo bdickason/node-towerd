@@ -11,7 +11,7 @@ Obj = (require basedir + 'controllers/utils/object.js').Obj
 # Unit Tests
 describe 'Mob mobs.js', ->
   beforeEach ->
-    global.world = new Obj # Required because maps relies on 'world' for some events
+    @world = new Obj # Required because maps relies on 'world' for some events
     
     # Stub data
     @name = 'Warrior'
@@ -22,7 +22,7 @@ describe 'Mob mobs.js', ->
     @speed = 1
     @maxHP = 50
 
-    @mob = new Mob @id
+    @mob = new Mob @id, @world
 
   it 'Loads a new mob called Warrior', ->
     expect(@mob.id).toEqual(@id)
@@ -50,12 +50,12 @@ describe 'Mob mobs.js', ->
 
   it 'Takes damage when a tower fires', ->
     @mob.on 'hit', (callback) =>
-      expect(@mob.curHP).toEqual(40)
+      expect(@mob.curHP).toEqual(49)
     
-    @fakeTower = { type: 'tower', damage: 10 }
+    @fakeTower = { type: 'tower', damage: 1 }
     @fakeTarget = { uid: @mob.uid }
     
-    world.emit 'fire', @fakeTower, @fakeTarget
+    @world.emit 'fire', @fakeTower, @fakeTarget
     
   it 'Dies when its HP drops to 0', ->
     @mob.on 'die', (curHP, callback) =>
