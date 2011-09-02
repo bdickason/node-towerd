@@ -132,7 +132,7 @@ filter = (obj) ->
   # This is to keep packets as small as possible
   switch obj.type
     when 'mob'
-      newobj = { uid: obj.uid, x: obj.x, y: obj.y, dx: obj.dx, dy: obj.dy, speed: obj.speed, maxHP: obj.maxHP, curHP: obj.curHP, symbol: obj.symbol }
+      newobj = { uid: obj.uid, x: obj.x, y: obj.y, dx: obj.dx, dy: obj.dy, speed: obj.speed, maxHP: obj.maxHP, curHP: obj.curHP, symbol: obj.symbol, type: obj.type }
     when 'tower'
       newobj = { uid: obj.uid, x: obj.x, y: obj.y, symbol: obj.symbol, damage: obj.damage, type: obj.type }
     when 'map'
