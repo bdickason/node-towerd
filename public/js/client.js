@@ -1,6 +1,6 @@
 (function() {
   $(function() {
-    /* Config Variables */    var draw, game, lastUpdate, reverseLoc, socket, update;
+    /* Config Variables */    var draw, game, host, lastUpdate, reverseLoc, socket, update;
     window.squarewidth = 50;
     window.FPS = 30;
     /* Reserved Variables */
@@ -8,7 +8,9 @@
     window.startTime = Date.now();
     window.elapsed = 0;
     lastUpdate = startTime;
-    socket = io.connect('http://localhost');
+    /* Figure out what URL we're hitting */
+    host = window.location.host;
+    socket = io.connect("http://" + host);
     /* Game Events */
     socket.on('init', function(data) {
       var mob, tower, _i, _j, _len, _len2, _map, _mobs, _towers;
