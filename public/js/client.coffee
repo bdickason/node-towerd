@@ -9,7 +9,10 @@ $ ->
   window.elapsed = 0
   lastUpdate = startTime
 
-  socket = io.connect 'http://localhost'
+  ### Figure out what URL we're hitting ###
+  host = window.location.host
+  
+  socket = io.connect "http://#{host}"
   
   ### Game Events ###
   # Initialize core game data on connect
