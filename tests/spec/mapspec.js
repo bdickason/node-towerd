@@ -12,7 +12,7 @@
       world = new Obj;
       this.name = 'Hidden Valley';
       this.id = 'hiddenvalley';
-      this.active = 100;
+      this.active = 1;
       this.theme = 'Forest';
       this.mobs = ['warrior', 'warrior'];
       this.size = 12;

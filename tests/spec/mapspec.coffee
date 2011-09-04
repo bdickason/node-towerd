@@ -16,7 +16,7 @@ describe 'Map map.js', ->
     # Stub data
     @name = 'Hidden Valley'
     @id = 'hiddenvalley'
-    @active = 100
+    @active = 1
     @theme = 'Forest'
     @mobs = [ 'warrior', 'warrior' ]
     @size = 12
