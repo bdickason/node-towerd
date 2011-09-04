@@ -4,7 +4,7 @@
 	"dependencies": {
 		"express": "2.4.3",
 		"coffee-script": "1.1.1",
-		"jade": "0.13.0",
+		"jade": "0.15.3",
 		"connect-redis": "1.0.6",
 		"redis": "0.6.4",
 		"hiredis": "0.1.12",
